@@ -1,11 +1,14 @@
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>PratiCorte</h1>
-      </header>
-    </div>
-  )
+import React from 'react';
+import { Home } from './home'
+
+class App extends React.Component {
+  render() {
+      return (
+          <div className="main-container">
+            <Home />
+          </div>
+      )
+  }
 }
 
-export default App
+export { App }

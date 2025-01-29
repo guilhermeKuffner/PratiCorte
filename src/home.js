@@ -1,40 +1,31 @@
-import React from 'react';
-const initialState = {
-    projeto: 'PratiCorte',
-    data: '24/01/2025'
-}
+import React from "react";
 class Home extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = initialState;
-    }
-
     render() {
         return (
             <>
-                <div>
-                    <div>
-                        <img src='' alt='' />
-                        <span>Gestão rapida e fácil da sua barbearia.</span>
-                    </div>
-                    <form>
+                <div className="container d-flex flex-column justify-content-center align-items-center">
+                    <div className="card p-4 shadow-lg bg-white rounded">
                         <div>
-                            <label htmlFor='email'>E-mail</label>
-                            <input type='text' name='email' id='email' placeholder='exemplo@gmail.com'
-                            />
+                            <img src="" alt="" />
+                            <span>Gestão rapida e fácil da sua barbearia.</span>
                         </div>
-                        <div>
-                            <label htmlFor='password'>Senha</label>
-                            <input type='password' name='password' id='password' placeholder='***********'
-                            />
+                        <form>
+                            <div className="mb-3">
+                                <label className="form-label" htmlFor="email">E-mail</label>
+                                <input className="form-control" type="text" name="email" id="email" placeholder="exemplo@gmail.com"/>
+                            </div>
+                            <div>
+                                <label className="form-label" htmlFor="password">Senha</label>
+                                <input className="form-control" type="password" name="password" id="password" placeholder="***********"
+                                />
+                            </div>
+                        </form>
+                        <a href="" className="d-block mb-3 text-decoration-none text-center">Esqueceu sua senha?</a>
+                        <button className="btn btn-primary mb-3">Fazer Login</button>
+                        <div className="text-center">
+                            <span className="d-block mb-2">Ainda não é cliente?</span>
+                            <a href="" className="btn btn-outline-secondary">Crie sua conta!</a>
                         </div>
-                    </form>
-                    <a href=''>Esqueceu sua senha?</a>
-                    <button>Fazer Login</button>
-                    <div>
-                        <span>Ainda não é cliente?</span>
-                        <a href=''>Crie sua conta!</a>
                     </div>
                 </div>
             </>
