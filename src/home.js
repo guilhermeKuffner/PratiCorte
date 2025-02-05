@@ -1,7 +1,10 @@
 import React from "react";
+import { PhoneNumberInput } from "./utils";
 
 const initialState = {
     screenType: 'login',
+    cpfCnpj: "",
+    phoneNumber: ""
 }
 
 class Home extends React.Component {
@@ -71,15 +74,11 @@ class Home extends React.Component {
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label" htmlFor="phoneNumber">Celular</label>
-                                    <input className="form-control" type="text" name="phoneNumber" id="phoneNumber" placeholder="(00)00000-0000"/>
+                                    <PhoneNumberInput value={this.state.phoneNumber} onChange={(e) => this.setState({ phoneNumber: e.target.value })} />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label" htmlFor="establishment">Nome do Estabelecimento</label>
                                     <input className="form-control" type="text" name="establishment" id="establishment" placeholder="Barbearia PratiCorte"/>
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label" htmlFor="establishment">CNPJ ou CPF</label>
-                                    <input className="form-control" type="text" name="establishment" id="establishment" placeholder="000.000.000-00"/>
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Como nos conheceu?</label>
