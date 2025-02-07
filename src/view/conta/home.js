@@ -35,7 +35,9 @@ class Login extends React.Component {
                                 />
                             </div>
                         </form>
-                        <a href="" className="d-block mb-3 text-decoration-none text-center">Esqueceu sua senha?</a>
+                        <Link to="/">
+                            <button className="btn btn-outline-secondary">Crie sua conta!</button>
+                        </Link>
                         <button className="btn btn-primary mb-3">Fazer Login</button>
                         <div className="text-center">
                             <span className="d-block mb-2">Ainda não é cliente?</span>
@@ -96,7 +98,7 @@ class Register extends React.Component {
                                 </select>
                             </div>
                         </form>
-                        <a href="" className="mb-3"><b>termo de uso e política de privacidade.</b></a>
+                        <Link to="/" className="mb-3"><b>termo de uso e política de privacidade.</b></Link>
                         <button className="btn btn-primary mb-3">Cadastre-se</button>
                         <div className="text-center">
                             <span className="d-block mb-2">Já é cliente?</span>
