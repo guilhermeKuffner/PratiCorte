@@ -1,11 +1,10 @@
 import React from "react";
 import { PhoneNumberInput } from "../../shared/utils";
 import { Link } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../../config/firebase'
 
-const initialState = {
-    cpfCnpj: "",
-    phoneNumber: ""
-}
+const initialState = {}
 
 class Login extends React.Component {
 
@@ -54,8 +53,25 @@ class Register extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = initialState;
+        this.state = {
+            email: "",
+            password: "",
+            phoneNumber: "",
+            error: null,
+          } 
     }
+
+    handleRegister = async () => {
+        const { email, password } = this.state;
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+          console.log("Usuário cadastrado:", userCredential.user)
+          alert("Cadastro realizado com sucesso!")
+        } catch (error) {
+          console.error("Erro no cadastro:", error.message)
+          this.setState({ error: error.message })
+        }
+      }
 
     render() {
         return (
@@ -70,11 +86,13 @@ class Register extends React.Component {
                         <form>
                             <div className="mb-3">
                                 <label className="form-label" htmlFor="email">E-mail</label>
-                                <input className="form-control" type="text" name="email" id="email" placeholder="exemplo@gmail.com"/>
+                                <input className="form-control" type="text" name="email" id="email" placeholder="exemplo@gmail.com"
+                                onChange={(e) => this.setState({ email: e.target.value })}/>
                             </div>
                             <div className="mb-3">
                                 <label className="form-label" htmlFor="password">Senha</label>
-                                <input className="form-control" type="password" name="password" id="password" placeholder="***********"/>
+                                <input className="form-control" type="password" name="password" id="password" placeholder="***********" 
+                                onChange={(e) => this.setState({ password: e.target.value })}/>
                             </div>
                             <div className="mb-3">
                                 <label className="form-label" htmlFor="phoneNumber">Celular</label>
@@ -97,11 +115,11 @@ class Register extends React.Component {
                             </div>
                         </form>
                         <Link to="/" className="mb-3"><b>termo de uso e política de privacidade.</b></Link>
-                        <button className="btn btn-primary mb-3">Cadastre-se</button>
+                        <button className="btn btn-primary mb-3" onClick={this.handleRegister}>Cadastre-se</button>
                         <div className="text-center">
                             <span className="d-block mb-2">Já é cliente?</span>
                             <Link to="/">
-                                <button className="btn btn-outline-secondary">Crie sua conta!</button>
+                                <button className="btn btn-outline-secondary">Acesse sua conta!</button>
                             </Link>
                         </div>
                     </div>
