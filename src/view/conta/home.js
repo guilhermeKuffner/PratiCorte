@@ -35,9 +35,7 @@ class Login extends React.Component {
                                 />
                             </div>
                         </form>
-                        <Link to="/">
-                            <button className="btn btn-outline-secondary">Crie sua conta!</button>
-                        </Link>
+                        <Link to="/" className="d-block mb-3 text-decoration-none text-center">Esqueceu sua senha?</Link>
                         <button className="btn btn-primary mb-3">Fazer Login</button>
                         <div className="text-center">
                             <span className="d-block mb-2">Ainda não é cliente?</span>
