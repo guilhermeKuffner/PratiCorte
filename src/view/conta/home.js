@@ -1,5 +1,6 @@
 import React from "react";
 import { PhoneNumberInput } from "../../shared/utils";
+import { Link } from 'react-router-dom';
 
 const initialState = {
     cpfCnpj: "",
@@ -38,9 +39,9 @@ class Login extends React.Component {
                         <button className="btn btn-primary mb-3">Fazer Login</button>
                         <div className="text-center">
                             <span className="d-block mb-2">Ainda não é cliente?</span>
-                            <a href="/conta/criar-conta">
+                            <Link to="/conta/criar-conta">
                                 <button className="btn btn-outline-secondary">Crie sua conta!</button>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
