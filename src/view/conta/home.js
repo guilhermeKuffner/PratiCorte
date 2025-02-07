@@ -100,9 +100,9 @@ class Register extends React.Component {
                         <button className="btn btn-primary mb-3">Cadastre-se</button>
                         <div className="text-center">
                             <span className="d-block mb-2">Já é cliente?</span>
-                            <a href="/">
-                                <button className="btn btn-outline-secondary" onClick={this.showLoginPage}>Voltar para tela inicial!</button>
-                            </a>
+                            <Link to="/">
+                                <button className="btn btn-outline-secondary">Crie sua conta!</button>
+                            </Link>
                         </div>
                     </div>
                 </div>
