@@ -1,11 +1,11 @@
 import React from 'react';
-import { Home } from './view/home'
+import AppRoutes from './config/routes';
 
 class App extends React.Component {
   render() {
       return (
           <div className="main-container">
-            <Home />
+            <AppRoutes />
           </div>
       )
   }
