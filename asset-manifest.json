@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/PratiCorte/static/css/main.6be0f663.css",
+    "main.js": "/PratiCorte/static/js/main.dcc89995.js",
+    "index.html": "/PratiCorte/index.html",
+    "main.6be0f663.css.map": "/PratiCorte/static/css/main.6be0f663.css.map",
+    "main.dcc89995.js.map": "/PratiCorte/static/js/main.dcc89995.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6be0f663.css",
+    "static/js/main.dcc89995.js"
+  ]
+}
