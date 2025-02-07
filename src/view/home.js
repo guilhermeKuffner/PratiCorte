@@ -1,5 +1,5 @@
 import React from "react";
-import { PhoneNumberInput } from "./utils";
+import { PhoneNumberInput } from "../shared/utils";
 
 const initialState = {
     screenType: 'login',

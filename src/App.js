@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home } from './home'
+import { Home } from './view/home'
 
 class App extends React.Component {
   render() {
