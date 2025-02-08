@@ -6,7 +6,7 @@ import { Home } from "../view/home/home";
 const AppRoutes = () => (
     <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/conta/criar-conta" element={<Register />} />
+        <Route path="/criar-conta" element={<Register />} />
         <Route path="/home" element={<Home />} />
     </Routes>
 )

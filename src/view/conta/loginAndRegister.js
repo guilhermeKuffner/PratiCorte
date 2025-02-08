@@ -2,8 +2,10 @@ import React from "react";
 import { PhoneNumberInput } from "../../shared/utils";
 import { Link } from 'react-router-dom';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from '../../config/firebase'
-import { collection, addDoc } from "firebase/firestore";
+import { auth } from '../../config/firebase'
+import { v7 as uuidv7 } from 'uuid'
+import { addEstablishment } from '../../store/collections/registerWorker'
+import { addUser } from '../../store/collections/userWorker'
 
 class Login extends React.Component {
 
@@ -18,10 +20,8 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        // Verifica se o usuário já está logado quando a página for carregada
         const user = auth.currentUser;
         if (user) {
-            // Se o usuário já estiver logado, redireciona diretamente para a página inicial
             window.location.href = "/home";
         }
     }
@@ -29,7 +29,7 @@ class Login extends React.Component {
 
     handleLogin = async () => {
         const { email, password } = this.state
-        this.setState({ isLoading: true });
+        this.setState({ isLoading: true })
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
             console.log("Usuário logado:", userCredential.user)
@@ -38,7 +38,7 @@ class Login extends React.Component {
             if (error.message == "Firebase: Error (auth/invalid-credential)."){
                 error.message = "Email ou senha inválidos, tente novamente"
             }
-            this.setState({ isLoading: false });  // Desativa o carregamento após tentar o login
+            this.setState({ isLoading: false })
             alert(`Erro no login: ${error.message}`)
         } finally {
             window.location.href = "/home"
@@ -73,7 +73,7 @@ class Login extends React.Component {
                             <button className="btn btn-primary mb-3" onClick={this.handleLogin}>Fazer Login</button>
                             <div className="text-center">
                                 <span className="d-block mb-2">Ainda não é cliente?</span>
-                                <Link to="/conta/criar-conta">
+                                <Link to="/criar-conta">
                                     <button className="btn btn-outline-secondary">Crie sua conta!</button>
                                 </Link>
                             </div>
@@ -102,17 +102,26 @@ class Register extends React.Component {
         } 
     }
 
+    componentDidMount() {
+        const user = auth.currentUser;
+        if (user) {
+            window.location.href = "/home";
+        }
+    }
+
     handleRegister = async () => {
         const { email, password, phoneNumber, establishment } = this.state;
         try {
           const userCredential = await createUserWithEmailAndPassword(auth, email, password)
           console.log("Usuário cadastrado:", userCredential.user)
-
-          const docRef = await addDoc(collection(db, "Estabelecimentos"), {
+          const data = {
+            estabelecimentoId: uuidv7(),
             email: email,
             nomeEstabelecimento: establishment,
-            celularEstabelecimento: phoneNumber,
-        })
+            celular: phoneNumber,
+          }
+          await addEstablishment({ data })
+          await addUser({ data })
 
           alert("Cadastro realizado com sucesso!")
         } catch (error) {
