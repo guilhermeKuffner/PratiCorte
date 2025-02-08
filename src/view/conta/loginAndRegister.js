@@ -112,23 +112,30 @@ class Register extends React.Component {
     handleRegister = async () => {
         const { email, password, phoneNumber, establishment } = this.state;
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-          console.log("Usuário cadastrado:", userCredential.user)
-          const data = {
-            estabelecimentoId: uuidv7(),
-            email: email,
-            nomeEstabelecimento: establishment,
-            celular: phoneNumber,
-          }
-          await addEstablishment({ data })
-          await addUser({ data })
-
-          alert("Cadastro realizado com sucesso!")
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+            console.log("Usuário cadastrado:", userCredential.user)
+            const estabelecimentoId = uuidv7();
+            const establishmentData = {
+                estabelecimentoId: estabelecimentoId,
+                email: email,
+                nomeEstabelecimento: establishment,
+                celular: phoneNumber,
+            }
+            const userData = {
+                id: userCredential.user.uid, 
+                email: email,
+                nomeEstabelecimento: establishment,
+                celular: phoneNumber,
+                estabelecimentoId: estabelecimentoId,
+            }
+            await addEstablishment(establishmentData)
+            await addUser(userData)
+            alert("Cadastro realizado com sucesso!")
         } catch (error) {
-          console.error("Erro no cadastro:", error.message)
-          this.setState({ error: error.message })
+            console.error("Erro no cadastro:", error.message)
+            this.setState({ error: error.message })
         }
-      }
+    }
 
     render() {
         return (
