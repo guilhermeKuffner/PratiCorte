@@ -1,11 +1,13 @@
 import React from "react";
 import { PhoneNumberInput } from "../../shared/utils";
 import { Link } from 'react-router-dom';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../config/firebase'
 import { v7 as uuidv7 } from 'uuid'
 import { addEstablishment } from '../../store/collections/registerWorker'
 import { addUser } from '../../store/collections/userWorker'
+import { handleLogin } from "../../config/auth";
+
 
 class Login extends React.Component {
 
@@ -15,34 +17,21 @@ class Login extends React.Component {
             email: "",
             password: "",
             error: null,
-            isLoading: false
+            isLoading: true
         }
     }
 
     componentDidMount() {
-        const user = auth.currentUser;
-        if (user) {
-            window.location.href = "/home";
-        }
-    }
-    
-
-    handleLogin = async () => {
-        const { email, password } = this.state
-        this.setState({ isLoading: true })
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password)
-            console.log("Usuário logado:", userCredential.user)
-            alert("Login realizado com sucesso!")
-        } catch (error) {
-            if (error.message == "Firebase: Error (auth/invalid-credential)."){
-                error.message = "Email ou senha inválidos, tente novamente"
+        const checkUser = async () => {
+            await new Promise(resolve => setTimeout(resolve, 1000))
+            const user = auth.currentUser
+            if (user) {
+                window.location.href = "/home"
+            } else {
+                this.setState({ isLoading: false })
             }
-            this.setState({ isLoading: false })
-            alert(`Erro no login: ${error.message}`)
-        } finally {
-            window.location.href = "/home"
         }
+        checkUser()
     }
     
     render() {
@@ -70,7 +59,9 @@ class Login extends React.Component {
                                 </div>
                             </form>
                             <Link to="/" className="d-block mb-3 text-decoration-none text-center">Esqueceu sua senha?</Link>
-                            <button className="btn btn-primary mb-3" onClick={this.handleLogin}>Fazer Login</button>
+                            <button className="btn btn-primary mb-3" onClick={() => handleLogin(this.state.email, this.state.password, (isLoading) => this.setState({ isLoading }))}>
+                                Fazer Login
+                            </button>
                             <div className="text-center">
                                 <span className="d-block mb-2">Ainda não é cliente?</span>
                                 <Link to="/criar-conta">
@@ -80,7 +71,6 @@ class Login extends React.Component {
                         </div>
                     </div> : 
                     <div>
-                        <h1>loading</h1>
                     </div>
                 }
 
@@ -130,7 +120,7 @@ class Register extends React.Component {
             }
             await addEstablishment(establishmentData)
             await addUser(userData)
-            alert("Cadastro realizado com sucesso!")
+            handleLogin(email, password, (isLoading) => this.setState({ isLoading }));
         } catch (error) {
             console.error("Erro no cadastro:", error.message)
             this.setState({ error: error.message })
