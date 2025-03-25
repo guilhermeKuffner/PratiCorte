@@ -6,7 +6,7 @@ import { auth } from '../../config/firebase'
 import { v7 as uuidv7 } from 'uuid'
 import { addEstablishment } from '../../store/collections/registerWorker'
 import { addUser } from '../../store/collections/userWorker'
-import { handleLogin } from "../../config/auth";
+import { checkUser, handleLogin } from "../../config/auth";
 
 
 class Login extends React.Component {
@@ -22,23 +22,12 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        const checkUser = async () => {
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            const user = auth.currentUser
-            if (user) {
-                window.location.href = "/home"
-            } else {
-                this.setState({ isLoading: false })
-            }
-        }
-        checkUser()
+        checkUser();
     }
-    
     render() {
         return (
             <> 
                 {
-                    this.state.isLoading == false ?
                     <div className="container d-flex flex-column justify-content-center align-items-center">
                         <div className="card p-4 shadow-lg bg-white rounded">
                             <div className="mb-2">
@@ -69,11 +58,8 @@ class Login extends React.Component {
                                 </Link>
                             </div>
                         </div>
-                    </div> : 
-                    <div>
                     </div>
                 }
-
             </>
         )
     }
@@ -93,10 +79,7 @@ class Register extends React.Component {
     }
 
     componentDidMount() {
-        const user = auth.currentUser;
-        if (user) {
-            window.location.href = "/home";
-        }
+        checkUser();
     }
 
     handleRegister = async () => {
