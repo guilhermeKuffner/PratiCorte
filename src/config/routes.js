@@ -28,6 +28,8 @@ const AppRoutes = () => (
     <Route path="/" element={<Login />} />
     <Route path="/criar-conta" element={<Register />} />
     <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+    
+    <Route path="*" element={<Navigate to="/home" replace />} />
   </Routes>
 )
 
