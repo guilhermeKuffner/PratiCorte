@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { handleLogout, getEstablishmentByUser } from "../../config/auth";
+import { handleLogout } from "../../config/auth";
 import { auth } from '../../config/firebase';
+import { getSessao } from "../../config/auth";
 
 class Home extends React.Component {
     constructor(props) {
@@ -10,14 +11,16 @@ class Home extends React.Component {
             user: auth.currentUser,
             establishment: null,
             isLoading: true,
+            sessao: getSessao(),
         };
     }
 
     async componentDidMount() {
         try {
-            const establishment = await getEstablishmentByUser(this.state.user.email);
+            const establishment = this.state.sessao.estabelecimento
             this.setState({ establishment: establishment, isLoading: false });
         } catch (error) {
+            handleLogout()
             console.error("Erro ao obter o estabelecimento", error);
             this.setState({ isLoading: false });
         }

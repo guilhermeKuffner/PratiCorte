@@ -1,13 +1,15 @@
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db} from "../config/firebase";
-
+import { auth } from "../config/firebase";
+import { getUserByEmail } from "../store/collections/userWorker";
+import { getEstablishmentByUser } from "../store/collections/establishmentWorker";
 
 export const handleLogin = async (email, password, setLoading) => {
     setLoading(true)
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
-        console.log("Usuário logado:", userCredential.user)
+        const user = await getUserByEmail(userCredential.user.email)
+        const establishment = await getEstablishmentByUser(user)
+        setSessao({ usuario: user, estabelecimento: establishment })
         alert("Login realizado com sucesso!")
         window.location.href = "/home"
     } catch (error) {
@@ -24,6 +26,7 @@ export const handleLogin = async (email, password, setLoading) => {
 export const handleLogout = async () => {
     try {
         await signOut(auth);    
+        localStorage.removeItem('sessao')
         window.location.href = "/";
     } catch (error) {
         console.error("Erro ao deslogar:", error.message);
@@ -39,15 +42,37 @@ export const checkUser = async () => {
     } 
 }
 
-export const getEstablishmentByUser = async (email) => {
-    const querySnapshot = await getDocs(query(collection(db, "estabelecimentos"), where("email", "==", email)));
-    var item = querySnapshot.docs.map(doc => doc.data()); 
-    if (item.length === 0) {
-        alert("Estabelecimento não encontrado com esse email, tente novamente ou entre em contato com o suporte.")
-        handleLogout()
-        return null
-    } else {
-        console.log(item)
-        return item[0]
+export const setSessao = (sessao) => {
+    localStorage.setItem('sessao', JSON.stringify(sessao))
+}
+
+export const getSessao = () => {
+    const sessao = localStorage.getItem('sessao')
+    return sessao ? JSON.parse(sessao) : null
+}
+
+export const setEstabelecimento = (estabelecimento) => {
+    const sessao = JSON.parse(localStorage.getItem('sessao'))
+    if (sessao !== null) {
+        sessao.sessao.estabelecimento = estabelecimento
+        setSessao(sessao)
     }
+}
+
+export const getEstabelecimento = () => {
+    const sessao = getSessao()
+    return sessao ? sessao.estabelecimento : null
+}
+
+export const setUsuario = (usuario) => {
+    const sessao = JSON.parse(localStorage.getItem('sessao'))
+    if (sessao !== null) {
+        sessao.sessao.usuario = usuario
+        setSessao(sessao)
+    }
+}
+
+export const getUsuario = () => {
+    const sessao = getSessao()
+    return sessao ? sessao.usuario : null
 }
