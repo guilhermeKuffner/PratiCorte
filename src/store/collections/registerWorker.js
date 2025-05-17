@@ -1,6 +1,5 @@
-import { collection, addDoc } from "firebase/firestore";
-import { db } from '../../config/firebase'
+import { addDoc } from "./collectionBaseWorker";
 
 export const addEstablishment = async (data) => {
-    await addDoc(collection(db, "estabelecimentos"), data)
+    return await addDoc({ collection: "estabelecimentos", data: data })
 }
