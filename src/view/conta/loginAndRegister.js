@@ -3,7 +3,6 @@ import { PhoneNumberInput } from "../../shared/utils";
 import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../config/firebase'
-import { v7 as uuidv7 } from 'uuid'
 import { addEstablishment } from '../../store/collections/registerWorker'
 import { addUser } from '../../store/collections/userWorker'
 import { checkUser, handleLogin } from "../../config/auth";
@@ -87,21 +86,18 @@ class Register extends React.Component {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password)
             console.log("Usuário cadastrado:", userCredential.user)
-            const estabelecimentoId = uuidv7();
             const establishmentData = {
-                estabelecimentoId: estabelecimentoId,
                 email: email,
                 nomeEstabelecimento: establishment,
                 celular: phoneNumber,
             }
+            const establishmentCreated = await addEstablishment(establishmentData)
             const userData = {
-                id: userCredential.user.uid, 
                 email: email,
                 nomeEstabelecimento: establishment,
                 celular: phoneNumber,
-                estabelecimentoId: estabelecimentoId,
+                estabelecimentoId: establishmentCreated.id,
             }
-            await addEstablishment(establishmentData)
             await addUser(userData)
             handleLogin(email, password, (isLoading) => this.setState({ isLoading }));
         } catch (error) {
