@@ -1,5 +1,8 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
+import { getEstabelecimento}  from "../../config/auth";
+import { isEmpty, PhoneNumberInput } from "../../shared/utils";
+import { updateEstablishment } from "../../store/collections/establishmentWorker";
 
 class Establishment extends React.Component {
     constructor(props) {
@@ -7,34 +10,111 @@ class Establishment extends React.Component {
         this.state = {
             establishment: null,
             isEditing: false,
+            isEditingNomeEstabelecimento: "",
+            isEditingNomeResponsavel: "",
+            isEditingEmail: "",
+            isEditingCelular: "",
+            isEditingEndereco: "",
+        }
+    }
+
+    componentDidMount() {
+        const establishment = getEstabelecimento()
+        this.setState({
+            establishment: establishment,
+            isEditingEmail: establishment?.email ?? "",
+            isEditingNomeEstabelecimento: establishment?.nomeEstabelecimento ?? "",
+            isEditingNomeResponsavel: establishment?.nomeResponsavel ?? "",
+            isEditingCelular: establishment?.celular ?? "",
+            isEditingEndereco: establishment?.endereco ?? "",
+        })
+    }
+
+    save = async () => {
+        try {
+            const establishmentData = {
+                id: this.state.establishment?.id,
+                email: this.state.isEditingEmail,
+                nomeEstabelecimento: this.state.isEditingNomeEstabelecimento,
+                nomeResponsavel: this.state.isEditingNomeResponsavel,
+                celular: this.state.isEditingCelular,
+                endereco: this.state.isEditingEndereco,
+            }
+            console.log(establishmentData)
+            if (await updateEstablishment(establishmentData)){
+                this.setState({ isEditing: false, establishment: establishmentData })
+            }
+        } catch (error) {
+            console.error("Erro no cadastro:", error.message)
         }
     }
     render() {
         return (
             <>
-                <NavBar>
-                    <div className="container d-flex flex-column justify-content-center align-items-center">
-                        <div className="card p-4 shadow-lg bg-white rounded">
-                            <div className="mb-2">
-                                <h1>Dados do seu estabelecimento</h1>  
-                            </div>
+                <NavBar />
+                <div className="container d-flex flex-column justify-content-center align-items-center">
+                    <div className="card p-4 shadow-lg bg-white rounded">
+                        <div className="mb-2">
+                            <h1>Dados do seu estabelecimento</h1>  
+                        </div>
+                        {
+                            this.state.isEditing == false ? (
+                                <div className="mb-3">
+                                    <div> Nome do estabelecimento: {!isEmpty(this.state.establishment?.nomeEstabelecimento) ? this.state.establishment?.nomeEstabelecimento :"Não informado"}</div>
+                                    <div> Nome do responsável: {!isEmpty(this.state.establishment?.nomeResponsavel) ? this.state.establishment?.nomeResponsavel : "Não informado"}</div>
+                                    <div> E-mail: {!isEmpty(this.state.establishment?.email) ? this.state.establishment?.email : "Não informado"}</div>
+                                    <div> Celular: {!isEmpty(this.state.establishment?.celular) ?  this.state.establishment?.celular : "Não informado"}</div>
+                                    <div> Endereço: {!isEmpty(this.state.establishment?.endereco) ?  this.state.establishment?.endereco : "Não informado"}</div>
+                                </div>
+                            ) : (
+                                <div className="mb-3">
+                                    <form>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="nomeEstabelecimento">Nome do estabelecimento</label>
+                                            <input className="form-control" type="text" name="nomeEstabelecimento" id="nomeEstabelecimento" placeholder="Nome do estabelecimento"
+                                            value={this.state.isEditingNomeEstabelecimento}
+                                            onChange={(e) => this.setState({ isEditingNomeEstabelecimento: e.target.value })}/>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="nomeEstabelecimento">Nome do responsável</label>
+                                            <input className="form-control" type="text" name="nomeEstabelecimento" id="nomeEstabelecimento" placeholder="Nome do responsável"
+                                            value={this.state.isEditingNomeResponsavel}
+                                            onChange={(e) => this.setState({ isEditingNomeResponsavel: e.target.value })}/>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="email">E-mail</label>
+                                            <input className="form-control" type="text" name="email" id="email" placeholder="exemplo@gmail.com"
+                                            value={this.state.isEditingEmail}
+                                            onChange={(e) => this.setState({ isEditingEmail: e.target.value })}/>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="celular">Celular</label>
+                                            <PhoneNumberInput value={this.state.isEditingCelular} onChange={(e) => this.setState({ isEditingCelular: e.target.value })} />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="endereco">Endereço</label>
+                                            <input className="form-control" type="text" name="endereco" id="endereco" placeholder="Endereço"
+                                            value={this.state.isEditingEndereco}
+                                            onChange={(e) => this.setState({ isEditingEndereco: e.target.value })}/>
+                                        </div>
+                                    </form>
+                                </div>
+                            )   
+                        }
+                        <div>
+                            <button className="btn btn-primary  me-2" onClick={() => this.setState({ isEditing: !this.state.isEditing })}>
+                                {this.state.isEditing ? "Cancelar" : "Editar"}
+                            </button>
                             {
-                                this.state.isEditing == false ? (
-                                    <div className="mb-3">
-                                        <div> Nome do estabelecimento: {this.state.establishment?.nomeEstabelecimento}</div>
-                                        <div> E-mail: {this.state.establishment?.email}</div>
-                                        <div> Celular: {this.state.establishment?.celular}</div>
-                                        <div> Endereço: {this.state.establishment?.endereco}</div>
-                                    </div>
-                                ) : (
-                                    <div className="mb-3">
-                                        <div> tela de edição</div>
-                                    </div>
-                                )   
+                                this.state.isEditing && (
+                                    <button className="btn btn-success" onClick={this.save}>
+                                        Salvar
+                                    </button>
+                                )
                             }
                         </div>
                     </div>
-                </NavBar>
+                </div>
             </>
         )
     }
