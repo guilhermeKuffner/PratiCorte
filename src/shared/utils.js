@@ -7,6 +7,17 @@ export const PhoneNumberInput = ({ value, onChange }) => {
     )
 }
 
+export const PhoneNumberFormat = ({ value }) => {
+    var number = removeSimbols(value)
+    return (
+        <PatternFormat value={number} format="(##) #####-####" displayType="text" allowEmptyFormatting mask="_" renderText={(formattedValue) => <span>{formattedValue}</span>}/>
+    )
+}
+
 export const isEmpty = (value) => {
     return value === null || value === undefined || value === "";
+}
+
+export const removeSimbols = (value) => {
+    return value.replace(/[^a-zA-Z0-9]/g, "")
 }

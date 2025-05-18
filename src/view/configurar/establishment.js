@@ -1,7 +1,7 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
 import { getEstabelecimento}  from "../../config/auth";
-import { isEmpty, PhoneNumberInput } from "../../shared/utils";
+import { isEmpty, PhoneNumberFormat, PhoneNumberInput, removeSimbols } from "../../shared/utils";
 import { updateEstablishment } from "../../store/collections/establishmentWorker";
 
 class Establishment extends React.Component {
@@ -31,23 +31,55 @@ class Establishment extends React.Component {
     }
 
     save = async () => {
-        try {
-            const establishmentData = {
-                id: this.state.establishment?.id,
-                email: this.state.isEditingEmail,
-                nomeEstabelecimento: this.state.isEditingNomeEstabelecimento,
-                nomeResponsavel: this.state.isEditingNomeResponsavel,
-                celular: this.state.isEditingCelular,
-                endereco: this.state.isEditingEndereco,
+        const data = {
+            id: this.state.establishment?.id,
+            email: this.state.isEditingEmail,
+            nomeEstabelecimento: this.state.isEditingNomeEstabelecimento,
+            nomeResponsavel: this.state.isEditingNomeResponsavel,
+            celular: removeSimbols(this.state.isEditingCelular),
+            endereco: this.state.isEditingEndereco,
+        }
+        if (this.verifyFields(data)) {
+            try {
+                if (await updateEstablishment(data)){
+                    this.setState({ isEditing: false, establishment: data })
+                } else {
+                    alert("Erro ao atualizar o estabelecimento")
+                }
+            } catch (error) {
+                console.error("Erro ao atualizar o estabelecimento:", error.message)
             }
-            console.log(establishmentData)
-            if (await updateEstablishment(establishmentData)){
-                this.setState({ isEditing: false, establishment: establishmentData })
-            }
-        } catch (error) {
-            console.error("Erro no cadastro:", error.message)
         }
     }
+
+    verifyFields = (data) => {
+        if (isEmpty(data.email)) {
+            alert("E-mail não informado")
+            return false
+        }
+        if (isEmpty(data.nomeEstabelecimento)) {
+            alert("Nome do estabelecimento não informado")
+            return false
+        }
+        if (isEmpty(data.nomeResponsavel)) {
+            alert("Nome do responsável não informado")
+            return false
+        }
+        if (isEmpty(data.celular)) {
+            alert("Celular não informado")
+            return false
+        } 
+        if (data.celular.length < 10) {
+            alert("Celular inválido")
+            return false
+        }
+        if (isEmpty(data.endereco)) {
+            alert("Endereço não informado")
+            return false
+        }
+        return true
+    }
+
     render() {
         return (
             <>
@@ -63,7 +95,7 @@ class Establishment extends React.Component {
                                     <div> Nome do estabelecimento: {!isEmpty(this.state.establishment?.nomeEstabelecimento) ? this.state.establishment?.nomeEstabelecimento :"Não informado"}</div>
                                     <div> Nome do responsável: {!isEmpty(this.state.establishment?.nomeResponsavel) ? this.state.establishment?.nomeResponsavel : "Não informado"}</div>
                                     <div> E-mail: {!isEmpty(this.state.establishment?.email) ? this.state.establishment?.email : "Não informado"}</div>
-                                    <div> Celular: {!isEmpty(this.state.establishment?.celular) ?  this.state.establishment?.celular : "Não informado"}</div>
+                                    <div> Celular: {!isEmpty(this.state.establishment?.celular) ? (<PhoneNumberFormat value={this.state.establishment.celular} />) : ("Não informado")}</div>
                                     <div> Endereço: {!isEmpty(this.state.establishment?.endereco) ?  this.state.establishment?.endereco : "Não informado"}</div>
                                 </div>
                             ) : (

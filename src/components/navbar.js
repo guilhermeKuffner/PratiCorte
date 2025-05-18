@@ -29,11 +29,11 @@ export const NavBar = props => {
                             </NavLink>
                         </ul>
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li class="nav-item dropdown">
+                            <li className="nav-item dropdown">
                                 <a className={`nav-link dropdown-toggle${isConfiguracoesActive ? " active" : ""}`} href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Configurações
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul className="dropdown-menu">
                                     <Link to="/configuracoes/estabelecimento" className="dropdown-item">
                                         Estabelecimento
                                     </Link>
