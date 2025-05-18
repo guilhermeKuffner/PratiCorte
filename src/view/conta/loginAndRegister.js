@@ -28,7 +28,7 @@ class Login extends React.Component {
             <> 
                 {
                     <div className="container d-flex flex-column justify-content-center align-items-center">
-                        <div className="card p-4 shadow-lg bg-white rounded">
+                        <div className="card p-4 shadow-lg bg-light rounded">
                             <div className="mb-2">
                                 <img src="" alt="" />
                                 <h1 className="mb-2">Acesse sua conta!</h1>
