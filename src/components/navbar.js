@@ -30,9 +30,9 @@ export const NavBar = props => {
                         </ul>
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                             <li className="nav-item dropdown">
-                                <a className={`nav-link dropdown-toggle${isConfiguracoesActive ? " active" : ""}`} role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Configurações
-                                </a>
+                            <button className={`nav-link dropdown-toggle${isConfiguracoesActive ? " active" : ""}`} type="button"data-bs-toggle="dropdown" aria-expanded="false">
+                                Configurações
+                            </button>
                                 <ul className="dropdown-menu">
                                     <Link to="/configuracoes/estabelecimento" className="dropdown-item">
                                         Estabelecimento
