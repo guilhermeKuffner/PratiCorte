@@ -16,7 +16,7 @@ export const PhoneNumberFormat = ({ value }) => {
 
 export const isValidPhoneNumber = (value) => {
     var number = removeSimbols(value)
-    return number?.length == 10 || number?.length == 11
+    return number?.length === 10 || number?.length === 11
 }
 
 export const isEmpty = (value) => {
