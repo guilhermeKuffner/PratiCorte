@@ -30,7 +30,7 @@ const PrivateRoute = ({ children }) => {
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<Login />} />
+    <Route path="/" element={<div className="center-container"><Login /></div>} />
     <Route path="/criar-conta" element={<Register />} />
     <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
     <Route path="/historico" element={<PrivateRoute><History /></PrivateRoute>} />
