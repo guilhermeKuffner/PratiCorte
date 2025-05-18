@@ -6,7 +6,7 @@ import { auth } from '../../config/firebase'
 import { addEstablishment } from '../../store/collections/registerWorker'
 import { addUser } from '../../store/collections/userWorker'
 import { checkUser, handleLogin } from "../../config/auth";
-
+import { isEmpty, removeSimbols } from "../../shared/utils";
 
 class Login extends React.Component {
 
@@ -69,6 +69,7 @@ class Register extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            name: "",
             email: "",
             password: "",
             phoneNumber: "",
@@ -81,28 +82,69 @@ class Register extends React.Component {
         checkUser();
     }
 
+    verifyFields = (data) => {
+        if (isEmpty(data.email)) {
+            alert("E-mail não informado")
+            return false
+        }
+        if (isEmpty(data.name)) {
+            alert("Nome não informado")
+            return false
+        }
+        if (isEmpty(data.password)) {
+            alert("Senha não informada")
+            return false
+        }
+        if (isEmpty(data.phoneNumber)) {
+            alert("Celular não informado")
+            return false
+        }
+        if (data.phoneNumber.length < 10) {
+            alert("Celular inválido")
+            return false
+        }
+        if (isEmpty(data.establishment)) {
+            alert("Nome do estabelecimento não informado")
+            return false
+        }
+        return true
+    }
+
     handleRegister = async () => {
-        const { email, password, phoneNumber, establishment } = this.state;
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-            console.log("Usuário cadastrado:", userCredential.user)
-            const establishmentData = {
-                email: email,
-                nomeEstabelecimento: establishment,
-                celular: phoneNumber,
+        const data = {
+            email: this.state.email,
+            password: this.state.password,
+            phoneNumber: removeSimbols(this.state.phoneNumber),
+            establishment: this.state.establishment,
+            name: this.state.name,
+        }
+        if (this.verifyFields(data)) {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password)
+                console.log("Usuário cadastrado:", userCredential.user)
+                const establishmentData = {
+                    email: data.email,
+                    nomeEstabelecimento: data.establishment,
+                    nomeResponsavel: data.name,
+                    celular: data.phoneNumber,
+                }
+                const establishmentCreated = await addEstablishment(establishmentData)
+                const userData = {
+                    email: data.email,
+                    nomeEstabelecimento: data.establishment,
+                    nome: data.name,
+                    celular: data.phoneNumber,
+                    estabelecimentoId: establishmentCreated.id,
+                }
+                await addUser(userData)
+                handleLogin(data.email, data.password, (isLoading) => this.setState({ isLoading }));
+            } catch (error) {
+                if (error.message === "Firebase: Error (auth/email-already-in-use).") {
+                    alert("E-mail já cadastrado")
+                }
+                console.error("Erro no cadastro:", error.message)
+                this.setState({ error: error.message })
             }
-            const establishmentCreated = await addEstablishment(establishmentData)
-            const userData = {
-                email: email,
-                nomeEstabelecimento: establishment,
-                celular: phoneNumber,
-                estabelecimentoId: establishmentCreated.id,
-            }
-            await addUser(userData)
-            handleLogin(email, password, (isLoading) => this.setState({ isLoading }));
-        } catch (error) {
-            console.error("Erro no cadastro:", error.message)
-            this.setState({ error: error.message })
         }
     }
 
@@ -121,6 +163,11 @@ class Register extends React.Component {
                                 <label className="form-label" htmlFor="email">E-mail</label>
                                 <input className="form-control" type="text" name="email" id="email" placeholder="exemplo@gmail.com"
                                 onChange={(e) => this.setState({ email: e.target.value })}/>
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label" htmlFor="email">Nome do responsável</label>
+                                <input className="form-control" type="text" name="name" id="name" placeholder="Nome do responsável"
+                                onChange={(e) => this.setState({ name: e.target.value })}/>
                             </div>
                             <div className="mb-3">
                                 <label className="form-label" htmlFor="password">Senha</label>
