@@ -1,7 +1,7 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
 import { getEstabelecimento}  from "../../config/auth";
-import { isEmpty, PhoneNumberFormat, PhoneNumberInput, removeSimbols } from "../../shared/utils";
+import { isEmpty, isValidPhoneNumber, PhoneNumberFormat, PhoneNumberInput, removeSimbols, isValidDocument, DocumentFormat } from "../../shared/utils";
 import { updateEstablishment } from "../../store/collections/establishmentWorker";
 
 class Establishment extends React.Component {
@@ -15,6 +15,7 @@ class Establishment extends React.Component {
             isEditingEmail: "",
             isEditingCelular: "",
             isEditingEndereco: "",
+            isEditingDocumento: "",
         }
     }
 
@@ -27,6 +28,7 @@ class Establishment extends React.Component {
             isEditingNomeResponsavel: establishment?.nomeResponsavel ?? "",
             isEditingCelular: establishment?.celular ?? "",
             isEditingEndereco: establishment?.endereco ?? "",
+            isEditingDocumento: establishment?.documento ?? "",
         })
     }
 
@@ -38,6 +40,7 @@ class Establishment extends React.Component {
             nomeResponsavel: this.state.isEditingNomeResponsavel,
             celular: removeSimbols(this.state.isEditingCelular),
             endereco: this.state.isEditingEndereco,
+            documento: removeSimbols(this.state.isEditingDocumento),
         }
         if (this.verifyFields(data)) {
             try {
@@ -65,12 +68,13 @@ class Establishment extends React.Component {
             alert("Nome do responsável não informado")
             return false
         }
-        if (isEmpty(data.celular)) {
-            alert("Celular não informado")
+        if (!isValidPhoneNumber(data.celular)) {
+            alert("Informe um celular válido")
             return false
         } 
-        if (data.celular.length < 10) {
-            alert("Celular inválido")
+        if (!isValidDocument(data.documento)) {
+            console.log(isValidDocument(data.documento))
+            alert("Informe um CPF ou CNPJ no documento válido")
             return false
         }
         if (isEmpty(data.endereco)) {
@@ -95,8 +99,9 @@ class Establishment extends React.Component {
                                     <div> Nome do estabelecimento: {!isEmpty(this.state.establishment?.nomeEstabelecimento) ? this.state.establishment?.nomeEstabelecimento :"Não informado"}</div>
                                     <div> Nome do responsável: {!isEmpty(this.state.establishment?.nomeResponsavel) ? this.state.establishment?.nomeResponsavel : "Não informado"}</div>
                                     <div> E-mail: {!isEmpty(this.state.establishment?.email) ? this.state.establishment?.email : "Não informado"}</div>
-                                    <div> Celular: {!isEmpty(this.state.establishment?.celular) ? (<PhoneNumberFormat value={this.state.establishment.celular} />) : ("Não informado")}</div>
-                                    <div> Endereço: {!isEmpty(this.state.establishment?.endereco) ?  this.state.establishment?.endereco : "Não informado"}</div>
+                                    <div> Celular: {!isEmpty(this.state.establishment?.celular) ? (<PhoneNumberFormat value={this.state.establishment?.celular} />) : ("Não informado")}</div>
+                                    <div> Endereço: {!isEmpty(this.state.establishment?.endereco) ? this.state.establishment?.endereco : ("Não informado")}</div>
+                                    <div> Documento: {!isEmpty(this.state.establishment?.documento) ? (<DocumentFormat value={this.state.establishment?.documento} />) : "Não informado"}</div>
                                 </div>
                             ) : (
                                 <div className="mb-3">
@@ -128,6 +133,12 @@ class Establishment extends React.Component {
                                             <input className="form-control" type="text" name="endereco" id="endereco" placeholder="Endereço"
                                             value={this.state.isEditingEndereco}
                                             onChange={(e) => this.setState({ isEditingEndereco: e.target.value })}/>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="document">Documento</label>
+                                            <input className="form-control" type="text" name="document" id="document" placeholder="CPF ou CPNJ"
+                                            value={this.state.isEditingDocumento}
+                                            onChange={(e) => this.setState({ isEditingDocumento: e.target.value })}/>
                                         </div>
                                     </form>
                                 </div>

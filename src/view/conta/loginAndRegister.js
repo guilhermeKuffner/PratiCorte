@@ -1,12 +1,12 @@
 import React from "react";
-import { PhoneNumberInput } from "../../shared/utils";
+import { isValidPhoneNumber, PhoneNumberInput } from "../../shared/utils";
 import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../config/firebase'
 import { addEstablishment } from '../../store/collections/registerWorker'
 import { addUser } from '../../store/collections/userWorker'
 import { checkUser, handleLogin } from "../../config/auth";
-import { isEmpty, removeSimbols } from "../../shared/utils";
+import { isEmpty, removeSimbols, isValidDocument } from "../../shared/utils";
 
 class Login extends React.Component {
 
@@ -95,12 +95,12 @@ class Register extends React.Component {
             alert("Senha não informada")
             return false
         }
-        if (isEmpty(data.phoneNumber)) {
-            alert("Celular não informado")
+        if (!isValidDocument(data.document)) {
+            alert("Informe um CPF ou CNPJ no documento válido")
             return false
         }
-        if (data.phoneNumber.length < 10) {
-            alert("Celular inválido")
+        if (!isValidPhoneNumber(data.phoneNumber)) {
+            alert("Informe um celular válido")
             return false
         }
         if (isEmpty(data.establishment)) {
@@ -117,6 +117,7 @@ class Register extends React.Component {
             phoneNumber: removeSimbols(this.state.phoneNumber),
             establishment: this.state.establishment,
             name: this.state.name,
+            document: this.state.document,
         }
         if (this.verifyFields(data)) {
             try {
@@ -165,7 +166,7 @@ class Register extends React.Component {
                                 onChange={(e) => this.setState({ email: e.target.value })}/>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label" htmlFor="email">Nome do responsável</label>
+                                <label className="form-label" htmlFor="name">Nome do responsável</label>
                                 <input className="form-control" type="text" name="name" id="name" placeholder="Nome do responsável"
                                 onChange={(e) => this.setState({ name: e.target.value })}/>
                             </div>
@@ -173,6 +174,13 @@ class Register extends React.Component {
                                 <label className="form-label" htmlFor="password">Senha</label>
                                 <input className="form-control" type="password" name="password" id="password" placeholder="***********" 
                                 onChange={(e) => this.setState({ password: e.target.value })}/>
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label" htmlFor="document">
+                                    <Link to="https://www.4devs.com.br/gerador_de_cpf" target="_blank" className="text-body text-decoration-none">Documento (CPF ou CPNJ)</Link>
+                                </label>
+                                <input className="form-control" type="text" name="document" id="document" placeholder="CPF ou CPNJ"
+                                onChange={(e) => this.setState({ document: e.target.value })}/>
                             </div>
                             <div className="mb-3">
                                 <label className="form-label" htmlFor="phoneNumber">Celular</label>
@@ -184,7 +192,7 @@ class Register extends React.Component {
                                 onChange={(e) => this.setState({ establishment: e.target.value })} />
                             </div>
                         </form>
-                        <Link to="/" className="mb-3"><b>termo de uso e política de privacidade.</b></Link>
+                        <Link to="/termos-de-uso" target="_blank" className="mb-3"><b>termo de uso e política de privacidade.</b></Link>
                         <button className="btn btn-primary mb-3" onClick={this.handleRegister}>Cadastre-se</button>
                         <div className="text-center">
                             <span className="d-block mb-2">Já é cliente?</span>
