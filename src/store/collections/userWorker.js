@@ -5,5 +5,5 @@ export const addUser = async (data) => {
 }
 
 export const getUserByEmail = async (email) => {
-    return await getDoc({ collectionName: "usuarios", field: "email", equals: email });
+    return await getDoc({ collection: "usuarios", field: "email", equals: email });
 }

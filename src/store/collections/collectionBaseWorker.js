@@ -1,7 +1,8 @@
 import { db } from '../../config/firebase'
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc as firebaseUpdateDoc } from "firebase/firestore";
 import { v7 as uuidv7 } from 'uuid'
-import { collection, getDocs, query, where} from "firebase/firestore";
+import { collection as fbCollection, getDocs, query, where} from "firebase/firestore";
+import { getUsuario } from '../../config/auth';
 
 export const addDoc = async ({ collection, data }) => {
     if (!data.id) {
@@ -19,9 +20,28 @@ export const addDoc = async ({ collection, data }) => {
     }
 }
 
-export const getDoc = async ({ collectionName, field, equals }) => {
-    const q = query(collection(db, collectionName), where(field, "==", equals))
+export const updateDoc = async ({ collection, data }) => {
+    if (!data.id) {
+        console.error("updateDoc: id não informado")
+        return false
+    }
+
+    data.updatedAt = new Date()
+    data.updatedBy = getUsuario()
+
+    try {
+        const ref = doc(db, collection, data.id)
+        await firebaseUpdateDoc(ref, data)
+        return true
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+export const getDoc = async ({ collection, field, equals }) => {
+    const q = query(fbCollection(db, collection), where(field, "==", equals))
     const querySnapshot = await getDocs(q)
     const itens = querySnapshot.docs.map(doc => doc.data())
     return itens[0]
-};
+}
