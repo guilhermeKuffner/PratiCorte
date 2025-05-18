@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { handleLogout } from "../../config/auth";
 import { auth } from '../../config/firebase';
 import { getSessao } from "../../config/auth";

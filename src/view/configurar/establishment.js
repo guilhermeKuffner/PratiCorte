@@ -90,7 +90,7 @@ class Establishment extends React.Component {
                             <h1>Dados do seu estabelecimento</h1>  
                         </div>
                         {
-                            this.state.isEditing == false ? (
+                            this.state.isEditing === false ? (
                                 <div className="mb-3">
                                     <div> Nome do estabelecimento: {!isEmpty(this.state.establishment?.nomeEstabelecimento) ? this.state.establishment?.nomeEstabelecimento :"Não informado"}</div>
                                     <div> Nome do responsável: {!isEmpty(this.state.establishment?.nomeResponsavel) ? this.state.establishment?.nomeResponsavel : "Não informado"}</div>
