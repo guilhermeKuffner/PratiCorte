@@ -1,11 +1,16 @@
+import React from "react";
 import { NavBar } from "../../components/navbar"
 
-export const History = () => {
-    return (
-        <>
-            <NavBar>
-                <h1>Historico de acessos</h1>  
-            </NavBar>
-        </>
-    )
+class History extends React.Component {
+    render() {
+        return (
+            <>
+                <NavBar>
+                    <h1>Historico de acessos</h1>  
+                </NavBar>
+            </>
+        )
+    }
 }
+
+export { History }

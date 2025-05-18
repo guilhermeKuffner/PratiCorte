@@ -1,11 +1,16 @@
+import React from "react";
 import { NavBar } from "../../components/navbar"
 
-export const Reports = () => {
-    return (
-        <>
-            <NavBar>
-                <h1>Relatórios</h1>  
-            </NavBar>
-        </>
-    )
+class Reports extends React.Component {
+    render() {
+        return (
+            <>
+                <NavBar>
+                    <h1>Relatórios</h1>  
+                </NavBar>
+            </>
+        )
+    }
 }
+
+export { Reports }
