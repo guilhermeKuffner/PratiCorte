@@ -6,7 +6,7 @@ class History extends React.Component {
         return (
             <>
                 <NavBar>
-                    <h1>Historico de acessos</h1>  
+                    <h1>deploy manual teste</h1>  
                 </NavBar>
             </>
         )
