@@ -23,7 +23,7 @@ export const isValidPhoneNumber = (value) => {
 
 export const TimeInput = ({ value, className, onChange }) => {
     return (
-        <PatternFormat value={value} onValueChange={(values) => { onChange(values.value) }}format="##:##" allowEmptyFormatting mask="_" 
+        <PatternFormat value={value} onChange={onChange} format="##:##" allowEmptyFormatting mask="_" 
         className={`form-control ${className || ''}`} />
     )
 }

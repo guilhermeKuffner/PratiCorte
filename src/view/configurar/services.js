@@ -1,7 +1,80 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
+import { TimeInput, isEmpty, removeSimbols, convertTimeToMinutes } from "../../shared/utils";
+import CurrencyInput from "../../components/CurrencyInput";
+import { addService } from "../../store/collections/servicesWorker";
 
 class Services extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            newServiceStatus: "Ativo",
+            newServiceNome: "",
+            newServiceDescricao: "",
+            newServicePreco: "",
+            newServiceDuracao: "",
+            services: [],
+
+            newServiceNomeAlert: "",
+            newServiceDescricaoAlert: "",
+            newServicePrecoAlert: "",
+            newServiceDuracaoAlert: "",
+        }
+    }
+
+    handleNewService = async () => {
+        const data = {
+            status : this.state.newServiceStatus,
+            nome : this.state.newServiceNome,
+            descricao : this.state.newServiceDescricao,
+            preco : this.state.newServicePreco,
+            duracao : convertTimeToMinutes(this.state.newServiceDuracao),
+        }
+        if (this.verifyFields(data)) {
+            try {
+                await addService(data)
+                alert("Serviço cadastrado com sucesso!")
+                this.updateList()
+                this.cleanFields()
+            } catch (error) {
+                console.error("Erro ao cadastrar serviço:", error.message)
+            }
+        }
+    }
+
+    updateList = async () => {
+        // TO DO - buscar lista por id e atualizar ou só pegar a lista que ja tinha e adicionar
+    }
+
+    cleanFields = () => {
+        this.setState({ newServiceStatus: "Ativo", newServiceNome: "", newServiceDescricao: "", newServicePreco: "", newServiceDuracao: "" })
+    }
+
+    verifyFields = (data) => {
+        var isValid = true
+        var invalidAlert = ""
+        if (isEmpty(data.nome)) {
+            invalidAlert = isEmpty(invalidAlert) ? "Nome do serviço não informado" : invalidAlert
+            this.setState({ newServiceNomeAlert: "is-invalid" })
+            isValid = false
+        }
+        if (isEmpty(data.preco) || parseInt(data.preco) <= 0) {
+            invalidAlert = isEmpty(invalidAlert) ? "Preço do serviço não informado" : invalidAlert
+            this.setState({ newServicePrecoAlert: "is-invalid" })
+            isValid = false
+        }
+        console.log(data.duracao)
+        if (data.duracao <= 0) {
+            invalidAlert = isEmpty(invalidAlert) ? "Duração do serviço inválida" : invalidAlert
+            this.setState({ newServiceDuracaoAlert: "is-invalid" })
+            isValid = false
+        }
+        if (!isValid) {
+            alert(invalidAlert)
+        }
+        return isValid
+    }
+
     render() {
         return (
             <>
@@ -12,19 +85,23 @@ class Services extends React.Component {
                             <div className="card p-3 shadow-lg bg-white rounded">
                                 <h2>Cadastrar serviços</h2>
                                 <label>Status</label>
-                                <select name="status" id="status" className="form-control">
+                                <select name="status" id="status" className="form-control" onChange={(e) => this.setState({ newServiceStatus: e.target.value })}>
                                     <option value="active">Ativo</option>
                                     <option value="inactive">Inativo</option>
                                 </select>
                                 <label>Nome do serviço</label>
-                                <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className="form-control"/>
+                                <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newServiceNomeAlert}`}
+                                    onChange={(e) => this.setState({ newServiceNome: e.target.value, newServiceNomeAlert: "" })}/>
                                 <label>Descrição</label>
-                                <textarea name="descricao" id="descricao" placeholder="Descrição" className="form-control" rows="4"/>
+                                <textarea name="descricao" id="descricao" placeholder="Descrição" className={`form-control ${this.state.newServiceDescricaoAlert}`} rows="4"
+                                    onChange={(e) => this.setState({ newServiceDescricao: e.target.value, newServiceDescricaoAlert: "" })}/>
                                 <label>Preço</label>
-                                <input type="text" name="preco" id="preco" placeholder="Preço" className="form-control"/>
+                                <CurrencyInput prefix="R$" value={this.state.newServicePreco} className={`form-control ${this.state.newServicePrecoAlert}`} 
+                                    onChangeEvent={(event, maskedvalue, value) => { this.setState({ newServicePreco: value, newServicePrecoAlert: "" }) }} />
                                 <label>Duração</label>
-                                <input type="text" name="duracao" id="duracao" placeholder="Duração" className="form-control"/>
-                                <button className="btn btn-primary mt-3">Cadastrar</button>
+                                <TimeInput value={this.state.newServiceDuracao} className={this.state.newServiceDuracaoAlert}
+                                   onChange={(e) => this.setState({ newServiceDuracao: e.target.value, newServiceDuracaoAlert: "" })}/>
+                                <button className="btn btn-primary mt-3" onClick={this.handleNewService}>Cadastrar</button>
                             </div>
                         </div>
                         <div className="col-12 col-md-8 mb-4">
