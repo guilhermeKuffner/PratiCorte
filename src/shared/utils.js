@@ -1,5 +1,6 @@
 import React from "react";
 import { PatternFormat } from "react-number-format";
+import { NumericFormat } from 'react-number-format';
 
 export const PhoneNumberInput = ({ value, onChange }) => {
     return (
@@ -18,6 +19,29 @@ export const isValidPhoneNumber = (value) => {
     var number = removeSimbols(value)
     return number?.length === 10 || number?.length === 11
 }
+
+
+export const TimeInput = ({ value, className, onChange }) => {
+    return (
+        <PatternFormat value={value} onValueChange={(values) => { onChange(values.value) }}format="##:##" allowEmptyFormatting mask="_" 
+        className={`form-control ${className || ''}`} />
+    )
+}
+
+
+export const convertTimeToMinutes = (hhmm) => {
+    const [hh, mm] = hhmm.split(":").map(Number)
+    if (mm > 59) {
+        alert("minutos inválidos")
+        return 0
+    }
+    var time = hh * 60 + mm
+    if (Number.isNaN(time)) {
+        return -1
+    }
+    return time
+}
+
 
 export const isEmpty = (value) => {
     return value === null || value === undefined || value === "";
