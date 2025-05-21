@@ -144,6 +144,9 @@ class Register extends React.Component {
                     alert("E-mail já cadastrado")
                 }
                 console.error("Erro no cadastro:", error.message)
+                if (error.message === "Firebase: Error (auth/invalid-email).") {
+                    alert("E-mail inválido")
+                }
                 this.setState({ error: error.message })
             }
         }
