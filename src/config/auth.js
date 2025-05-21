@@ -10,7 +10,6 @@ export const handleLogin = async (email, password, setLoading) => {
         const user = await getUserByEmail(userCredential.user.email)
         const establishment = await getEstablishmentByUser(user)
         setSessao({ usuario: user, estabelecimento: establishment })
-        alert("Login realizado com sucesso!")
         window.location.href = "/home"
     } catch (error) {
         let errorMessage = error.message

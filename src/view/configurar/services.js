@@ -39,7 +39,6 @@ class Services extends React.Component {
         if (this.verifyFields(data)) {
             try {
                 await addService(data)
-                alert("Serviço cadastrado com sucesso!")
                 this.load()
                 this.cleanFields()
             } catch (error) {
