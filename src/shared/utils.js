@@ -126,3 +126,18 @@ export const isValidDocument = (doc) => {
         return isValidCNPJ(cleaned)
     }
 }
+
+export const OrderByField = (data, field) => {
+    return data.sort((a, b) => {
+      const valA = a[field]
+      const valB = b[field]
+      if (typeof valA === "string" && typeof valB === "string") {
+        return valA.localeCompare(valB)
+      }
+      if (typeof valA === "number" && typeof valB === "number") {
+        return valA - valB
+      }
+      return 0
+    })
+  }
+  

@@ -1,13 +1,15 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
-import { TimeInput, isEmpty, removeSimbols, convertTimeToMinutes } from "../../shared/utils";
+import { TimeInput, isEmpty, convertTimeToMinutes, OrderByField } from "../../shared/utils";
 import CurrencyInput from "../../components/CurrencyInput";
-import { addService } from "../../store/collections/servicesWorker";
+import { addService, getServices } from "../../store/collections/servicesWorker";
+import { getEstabelecimento } from "../../config/auth";
 
 class Services extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            establishment: getEstabelecimento(),
             newServiceStatus: "Ativo",
             newServiceNome: "",
             newServiceDescricao: "",
@@ -22,6 +24,10 @@ class Services extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.load()
+    }
+
     handleNewService = async () => {
         const data = {
             status : this.state.newServiceStatus,
@@ -34,16 +40,12 @@ class Services extends React.Component {
             try {
                 await addService(data)
                 alert("Serviço cadastrado com sucesso!")
-                this.updateList()
+                this.load()
                 this.cleanFields()
             } catch (error) {
                 console.error("Erro ao cadastrar serviço:", error.message)
             }
         }
-    }
-
-    updateList = async () => {
-        // TO DO - buscar lista por id e atualizar ou só pegar a lista que ja tinha e adicionar
     }
 
     cleanFields = () => {
@@ -73,6 +75,12 @@ class Services extends React.Component {
             alert(invalidAlert)
         }
         return isValid
+    }
+
+    load = async () => {
+        const services = await getServices(this.state.establishment.id)
+        const ordered = OrderByField(services, "nome")
+        this.setState({ services: ordered })
     }
 
     render() {
@@ -107,47 +115,44 @@ class Services extends React.Component {
                         <div className="col-12 col-md-8 mb-4">
                             <div className="card p-4 shadow-lg bg-white rounded mb-3">
                                 <h2>Serviços cadastrados</h2>
-                                <table className="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" className="col-md-3">Nome</th>
-                                            <th scope="col" className="d-none d-md-table-cell col-md-4">Descrição</th>
-                                            <th scope="col" className="text-center col-md-2">Preço</th>
-                                            <th scope="col" className="text-center col-md-2">Duração</th>
-                                            <th scope="col" className="text-center col-md-2">Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Serviço 1</td>
-                                            <td className="d-none d-md-table-cell">Descrição 1</td>
-                                            <td className="text-center">R$100,00</td>
-                                            <td className="text-center">01:00</td>
-                                            <td className="d-flex flex-nowrap gap-2 justify-content-center">
-                                                <button className="btn btn-secondary">
-                                                    <i className="fas fa-edit" />
-                                                </button>
-                                                <button className="btn btn-danger">
-                                                    <i className="fas fa-trash" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Serviço 2</td>
-                                            <td className="d-none d-md-table-cell">Descrição 2</td>
-                                            <td className="text-center">R$200,00</td>
-                                            <td className="text-center">01:00</td>
-                                            <td className="d-flex flex-nowrap gap-2 justify-content-center">
-                                                <button className="btn btn-secondary">
-                                                    <i className="fas fa-edit" />
-                                                </button>
-                                                <button className="btn btn-danger">
-                                                    <i className="fas fa-trash" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                {
+                                    this.state.services.length > 0 &&
+                                    <table className="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" className="col-md-3">Nome</th>
+                                                <th scope="col" className="d-none d-md-table-cell col-md-4">Descrição</th>
+                                                <th scope="col" className="text-center col-md-2">Preço</th>
+                                                <th scope="col" className="text-center col-md-2">Duração</th>
+                                                <th scope="col" className="text-center col-md-2">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                this.state.services.map((service, index) => {
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td>{service.nome}</td>
+                                                            <td className="d-none d-md-table-cell">{service.descricao}</td>
+                                                            <td className="text-center">{service.preco}</td>
+                                                            <td className="text-center">{service.duracao}</td>
+                                                            <td className="align-middle">
+                                                            <div className="d-flex flex-nowrap gap-2 justify-content-center">
+                                                                <button className="btn btn-secondary">
+                                                                <i className="fas fa-edit" />
+                                                                </button>
+                                                                <button className="btn btn-danger">
+                                                                <i className="fas fa-trash" />
+                                                                </button>
+                                                            </div>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
                             </div>
                         </div>
                     </div>
