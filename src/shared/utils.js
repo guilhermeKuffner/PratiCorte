@@ -42,6 +42,16 @@ export const convertTimeToMinutes = (hhmm) => {
     return time
 }
 
+export const convertMinutesToTime = (minutes) => {
+    if (typeof minutes !== "number" || minutes < 0 || Number.isNaN(minutes)) {
+        return "00:00"
+    }
+    const hh = String(Math.floor(minutes / 60)).padStart(2, "0")
+    const mm = String(minutes % 60).padStart(2, "0")
+    return `${hh}:${mm}`
+}
+
+
 
 export const isEmpty = (value) => {
     return value === null || value === undefined || value === "";
