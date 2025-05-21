@@ -1,6 +1,6 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
-import { TimeInput, isEmpty, convertTimeToMinutes, OrderByField, convertMinutesToTime } from "../../shared/utils";
+import { TimeInput, isEmpty, convertTimeToMinutes, OrderByField, saveTime, PriceFormat } from "../../shared/utils";
 import CurrencyInput from "../../components/CurrencyInput";
 import { addService, getServices, deleteService, updateService } from "../../store/collections/servicesWorker";
 import { getEstabelecimento } from "../../config/auth";
@@ -34,12 +34,13 @@ class Services extends React.Component {
     }
 
     handleNewService = async () => {
+        console.log(this.state.newServiceDuracao)
         const data = {
             status : this.state.newServiceStatus,
             nome : this.state.newServiceNome,
             descricao : this.state.newServiceDescricao,
             preco : this.state.newServicePreco,
-            duracao : convertTimeToMinutes(this.state.newServiceDuracao),
+            duracao : saveTime(this.state.newServiceDuracao),
         }
         if (this.verifyFields(data)) {
             try {
@@ -69,7 +70,7 @@ class Services extends React.Component {
             this.setState({ newServicePrecoAlert: "is-invalid" })
             isValid = false
         }
-        if (data.duracao <= 0) {
+        if (data.duracao.length < 4 || !data.duracao) {
             invalidAlert = isEmpty(invalidAlert) ? "Duração do serviço inválida" : invalidAlert
             this.setState({ newServiceDuracaoAlert: "is-invalid" })
             isValid = false
@@ -100,7 +101,7 @@ class Services extends React.Component {
         return () => {
             const serviceWithFormattedTime = {
                 ...service,
-                duracao: convertMinutesToTime(service.duracao)
+                duracao: saveTime(service.duracao)
             }
             this.setState({
                 editingServiceModalOpen: true,
@@ -120,7 +121,7 @@ class Services extends React.Component {
             nome : this.state.editingService.nome,
             descricao : this.state.editingService.descricao,
             preco : this.state.editingService.preco,
-            duracao : convertTimeToMinutes(this.state.editingService.duracao),
+            duracao : saveTime(this.state.editingService.duracao),
         }
         if (this.verifyFields(data)) {
             try {
@@ -185,7 +186,7 @@ class Services extends React.Component {
                                                         <tr key={index}>
                                                             <td>{service.nome}</td>
                                                             <td className="d-none d-md-table-cell">{service.descricao}</td>
-                                                            <td className="text-center">{service.preco}</td>
+                                                            <td className="text-center"><PriceFormat value={service.preco} /></td>
                                                             <td className="text-center">{service.duracao}</td>
                                                             <td className="align-middle">
                                                             <div className="d-flex flex-nowrap gap-2 justify-content-center">

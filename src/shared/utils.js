@@ -1,6 +1,6 @@
 import React from "react";
 import { PatternFormat } from "react-number-format";
-import { NumericFormat } from 'react-number-format';
+import { parse } from "uuid";
 
 export const PhoneNumberInput = ({ value, onChange }) => {
     return (
@@ -42,16 +42,17 @@ export const convertTimeToMinutes = (hhmm) => {
     return time
 }
 
-export const convertMinutesToTime = (minutes) => {
-    if (typeof minutes !== "number" || minutes < 0 || Number.isNaN(minutes)) {
-        return "00:00"
+export const saveTime = (value) => {
+    var time = removeSimbols(value)
+    if (time.length < 4) {
+        return false
+    } else {
+        const hh = time.substring(0, 2)
+        const mm = time.substring(2, 4)
+        console.log(hh, mm)
+        return `${hh}:${mm}`
     }
-    const hh = String(Math.floor(minutes / 60)).padStart(2, "0")
-    const mm = String(minutes % 60).padStart(2, "0")
-    return `${hh}:${mm}`
 }
-
-
 
 export const isEmpty = (value) => {
     return value === null || value === undefined || value === "";
@@ -75,6 +76,12 @@ export const DocumentFormat = ({ value }) => {
             mask="_"
             renderText={(formattedValue) => <span>{formattedValue}</span>}
         />
+    )
+}
+
+export const PriceFormat = ({ value }) => {
+    return (
+        <span>R${parseFloat(value).toFixed(2)}</span>
     )
 }
 
