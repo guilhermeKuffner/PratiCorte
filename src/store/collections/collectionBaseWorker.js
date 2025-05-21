@@ -1,5 +1,5 @@
 import { db } from '../../config/firebase'
-import { doc, setDoc, updateDoc as firebaseUpdateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { v7 as uuidv7 } from 'uuid'
 import { collection as fbCollection, getDocs, query,} from "firebase/firestore";
 import { getUsuario, getEstabelecimento } from '../../config/auth';
@@ -35,13 +35,11 @@ export const updateDoc = async ({ collection, data }) => {
         console.error("updateDoc: id não informado")
         return false
     }
-
     data.updatedAt = new Date()
     data.updatedBy = getUsuario()
-
     try {
         const ref = doc(db, collection, data.id)
-        await firebaseUpdateDoc(ref, data)
+        await setDoc(ref, data, { merge: true })
         return true
     } catch (error) {
         console.error(error)
@@ -62,7 +60,7 @@ export const getDoc = async ({ collection, queries }) => {
         }
         const q = query(fbCollection(db, collection), ...qs)
         const querySnapshot = await getDocs(q)
-        const itens = querySnapshot.docs.map(doc => doc.data())
+        const itens = querySnapshot.docs.map(doc => doc.data()).filter(item => item.isDeleted !== true)
         return itens[0]
     } catch (error) {
         console.log(error)
@@ -82,7 +80,7 @@ export const getAllDocs = async ({ collection, queries }) => {
         }
         const q = query(fbCollection(db, collection), ...qs)
         const querySnapshot = await getDocs(q)
-        const itens = querySnapshot.docs.map(doc => doc.data())
+        const itens = querySnapshot.docs.map(doc => doc.data()).filter(item => item.isDeleted !== true)
         return itens
     } catch (error) {
         console.log(error)
@@ -90,3 +88,20 @@ export const getAllDocs = async ({ collection, queries }) => {
     }
 }
 
+export const deleteDoc = async ({ collection, data }) => {
+    if (!data.id) {
+        console.error("updateDoc: id não informado")
+        return false
+    }
+    data.updatedAt = new Date()
+    data.updatedBy = getUsuario()
+    data.isDeleted = true
+    try {
+        const ref = doc(db, collection, data.id)
+        await setDoc(ref, data, { merge: true })
+        return true
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}

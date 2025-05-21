@@ -1,4 +1,4 @@
-import { addDoc, getAllDocs, updateDoc } from "./collectionBaseWorker";
+import { addDoc, getAllDocs, updateDoc, deleteDoc } from "./collectionBaseWorker";
 import { where } from "firebase/firestore"
 
 export const addService = async (data) => {
@@ -16,4 +16,8 @@ export const getServices = async (id) => {
             where("estabelecimentoId", "==", id)
         ]
     })
+}
+
+export const deleteService = async (data) => {
+    return await deleteDoc({ collection: "servicos", data: data })
 }

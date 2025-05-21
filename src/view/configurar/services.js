@@ -2,7 +2,7 @@ import React from "react";
 import { NavBar } from "../../components/navbar"
 import { TimeInput, isEmpty, convertTimeToMinutes, OrderByField } from "../../shared/utils";
 import CurrencyInput from "../../components/CurrencyInput";
-import { addService, getServices } from "../../store/collections/servicesWorker";
+import { addService, getServices, deleteService } from "../../store/collections/servicesWorker";
 import { getEstabelecimento } from "../../config/auth";
 
 class Services extends React.Component {
@@ -83,6 +83,15 @@ class Services extends React.Component {
         this.setState({ services: ordered })
     }
 
+    handleDeleteService = async (data) => {
+        console.log(data)   
+        const result = await deleteService(data)
+        if (result) {
+            alert("Serviço excluído com sucesso!")
+            this.load()
+        }
+    }
+
     render() {
         return (
             <>
@@ -99,10 +108,10 @@ class Services extends React.Component {
                                 </select>
                                 <label>Nome do serviço</label>
                                 <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newServiceNomeAlert}`}
-                                    onChange={(e) => this.setState({ newServiceNome: e.target.value, newServiceNomeAlert: "" })}/>
+                                    value={this.state.newServiceNome} onChange={(e) => this.setState({ newServiceNome: e.target.value, newServiceNomeAlert: ""})}/>
                                 <label>Descrição</label>
                                 <textarea name="descricao" id="descricao" placeholder="Descrição" className={`form-control ${this.state.newServiceDescricaoAlert}`} rows="4"
-                                    onChange={(e) => this.setState({ newServiceDescricao: e.target.value, newServiceDescricaoAlert: "" })}/>
+                                    value={this.state.newServiceDescricao} onChange={(e) => this.setState({ newServiceDescricao: e.target.value, newServiceDescricaoAlert: "" })}/>
                                 <label>Preço</label>
                                 <CurrencyInput prefix="R$" value={this.state.newServicePreco} className={`form-control ${this.state.newServicePrecoAlert}`} 
                                     onChangeEvent={(event, maskedvalue, value) => { this.setState({ newServicePreco: value, newServicePrecoAlert: "" }) }} />
@@ -139,10 +148,10 @@ class Services extends React.Component {
                                                             <td className="align-middle">
                                                             <div className="d-flex flex-nowrap gap-2 justify-content-center">
                                                                 <button className="btn btn-secondary">
-                                                                <i className="fas fa-edit" />
+                                                                    <i className="fas fa-edit" />
                                                                 </button>
-                                                                <button className="btn btn-danger">
-                                                                <i className="fas fa-trash" />
+                                                                <button className="btn btn-danger" onClick={() => this.handleDeleteService(service)}>
+                                                                    <i className="fas fa-trash" />
                                                                 </button>
                                                             </div>
                                                             </td>
