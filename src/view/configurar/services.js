@@ -36,11 +36,11 @@ class Services extends React.Component {
     handleNewService = async () => {
         console.log(this.state.newServiceDuracao)
         const data = {
-            status : this.state.newServiceStatus,
-            nome : this.state.newServiceNome,
-            descricao : this.state.newServiceDescricao,
-            preco : this.state.newServicePreco,
-            duracao : saveTime(this.state.newServiceDuracao),
+            status: this.state.newServiceStatus,
+            nome: this.state.newServiceNome,
+            descricao: this.state.newServiceDescricao,
+            preco: this.state.newServicePreco,
+            duracao: saveTime(this.state.newServiceDuracao),
         }
         if (this.verifyFields(data)) {
             try {
@@ -88,7 +88,6 @@ class Services extends React.Component {
     }
 
     handleDeleteService = async (data) => {
-        console.log(data)   
         const result = await deleteService(data)
         if (result) {
             alert("Serviço excluído com sucesso!")
@@ -116,12 +115,12 @@ class Services extends React.Component {
 
     handleEditService = async () => {
         const data = {
-            id : this.state.editingService.id,
-            status : this.state.editingService.status,
-            nome : this.state.editingService.nome,
-            descricao : this.state.editingService.descricao,
-            preco : this.state.editingService.preco,
-            duracao : saveTime(this.state.editingService.duracao),
+            id: this.state.editingService.id,
+            status: this.state.editingService.status,
+            nome: this.state.editingService.nome,
+            descricao: this.state.editingService.descricao,
+            preco: this.state.editingService.preco,
+            duracao: saveTime(this.state.editingService.duracao),
         }
         if (this.verifyFields(data)) {
             try {
@@ -138,7 +137,7 @@ class Services extends React.Component {
     render() {
         return (
             <>
-                <NavBar/>
+                <NavBar />
                 <div className="container-fluid">
                     <div className="row justify-content-center">
                         <div className="col-12 col-md-4 mb-4">
@@ -151,16 +150,16 @@ class Services extends React.Component {
                                 </select>
                                 <label>Nome do serviço</label>
                                 <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newServiceNomeAlert}`}
-                                    value={this.state.newServiceNome} onChange={(e) => this.setState({ newServiceNome: e.target.value, newServiceNomeAlert: ""})}/>
+                                    value={this.state.newServiceNome} onChange={(e) => this.setState({ newServiceNome: e.target.value, newServiceNomeAlert: "" })} />
                                 <label>Descrição</label>
                                 <textarea name="descricao" id="descricao" placeholder="Descrição" className={`form-control ${this.state.newServiceDescricaoAlert}`} rows="4"
-                                    value={this.state.newServiceDescricao} onChange={(e) => this.setState({ newServiceDescricao: e.target.value, newServiceDescricaoAlert: "" })}/>
+                                    value={this.state.newServiceDescricao} onChange={(e) => this.setState({ newServiceDescricao: e.target.value, newServiceDescricaoAlert: "" })} />
                                 <label>Preço</label>
-                                <CurrencyInput prefix="R$" value={this.state.newServicePreco} className={`form-control ${this.state.newServicePrecoAlert}`} 
+                                <CurrencyInput prefix="R$" value={this.state.newServicePreco} className={`form-control ${this.state.newServicePrecoAlert}`}
                                     onChangeEvent={(event, maskedvalue, value) => { this.setState({ newServicePreco: value, newServicePrecoAlert: "" }) }} />
                                 <label>Duração</label>
                                 <TimeInput value={this.state.newServiceDuracao} className={this.state.newServiceDuracaoAlert}
-                                   onChange={(e) => this.setState({ newServiceDuracao: e.target.value, newServiceDuracaoAlert: "" })}/>
+                                    onChange={(e) => this.setState({ newServiceDuracao: e.target.value, newServiceDuracaoAlert: "" })} />
                                 <button className="btn btn-primary mt-3" onClick={this.handleNewService}>Cadastrar</button>
                             </div>
                         </div>
@@ -189,14 +188,14 @@ class Services extends React.Component {
                                                             <td className="text-center"><PriceFormat value={service.preco} /></td>
                                                             <td className="text-center">{service.duracao}</td>
                                                             <td className="align-middle">
-                                                            <div className="d-flex flex-nowrap gap-2 justify-content-center">
-                                                                <button className="btn btn-secondary" onClick={this.showEditingServiceModal(service)}>
-                                                                    <i className="fas fa-edit" />
-                                                                </button>
-                                                                <button className="btn btn-danger" onClick={() => this.handleDeleteService(service)}>
-                                                                    <i className="fas fa-trash" />
-                                                                </button>
-                                                            </div>
+                                                                <div className="d-flex flex-nowrap gap-2 justify-content-center">
+                                                                    <button className="btn btn-secondary" onClick={this.showEditingServiceModal(service)}>
+                                                                        <i className="fas fa-edit" />
+                                                                    </button>
+                                                                    <button className="btn btn-danger" onClick={() => this.handleDeleteService(service)}>
+                                                                        <i className="fas fa-trash" />
+                                                                    </button>
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     )
@@ -216,27 +215,27 @@ class Services extends React.Component {
                             <div className="card p-4 shadow-lg bg-white rounded">
                                 <h2>Editar serviço</h2>
                                 <label>Status</label>
-                                <select name="status" id="status" className="form-control" 
-                                    value={this.state.editingService.status} 
+                                <select name="status" id="status" className="form-control"
+                                    value={this.state.editingService.status}
                                     onChange={(e) => this.setState({ editingService: { ...this.state.editingService, status: e.target.value } })}>
                                     <option value="active">Ativo</option>
                                     <option value="inactive">Inativo</option>
                                 </select>
                                 <label>Nome do serviço</label>
                                 <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newServiceNomeAlert}`}
-                                    value={this.state.editingService.nome} 
-                                    onChange={(e) => this.setState({ editingService: { ...this.state.editingService, nome: e.target.value } })}/>
+                                    value={this.state.editingService.nome}
+                                    onChange={(e) => this.setState({ editingService: { ...this.state.editingService, nome: e.target.value } })} />
                                 <label>Descrição</label>
                                 <textarea name="descricao" id="descricao" placeholder="Descrição" className={`form-control ${this.state.newServiceDescricaoAlert}`} rows="4"
-                                    value={this.state.editingService.descricao} 
-                                    onChange={(e) => this.setState({ editingService: { ...this.state.editingService, descricao: e.target.value } })}/>
+                                    value={this.state.editingService.descricao}
+                                    onChange={(e) => this.setState({ editingService: { ...this.state.editingService, descricao: e.target.value } })} />
                                 <label>Preço</label>
-                                <CurrencyInput prefix="R$" value={this.state.editingService.preco} className={`form-control ${this.state.newServicePrecoAlert}`} 
-                                    onChangeEvent={(event, maskedvalue, value) => { this.setState({ editingService: { ...this.state.editingService, preco: value }})}} />
+                                <CurrencyInput prefix="R$" value={this.state.editingService.preco} className={`form-control ${this.state.newServicePrecoAlert}`}
+                                    onChangeEvent={(event, maskedvalue, value) => { this.setState({ editingService: { ...this.state.editingService, preco: value } }) }} />
                                 <label>Duração</label>
                                 <TimeInput value={this.state.editingService.duracao} className={this.state.newServiceDuracaoAlert}
-                                   onChange={(e) => this.setState({ editingService: { ...this.state.editingService, duracao: e.target.value }})}/>
-                                <button className="btn btn-primary mt-3" onClick={this.handleEditService}>Editar</button>                                
+                                    onChange={(e) => this.setState({ editingService: { ...this.state.editingService, duracao: e.target.value } })} />
+                                <button className="btn btn-primary mt-3" onClick={this.handleEditService}>Editar</button>
                             </div>
                         </DialogContent>
                     }
