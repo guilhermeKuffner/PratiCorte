@@ -8,13 +8,13 @@ class OpeningHours extends React.Component {
         super(props);
         this.state = {
             horarios: [
-                { dia: "Domingo", horarioInicio: "00:00", horarioFim: "00:00" },
-                { dia: "Segunda-feira", horarioInicio: "00:00", horarioFim: "00:00" },
-                { dia: "Terça-feira", horarioInicio: "00:00", horarioFim: "00:00" },
-                { dia: "Quarta-feira", horarioInicio: "00:00", horarioFim: "00:00" },
-                { dia: "Quinta-feira", horarioInicio: "00:00", horarioFim: "00:00" },
-                { dia: "Sexta-feira", horarioInicio: "00:00", horarioFim: "00:00" },
-                { dia: "Sabado", horarioInicio: "00:00", horarioFim: "00:00" },
+                { dia: "Domingo", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
+                { dia: "Segunda-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "inactive" },
+                { dia: "Terça-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
+                { dia: "Quarta-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
+                { dia: "Quinta-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
+                { dia: "Sexta-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
+                { dia: "Sabado", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
             ]
         }
     }
@@ -24,6 +24,18 @@ class OpeningHours extends React.Component {
         const horarios = this.state.horarios
         horarios[index][field] = value
         this.setState({ horarios: horarios })
+    }
+
+    handleChangeStatus = (index) => {
+        const horarios = [...this.state.horarios];
+        horarios[index].status = horarios[index].status == "active" ? "inactive" : "active";
+        this.setState({ horarios: horarios })
+        
+        console.log(horarios[index])
+    }
+
+    getStatus = (index) => {
+        return this.state.horarios[index].status == "active" ? true : false
     }
 
     render() {
