@@ -1,7 +1,7 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
 import { TimeInput } from "../../shared/utils";
-import { getEstabelecimento, setHorarios } from "../../config/auth";
+import { getEstabelecimento, setHorarios, getHorarios } from "../../config/auth";
 import { getOpeningHours, addOpeningHours, updateOpeningHours } from "../../store/collections/openingHoursWorker";
 import { isEmpty } from "../../shared/utils";
 
@@ -29,9 +29,13 @@ class OpeningHours extends React.Component {
     }
 
     load = async () => {
-        const horarios = await getOpeningHours(this.state.establishment.id)
+        const horarios = getHorarios()
+        if (isEmpty(horarios)) {
+            horarios = await getOpeningHours(this.state.establishment.id)
+            horarios = horarios.horarios
+        }
         if (!isEmpty(horarios)) {
-            this.setState({ horarios: horarios.horarios })
+            this.setState({ horarios: horarios })
             this.setState({ horariosId: horarios.id })
         }
     }
