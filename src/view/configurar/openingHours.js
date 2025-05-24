@@ -1,7 +1,7 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
 import { TimeInput } from "../../shared/utils";
-import { getEstabelecimento } from "../../config/auth";
+import { getEstabelecimento, setHorarios } from "../../config/auth";
 import { getOpeningHours, addOpeningHours, updateOpeningHours } from "../../store/collections/openingHoursWorker";
 import { isEmpty } from "../../shared/utils";
 
@@ -67,6 +67,8 @@ class OpeningHours extends React.Component {
                 console.log("atualizando")
                 await updateOpeningHours(data)
             }
+            setHorarios(data?.horarios)
+            alert("Horário de funcionamento salvo com sucesso!")
         } catch (error) {
             console.error("Erro ao cadastrar horário de funcionamento:", error.message)
         }

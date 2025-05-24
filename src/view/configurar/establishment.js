@@ -3,6 +3,7 @@ import { NavBar } from "../../components/navbar"
 import { getEstabelecimento}  from "../../config/auth";
 import { isEmpty, isValidPhoneNumber, PhoneNumberFormat, PhoneNumberInput, removeSimbols, isValidDocument, DocumentFormat } from "../../shared/utils";
 import { updateEstablishment } from "../../store/collections/establishmentWorker";
+import { setEstabelecimento } from "../../config/auth";
 
 class Establishment extends React.Component {
     constructor(props) {
@@ -46,6 +47,7 @@ class Establishment extends React.Component {
             try {
                 if (await updateEstablishment(data)){
                     this.setState({ isEditing: false, establishment: data })
+                    setEstabelecimento(data)
                 } else {
                     alert("Erro ao atualizar o estabelecimento")
                 }
