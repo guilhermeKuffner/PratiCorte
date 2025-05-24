@@ -1,21 +1,38 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
 import { TimeInput } from "../../shared/utils";
+import { getEstabelecimento } from "../../config/auth";
+import { getOpeningHours, addOpeningHours, updateOpeningHours } from "../../store/collections/openingHoursWorker";
+import { isEmpty } from "../../shared/utils";
 
 class OpeningHours extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            establishment: getEstabelecimento(),
+            horariosId: "",
             horarios: [
                 { dia: "Domingo", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
-                { dia: "Segunda-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "inactive" },
+                { dia: "Segunda-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
                 { dia: "Terça-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
                 { dia: "Quarta-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
                 { dia: "Quinta-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
                 { dia: "Sexta-feira", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
                 { dia: "Sabado", horarioInicio: "00:00", horarioFim: "00:00", status: "active" },
-            ]
+            ],
+        }
+    }
+
+    componentDidMount() {
+        this.load()
+    }
+
+    load = async () => {
+        const horarios = await getOpeningHours(this.state.establishment.id)
+        if (!isEmpty(horarios)) {
+            this.setState({ horarios: horarios.horarios })
+            this.setState({ horariosId: horarios.id })
         }
     }
 
@@ -30,12 +47,29 @@ class OpeningHours extends React.Component {
         const horarios = [...this.state.horarios];
         horarios[index].status = horarios[index].status == "active" ? "inactive" : "active";
         this.setState({ horarios: horarios })
-        
-        console.log(horarios[index])
     }
 
     getStatus = (index) => {
-        return this.state.horarios[index].status == "active" ? true : false
+        return this.state.horarios[index]?.status == "active" ? true : false
+    }
+
+    save = async () => {
+        const data = {
+            estabelecimentoId: this.state.establishment.id,
+            horarios: this.state.horarios,
+            id: this.state.horariosId,
+        }
+        try {
+            if (this.state.horariosId === "") {
+                console.log("adicionando")
+                await addOpeningHours(data)
+            } else {
+                console.log("atualizando")
+                await updateOpeningHours(data)
+            }
+        } catch (error) {
+            console.error("Erro ao cadastrar horário de funcionamento:", error.message)
+        }
     }
 
     render() {
@@ -132,7 +166,7 @@ class OpeningHours extends React.Component {
                             </div>
                         </div>
                         <div className="d-flex justify-content-end mt-3">
-                        <button className="btn btn-primary">Salvar</button>
+                        <button className="btn btn-primary" onClick={this.save}>Salvar</button>
                         </div>
                     </div>
                 </div>
