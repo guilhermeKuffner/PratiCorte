@@ -42,144 +42,97 @@ class OpeningHours extends React.Component {
         return (
             <>
                 <NavBar/>
-                <div className="container-fluid">
-                    <div className="row justify-content-center">
-                        <div className="col-12 col-md-4 mb-4">
-                            <div className="card p-3 shadow-lg bg-white rounded">
-                                <h2>Configurar horario de funcionamento</h2>
-                                <div>
-                                    <table className="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" className="col-md-2">Dia</th>
-                                                <th scope="col" className="col-md-3 justify-content-center">Horário de funcionamento</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Domingo</td>
-                                                <td>
-                                                    <div className="form-group row align-items-center">
-                                                        <label className="col-auto col-form-label">Inicio</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioInicio} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
-                                                        </div>
-                                                        <label className="col-auto col-form-label">Fim</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioFim} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Segunda-feira</td>
-                                                <td>
-                                                    <div className="form-group row align-items-center">
-                                                        <label className="col-auto col-form-label">Inicio</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioInicio} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
-                                                        </div>
-                                                        <label className="col-auto col-form-label">Fim</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioFim} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Terça-feira</td>
-                                                <td>
-                                                    <div className="form-group row align-items-center">
-                                                        <label className="col-auto col-form-label">Inicio</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioInicio} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
-                                                        </div>
-                                                        <label className="col-auto col-form-label">Fim</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioFim} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Quarta-feira</td>
-                                                <td>
-                                                    <div className="form-group row align-items-center">
-                                                        <label className="col-auto col-form-label">Inicio</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioInicio} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
-                                                        </div>
-                                                        <label className="col-auto col-form-label">Fim</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioFim} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Quinta-feira</td>
-                                                <td>
-                                                    <div className="form-group row align-items-center">
-                                                        <label className="col-auto col-form-label">Inicio</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioInicio} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
-                                                        </div>
-                                                        <label className="col-auto col-form-label">Fim</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioFim} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Sexta-feira</td>
-                                                <td>
-                                                    <div className="form-group row align-items-center">
-                                                        <label className="col-auto col-form-label">Inicio</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioInicio} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
-                                                        </div>
-                                                        <label className="col-auto col-form-label">Fim</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioFim} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Sabado</td>
-                                                <td>
-                                                    <div className="form-group row align-items-center">
-                                                        <label className="col-auto col-form-label">Inicio</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioInicio} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
-                                                        </div>
-                                                        <label className="col-auto col-form-label">Fim</label>
-                                                        <div className="col-3">
-                                                            <TimeInput value={this.state.horarios[0].horarioFim} 
-                                                            onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <button className="btn btn-primary mt-3 align-self-end ">Salvar</button>
+                <div className="d-flex justify-content-center py-5">
+                    <div className="card p-4 shadow bg-white rounded w-auto">
+                        <h5 className="mb-4">Configurar horário de funcionamento</h5>
+                        <div className="d-flex flex-column gap-2">
+                            <div className="d-flex align-items-center mb-2">
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="switch-segunda" checked={this.getStatus(0)} onChange={() => this.handleChangeStatus(0)}/>
                                 </div>
+                                <div className="text-start pe-3 text-nowrap fw-bold" style={{ width: "130px" }}>Domingo</div>
+                                <div className="me-1 text-nowrap">Início:</div>
+                                <TimeInput value={this.state.horarios[0].horarioInicio} disabled={!this.getStatus(0)}
+                                    onChange={(e) => this.handleChangeHorario(e, 0, "horarioInicio")} />
+                                <div className="ms-3 me-1 text-nowrap">Fim:</div>
+                                <TimeInput value={this.state.horarios[0].horarioFim} disabled={!this.getStatus(0)}
+                                    onChange={(e) => this.handleChangeHorario(e, 0, "horarioFim")} />
                             </div>
+                            <div className="d-flex align-items-center mb-2">
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="switch-segunda" checked={this.getStatus(1)} onChange={() => this.handleChangeStatus(1)}/>
+                                </div>
+                                <div className="text-start pe-3 text-nowrap fw-bold" style={{ width: "130px" }}>Segunda-feira</div>
+                                <div className="me-1 text-nowrap">Início:</div>
+                                <TimeInput value={this.state.horarios[1].horarioInicio} disabled={!this.getStatus(1)}
+                                    onChange={(e) => this.handleChangeHorario(e, 1, "horarioInicio")} />
+                                <div className="ms-3 me-1 text-nowrap">Fim:</div>
+                                <TimeInput value={this.state.horarios[1].horarioFim} disabled={!this.getStatus(1)}
+                                    onChange={(e) => this.handleChangeHorario(e, 1, "horarioFim")} />
+                            </div>
+                            <div className="d-flex align-items-center mb-2">
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="switch-segunda" checked={this.getStatus(2)} onChange={() => this.handleChangeStatus(2)}/>
+                                </div>
+                                <div className="text-start pe-3 text-nowrap fw-bold" style={{ width: "130px" }}>Terça-feira</div>
+                                <div className="me-1 text-nowrap">Início:</div>
+                                <TimeInput value={this.state.horarios[2].horarioInicio} disabled={!this.getStatus(2)}
+                                    onChange={(e) => this.handleChangeHorario(e, 2, "horarioInicio")} />
+                                <div className="ms-3 me-1 text-nowrap">Fim:</div>
+                                <TimeInput value={this.state.horarios[2].horarioFim} disabled={!this.getStatus(2)}
+                                    onChange={(e) => this.handleChangeHorario(e, 2, "horarioFim")} />
+                            </div>
+                            <div className="d-flex align-items-center mb-2">
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="switch-segunda" checked={this.getStatus(3)} onChange={() => this.handleChangeStatus(3)}/>
+                                </div>
+                                <div className="text-start pe-3 text-nowrap fw-bold" style={{ width: "130px" }}>Quarta-feira</div>
+                                <div className="me-1 text-nowrap">Início:</div>
+                                <TimeInput value={this.state.horarios[3].horarioInicio} disabled={!this.getStatus(3)}
+                                    onChange={(e) => this.handleChangeHorario(e, 3, "horarioInicio")} />
+                                <div className="ms-3 me-1 text-nowrap">Fim:</div>
+                                <TimeInput value={this.state.horarios[3].horarioFim} disabled={!this.getStatus(3)}
+                                    onChange={(e) => this.handleChangeHorario(e, 3, "horarioFim")} />
+                            </div>
+                            <div className="d-flex align-items-center mb-2">
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="switch-segunda" checked={this.getStatus(4)} onChange={() => this.handleChangeStatus(4)}/>
+                                </div>
+                                <div className="text-start pe-3 text-nowrap fw-bold" style={{ width: "130px" }}>Quinta-feira</div>
+                                <div className="me-1 text-nowrap">Início:</div>
+                                <TimeInput value={this.state.horarios[4].horarioInicio} disabled={!this.getStatus(4)}
+                                    onChange={(e) => this.handleChangeHorario(e, 4, "horarioInicio")} />
+                                <div className="ms-3 me-1 text-nowrap">Fim:</div>
+                                <TimeInput value={this.state.horarios[4].horarioFim} disabled={!this.getStatus(4)}
+                                    onChange={(e) => this.handleChangeHorario(e, 4, "horarioFim")} />
+                            </div>
+                            <div className="d-flex align-items-center mb-2">
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="switch-segunda" checked={this.getStatus(5)} onChange={() => this.handleChangeStatus(5)}/>
+                                </div>
+                                <div className="text-start pe-3 text-nowrap fw-bold" style={{ width: "130px" }}>Sexta-feira</div>
+                                <div className="me-1 text-nowrap">Início:</div>
+                                <TimeInput value={this.state.horarios[5].horarioInicio} disabled={!this.getStatus(5)}
+                                    onChange={(e) => this.handleChangeHorario(e, 5, "horarioInicio")} />
+                                <div className="ms-3 me-1 text-nowrap">Fim:</div>
+                                <TimeInput value={this.state.horarios[5].horarioFim} disabled={!this.getStatus(5)}
+                                    onChange={(e) => this.handleChangeHorario(e, 5, "horarioFim")} />
+                            </div>
+                            <div className="d-flex align-items-center mb-2">
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id="switch-segunda" checked={this.getStatus(6)} onChange={() => this.handleChangeStatus(6)}/>
+                                </div>
+                                <div className="text-start pe-3 text-nowrap fw-bold" style={{ width: "130px" }}>Sábado</div>
+                                <div className="me-1 text-nowrap">Início:</div>
+                                <TimeInput value={this.state.horarios[6].horarioInicio} disabled={!this.getStatus(6)}
+                                    onChange={(e) => this.handleChangeHorario(e, 6, "horarioInicio")} />
+                                <div className="ms-3 me-1 text-nowrap">Fim:</div>
+                                <TimeInput value={this.state.horarios[6].horarioFim} disabled={!this.getStatus(6)}
+                                    onChange={(e) => this.handleChangeHorario(e, 6, "horarioFim")} />
+                            </div>
+                        </div>
+                        <div className="d-flex justify-content-end mt-3">
+                        <button className="btn btn-primary">Salvar</button>
                         </div>
                     </div>
                 </div>
