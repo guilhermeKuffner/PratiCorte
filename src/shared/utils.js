@@ -157,3 +157,13 @@ export const OrderByField = (data, field) => {
     })
   }
   
+  export const setDaysAllowed = (data) => {
+    const horarios = data.horarios
+    var daysAllowed = []
+    for (let i = 0; i < horarios.length; i++) {
+      if (horarios[i].status === "active") {
+        daysAllowed.push(horarios[i].day)
+      }
+    }
+    return daysAllowed
+  }

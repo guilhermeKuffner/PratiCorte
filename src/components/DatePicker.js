@@ -5,15 +5,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import ptBR from 'date-fns/locale/pt-BR';
 
-const DateInput = ({ value, onChange }) => {
+const DateInput = ({ value, onChange, days }) => {
   const hoje = new Date()
   const max = new Date()
   max.setDate(hoje.getDate() + 7)
 
   const daysAllowed = (date) => {
-    //essa funcao precisa retornar apenas os horarios cujo dia da semana status == active
     const dia = date.getDay()
-    return !(dia === 2 || dia === 6)
+    return !days.includes(dia)
   }
 
   return (
