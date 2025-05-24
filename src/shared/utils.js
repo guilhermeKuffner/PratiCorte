@@ -21,13 +21,12 @@ export const isValidPhoneNumber = (value) => {
 }
 
 
-export const TimeInput = ({ value, className, onChange }) => {
+export const TimeInput = ({ value, className, style, onChange, disabled }) => {
     return (
-        <PatternFormat value={value} onChange={onChange} format="##:##" allowEmptyFormatting mask="_" 
-        className={`form-control ${className || ''}`} />
+      <PatternFormat value={value} onChange={onChange} format="##:##" allowEmptyFormatting mask="_" 
+      className={`form-control  ${className || ''}`} style={{ width: "80px", ...style }} disabled={disabled}/>
     )
 }
-
 
 export const convertTimeToMinutes = (hhmm) => {
     const [hh, mm] = hhmm.split(":").map(Number)
