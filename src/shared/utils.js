@@ -54,7 +54,7 @@ export const saveTime = (value) => {
 }
 
 export const isEmpty = (value) => {
-    return value === null || value === undefined || value === "";
+    return value === null || value === undefined || value === "" || value.length === 0;
 }
 
 export const removeSimbols = (value) => {
