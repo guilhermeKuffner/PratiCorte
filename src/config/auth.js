@@ -51,9 +51,9 @@ export const getSessao = () => {
 }
 
 export const setEstabelecimento = (estabelecimento) => {
-    const sessao = JSON.parse(localStorage.getItem('sessao'))
+    const sessao = getSessao()
     if (sessao !== null) {
-        sessao.sessao.estabelecimento = estabelecimento
+        sessao.estabelecimento = estabelecimento
         setSessao(sessao)
     }
 }
@@ -64,9 +64,9 @@ export const getEstabelecimento = () => {
 }
 
 export const setUsuario = (usuario) => {
-    const sessao = JSON.parse(localStorage.getItem('sessao'))
+    const sessao = getSessao()
     if (sessao !== null) {
-        sessao.sessao.usuario = usuario
+        sessao.usuario = usuario
         setSessao(sessao)
     }
 }
@@ -74,4 +74,17 @@ export const setUsuario = (usuario) => {
 export const getUsuario = () => {
     const sessao = getSessao()
     return sessao ? sessao.usuario : null
+}
+
+export const setHorarios = (horarios) => {
+    const sessao = getSessao()
+    if (sessao !== null) {
+        sessao.horarios = horarios
+        setSessao(sessao)
+    }
+}
+
+export const getHorarios = () => {
+    const sessao = getSessao()
+    return sessao ? sessao.horarios : null
 }
