@@ -3,6 +3,9 @@ import { handleLogout } from "../../config/auth";
 import { auth } from '../../config/firebase';
 import { getSessao } from "../../config/auth";
 import { NavBar } from "../../components/navbar";
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import { DateInput } from "../../components/DatePicker";
 
 class Home extends React.Component {
     constructor(props) {
@@ -12,7 +15,9 @@ class Home extends React.Component {
             establishment: null,
             isLoading: true,
             sessao: getSessao(),
-        };
+            appointmentModalOpen: false,
+            selectedDate: null,
+        }
     }
 
     async componentDidMount() {
@@ -26,6 +31,18 @@ class Home extends React.Component {
         }
     }
 
+    showAppointmentModal = () =>{
+        this.setState({
+            appointmentModalOpen: true,
+        })
+    }
+
+    hideAppointmentModal = () =>{
+        this.setState({
+            appointmentModalOpen: false,
+        })
+    }
+
     render() {
         const { user, establishment, isLoading } = this.state;
         if (isLoading) {
@@ -34,15 +51,24 @@ class Home extends React.Component {
 
         return (
             <>
-                <NavBar>
-                    <div className="container d-flex flex-column justify-content-center align-items-center">
-                        <div className="card p-4 shadow-lg bg-white rounded">
-                            <h1>Bem-vindo!</h1>
-                            <h1>Seu e-mail: {user.email}</h1>
-                            <h1>Seu nome de estabelecimento: {establishment.nomeEstabelecimento}</h1>
-                        </div>
+                <NavBar />
+                <div className="container d-flex flex-column justify-content-center align-items-center">
+                    <div className="card p-4 shadow-lg bg-white rounded">
+                        <button className="btn btn-success" onClick={() => this.showAppointmentModal()}>Agendar</button>
                     </div>
-                </NavBar>
+                </div>
+                <Dialog onClose={this.hideAppointmentModal} fullWidth maxWidth={"xs"} open={this.state.appointmentModalOpen}>
+                    {
+                        this.state.appointmentModalOpen &&
+                        <DialogContent>
+                            <h2>Agendar serviço</h2>
+                            <DateInput
+                                value={this.state.selectedDate}
+                                onChange={(newDate) => this.setState({ selectedDate: newDate })}
+                            />
+                        </DialogContent>
+                    }
+                </Dialog>
             </>
         );
     }
