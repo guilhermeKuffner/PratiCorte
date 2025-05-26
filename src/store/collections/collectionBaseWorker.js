@@ -93,8 +93,8 @@ export const deleteDoc = async ({ collection, data }) => {
         console.error("updateDoc: id não informado")
         return false
     }
-    data.updatedAt = new Date()
-    data.updatedBy = getUsuario()
+    data.deletedAt = new Date()
+    data.deletedBy = getUsuario()
     data.isDeleted = true
     try {
         const ref = doc(db, collection, data.id)
