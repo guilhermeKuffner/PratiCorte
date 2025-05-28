@@ -1,7 +1,7 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
 import { isEmpty } from "../../shared/utils";
-import { addUser, getUsers } from "../../store/collections/userWorker";
+import { addUser, getUsers, updateUser } from "../../store/collections/userWorker";
 import { getEstabelecimento } from "../../config/auth";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -63,7 +63,7 @@ class Users extends React.Component {
         this.setState({ newUserStatus: "Ativo", newUserNome: "", newUserCelular: "", newUserEmail: "", newUserSenha: "" })
     }
 
-    verifyFields = (data) => {
+    verifyFields = (data, checkEmailAndPassword = true) => {
         var isValid = true
         var invalidAlert = ""
         if (isEmpty(data.nome)) {
@@ -76,12 +76,12 @@ class Users extends React.Component {
             this.setState({ newUserCelularAlert: "is-invalid" })
             isValid = false
         }
-        if (isEmpty(data.email)) {
+        if (isEmpty(data.email) && checkEmailAndPassword) {
             invalidAlert = isEmpty(invalidAlert) ? "Informe o email" : invalidAlert
             this.setState({ newUserEmailAlert: "is-invalid" })
             isValid = false
         }
-        if (isEmpty(data.senha)) {
+        if (isEmpty(data.senha) && checkEmailAndPassword) {
             invalidAlert = isEmpty(invalidAlert) ? "Informe a senha" : invalidAlert
             this.setState({ newUserSenhaAlert: "is-invalid" })
             isValid = false
@@ -90,6 +90,38 @@ class Users extends React.Component {
             alert(invalidAlert)
         }
         return isValid
+    }
+
+    showEditingUserModal = (user) => {
+        return () => {
+            this.setState({
+                editingUserModalOpen: true,
+                editingUser: {...user}
+            })
+        }
+    }
+
+    hideEditingUserModal = () => {
+        this.setState({ editingUserModalOpen: false, editingUser: null })
+    }
+
+    handleEditUser = async () => {
+        const data = {
+            id: this.state.editingUser.id,
+            status: this.state.editingUser.status,
+            nome: this.state.editingUser.nome,
+            celular: this.state.editingUser.celular,
+        }
+        if (this.verifyFields(data, false)) {
+            try {
+                await updateUser(data)
+                this.load()
+                this.cleanFields()
+                this.hideEditingUserModal()
+            } catch (error) {
+                console.error("Erro ao editar o usuário:", error.message)
+            }
+        }
     }
 
     render() {
@@ -116,7 +148,7 @@ class Users extends React.Component {
                                 <input type="text" name="email" id="email" placeholder="Email" className={`form-control ${this.state.newUserEmailAlert}`}
                                     value={this.state.newUserEmail} onChange={(e) => this.setState({ newUserEmail: e.target.value, newUserEmailAlert: "" })} />
                                 <label>Senha</label>
-                                <input type="text" name="senha" id="senha" placeholder="Senha" className={`form-control ${this.state.newUserSenhaAlert}`}
+                                <input type="password" name="senha" id="senha" placeholder="Senha" className={`form-control ${this.state.newUserSenhaAlert}`}
                                     value={this.state.newUserSenha} onChange={(e) => this.setState({ newUserSenha: e.target.value, newUserSenhaAlert: "" })} />
                                 <button className="btn btn-primary mt-3" onClick={this.handleNewUser}>Cadastrar</button>
 
@@ -145,7 +177,7 @@ class Users extends React.Component {
                                                             <td className="text-start">{user.celular}</td>
                                                             <td className="align-middle">
                                                                 <div className="d-flex flex-nowrap gap-2 justify-content-end">
-                                                                    <button className="btn btn-secondary" onClick={""}>
+                                                                    <button className="btn btn-secondary" onClick={this.showEditingUserModal(user)}>
                                                                         <i className="fas fa-edit" />
                                                                     </button>
                                                                     <button className="btn btn-danger" onClick={() => this.handleDeleteUser(user)}>
@@ -172,16 +204,13 @@ class Users extends React.Component {
                                 <h2>Editar usuário</h2>
                                 <label>Nome</label>
                                 <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
-                                    value={this.state.newUserNome} onChange={(e) => this.setState({ newUserNome: e.target.value, newUserNomeAlert: "" })} />
+                                    value={this.state.editingUser.nome} onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, nome: e.target.value } })} />
                                 <label>Celular</label>
                                 <input type="text" name="celular" id="celular" placeholder="Celular" className={`form-control ${this.state.newUserCelularAlert}`}
-                                    value={this.state.newUserCelular} onChange={(e) => this.setState({ newUserCelular: e.target.value, newUserCelularAlert: "" })} />
+                                    value={this.state.editingUser.celular} onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, celular: e.target.value } })} />
                                 <label>Email</label>
-                                <input type="text" name="email" id="email" placeholder="Email" className={`form-control ${this.state.newUserEmailAlert}`}
-                                    value={this.state.newUserEmail} onChange={(e) => this.setState({ newUserEmail: e.target.value, newUserEmailAlert: "" })} />
-                                <label>Senha</label>
-                                <input type="text" name="senha" id="senha" placeholder="Senha" className={`form-control ${this.state.newUserSenhaAlert}`}
-                                    value={this.state.newUserSenha} onChange={(e) => this.setState({ newUserSenha: e.target.value, newUserSenhaAlert: "" })} />
+                                <input type="text" name="email" id="email" placeholder="Email" className={`form-control`} value={this.state.editingUser.email} disabled/>
+                                <button className="btn btn-primary mt-3" onClick={this.handleEditUser}>Editar</button>
                             </div>
                         </DialogContent>
                     }
