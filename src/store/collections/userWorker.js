@@ -1,4 +1,4 @@
-import { addDoc, getDoc } from "./collectionBaseWorker";
+import { addDoc, getDoc, getAllDocs } from "./collectionBaseWorker";
 import { where } from "firebase/firestore"
 
 export const addUser = async (data) => {
@@ -10,6 +10,15 @@ export const getUserByEmail = async (email) => {
         collection: "usuarios",
         queries: [
             where("email", "==", email),
+        ]
+    })
+}
+
+export const getUsers = async (id) => {
+    return await getAllDocs({
+        collection: "usuarios",
+        queries: [
+            where("estabelecimentoId", "==", id),
         ]
     })
 }

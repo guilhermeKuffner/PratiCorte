@@ -37,6 +37,9 @@ export const NavBar = props => {
                                     <Link to="/configuracoes/estabelecimento" className="dropdown-item">
                                         Estabelecimento
                                     </Link>
+                                    <Link to="/configuracoes/usuarios" className="dropdown-item">
+                                        Usuários
+                                    </Link>
                                     <Link to="/configuracoes/horarios" className="dropdown-item">
                                         Horários
                                     </Link>

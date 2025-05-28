@@ -9,6 +9,7 @@ import { Services } from "../view/configurar/services";
 import { Reports } from "../view/relatorios/reports";
 import { History } from "../view/historico/history";
 import { UserTerms } from "../view/configurar/termosDeUso";
+import { Users } from "../view/configurar/users";
 
 const PrivateRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -39,7 +40,8 @@ const AppRoutes = () => (
     <Route path="/configuracoes/estabelecimento" element={<PrivateRoute><Establishment /></PrivateRoute>} />
     <Route path="/configuracoes/horarios" element={<PrivateRoute><OpeningHours /></PrivateRoute>} />
     <Route path="/configuracoes/servicos" element={<PrivateRoute><Services /></PrivateRoute>} />
-    
+    <Route path="/configuracoes/usuarios" element={<PrivateRoute><Users /></PrivateRoute>} />
+
     <Route path="/termos-de-uso" element={<div className="center-container"><UserTerms /></div>} />
     <Route path="*" element={<Navigate to="/home" replace />} />
   </Routes>
