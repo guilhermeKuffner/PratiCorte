@@ -1,7 +1,7 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
 import { isEmpty } from "../../shared/utils";
-import { addUser, getUsers, updateUser } from "../../store/collections/userWorker";
+import { addUser, getUsers, updateUser, deleteUser } from "../../store/collections/userWorker";
 import { getEstabelecimento } from "../../config/auth";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -12,6 +12,7 @@ class Users extends React.Component {
         this.state = {
             establishment: getEstabelecimento(),
             newUserStatus: "Ativo",
+            newUserAgendavel: true,
             newUserNome: "",
             newUserCelular: "",
             newUserEmail: "",
@@ -42,6 +43,7 @@ class Users extends React.Component {
     handleNewUser = async () => {
         const data = {
             status: this.state.newUserStatus,
+            agendavel: this.state.newUserAgendavel,
             nome: this.state.newUserNome,
             celular: this.state.newUserCelular,
             email: this.state.newUserEmail,
@@ -108,6 +110,7 @@ class Users extends React.Component {
     handleEditUser = async () => {
         const data = {
             id: this.state.editingUser.id,
+            agendavel: this.state.editingUser.agendavel,
             status: this.state.editingUser.status,
             nome: this.state.editingUser.nome,
             celular: this.state.editingUser.celular,
@@ -121,6 +124,14 @@ class Users extends React.Component {
             } catch (error) {
                 console.error("Erro ao editar o usuário:", error.message)
             }
+        }
+    }
+
+    handleDeleteUser = async (data) => {
+        const result = await deleteUser(data)
+        if (result) {
+            alert("Serviço excluído com sucesso!")
+            this.load()
         }
     }
 
@@ -202,6 +213,18 @@ class Users extends React.Component {
                         <DialogContent>
                             <div className="card p-4 shadow-lg bg-white rounded">
                                 <h2>Editar usuário</h2>
+                                <label>Status</label>
+                                <select name="status" id="status" className="form-control" value={this.state.editingUser.status}
+                                    onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, status: e.target.value }})}>
+                                    <option value="active">Ativo</option>
+                                    <option value="inactive">Inativo</option>
+                                </select>
+                                <label>Tipo</label>
+                                <select name="agendavel" id="agendavel" className="form-control" value={this.state.editingUser.agendavel}
+                                    onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, agendavel: e.target.value }})}>
+                                    <option value={true}>Barbeiro</option>
+                                    <option value={false}>Administrativo</option>
+                                </select>
                                 <label>Nome</label>
                                 <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
                                     value={this.state.editingUser.nome} onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, nome: e.target.value } })} />

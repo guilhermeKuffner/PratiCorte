@@ -1,4 +1,4 @@
-import { addDoc, getDoc, getAllDocs, updateDoc } from "./collectionBaseWorker";
+import { addDoc, getDoc, getAllDocs, updateDoc, deleteDoc } from "./collectionBaseWorker";
 import { where } from "firebase/firestore"
 
 export const addUser = async (data) => {
@@ -25,4 +25,8 @@ export const getUsers = async (id) => {
 
 export const updateUser = async (data) => {
     return await updateDoc({ collection: "usuarios", data: data })
+}
+
+export const deleteUser = async (data) => {
+    return await deleteDoc({ collection: "usuarios", data: data })
 }
