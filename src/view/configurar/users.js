@@ -68,22 +68,22 @@ class Users extends React.Component {
         var invalidAlert = ""
         if (isEmpty(data.nome)) {
             invalidAlert = isEmpty(invalidAlert) ? "Informe o nome" : invalidAlert
-            this.setState({ newServiceNomeAlert: "is-invalid" })
+            this.setState({ newUserNomeAlert: "is-invalid" })
             isValid = false
         }
         if (isEmpty(data.celular)) {
             invalidAlert = isEmpty(invalidAlert) ? "Informe o celular" : invalidAlert
-            this.setState({ newServicePrecoAlert: "is-invalid" })
+            this.setState({ newUserCelularAlert: "is-invalid" })
             isValid = false
         }
         if (isEmpty(data.email)) {
             invalidAlert = isEmpty(invalidAlert) ? "Informe o email" : invalidAlert
-            this.setState({ newServiceDuracaoAlert: "is-invalid" })
+            this.setState({ newUserEmailAlert: "is-invalid" })
             isValid = false
         }
         if (isEmpty(data.senha)) {
             invalidAlert = isEmpty(invalidAlert) ? "Informe a senha" : invalidAlert
-            this.setState({ newServiceDuracaoAlert: "is-invalid" })
+            this.setState({ newUserSenhaAlert: "is-invalid" })
             isValid = false
         }
         if (!isValid) {
@@ -130,10 +130,9 @@ class Users extends React.Component {
                                     <table className="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th scope="col" className="col-md-3">Nome</th>
-                                                <th scope="col" className="d-none d-md-table-cell col-md-4">email</th>
-                                                <th scope="col" className="text-center col-md-2">celular</th>
-
+                                                <th scope="col" className="text-start col-md-3">Nome</th>
+                                                <th scope="col" className="text-start col-md-4">email</th>
+                                                <th scope="col" className="text-start col-md-2">celular</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -145,7 +144,7 @@ class Users extends React.Component {
                                                             <td className="text-start">{user.email}</td>
                                                             <td className="text-start">{user.celular}</td>
                                                             <td className="align-middle">
-                                                                <div className="d-flex flex-nowrap gap-2 justify-content-center">
+                                                                <div className="d-flex flex-nowrap gap-2 justify-content-end">
                                                                     <button className="btn btn-secondary" onClick={""}>
                                                                         <i className="fas fa-edit" />
                                                                     </button>
