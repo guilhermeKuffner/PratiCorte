@@ -3,7 +3,7 @@ import { NavBar } from "../../components/navbar"
 import { TimeInput } from "../../shared/utils";
 import { getEstabelecimento, setHorarios, getHorarios } from "../../config/auth";
 import { getOpeningHours, addOpeningHours, updateOpeningHours } from "../../store/collections/openingHoursWorker";
-import { isEmpty } from "../../shared/utils";
+import { isEmpty, isValidMinutes } from "../../shared/utils";
 
 class OpeningHours extends React.Component {
 
@@ -62,24 +62,44 @@ class OpeningHours extends React.Component {
             horarios: this.state.horarios,
             id: this.state.horariosId,
         }
+        if (this.verifyFields(data)) {
+            for (let i = 0; i < data.horarios.length; i++) {
+                if (isEmpty(data.horarios[i].day)) {
+                    data.horarios[i].day = i
+                }
+            }
+            try {
+                if (this.state.horariosId === "") {
+                    console.log("adicionando")
+                    await addOpeningHours(data)
+                } else {
+                    console.log("atualizando")
+                    await updateOpeningHours(data)
+                }
+                setHorarios(data)
+                alert("Horário de funcionamento salvo com sucesso!")
+            } catch (error) {
+                console.error("Erro ao cadastrar horário de funcionamento:", error.message)
+            }
+        }
+    }
+
+    verifyFields = (data) => {
         for (let i = 0; i < data.horarios.length; i++) {
-            if (isEmpty(data.horarios[i].day)) {
-                data.horarios[i].day = i
+            if (isEmpty((data.horarios[i].horarioInicio)) || isEmpty((data.horarios[i].horarioFim) && data.horarios[i].status === "active")) {
+                alert("Preencha o horario de inicio e fim.")
+                return false
             }
-        }
-        try {
-            if (this.state.horariosId === "") {
-                console.log("adicionando")
-                await addOpeningHours(data)
-            } else {
-                console.log("atualizando")
-                await updateOpeningHours(data)
+            if (data.horarios[i].horarioInicio > data.horarios[i].horarioFim) {
+                alert("O horario de inicio deve ser menor que o horario de fim.")
+                return false
             }
-            setHorarios(data)
-            alert("Horário de funcionamento salvo com sucesso!")
-        } catch (error) {
-            console.error("Erro ao cadastrar horário de funcionamento:", error.message)
+            if (!isValidMinutes(data.horarios[i].horarioInicio) || !isValidMinutes(data.horarios[i].horarioFim)) {
+                return false
+            }
+            console.log(data.horarios[i])
         }
+        return true
     }
 
     render() {

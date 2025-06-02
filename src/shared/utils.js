@@ -193,3 +193,16 @@ export const getAvailableHours = (data) => {
     })
     return blocosPorDia
 }
+
+export const isValidMinutes = (hour) => {
+    const [hh, mm] = hour.split(":").map(Number)
+    if (mm > 59) {
+        alert("minutos inválidos")
+        return false
+    }
+    var time = hh * 60 + mm
+    if (Number.isNaN(time)) {
+        return false
+    }
+    return true
+}
