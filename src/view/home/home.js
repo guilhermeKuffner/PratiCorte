@@ -6,7 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { DateInput } from "../../components/DatePicker";
 import { getDay } from "date-fns";
-import { setDaysAllowed } from "../../shared/utils";
+import { setDaysAllowed, getAvailableHours } from "../../shared/utils";
 
 class Home extends React.Component {
     constructor(props) {
@@ -31,6 +31,7 @@ class Home extends React.Component {
             const horarios = this.state.sessao.horarios
             const daysAllowed = setDaysAllowed(horarios)
             const isDayAllowed = daysAllowed.includes(this.state.dayOfWeek)
+            const availableHours = getAvailableHours(horarios)
     
             this.setState({ 
                 establishment: sessao.estabelecimento, 
@@ -98,10 +99,15 @@ class Home extends React.Component {
                                     this.state.horarios.horarios.map((hour, index) => {
                                         if (hour.day === this.state.dayOfWeek) {
                                             return (
-                                                <div key={index}>
-                                                    <h3>{hour.dia}</h3>
-                                                    <p>{hour.horarioInicio} as {hour.horarioFim}</p>
-                                                </div>
+                                                <>
+                                                    <div key={index}>
+                                                        <h3>{hour.dia}</h3>
+                                                        <p>das {hour.horarioInicio} as {hour.horarioFim}</p>
+                                                    </div>
+                                                    <div>
+                                                        teste
+                                                    </div>
+                                                </>
                                             )
                                         } 
                                     }) : 

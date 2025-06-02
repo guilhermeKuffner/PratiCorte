@@ -157,7 +157,7 @@ export const OrderByField = (data, field) => {
     })
   }
   
-  export const setDaysAllowed = (data) => {
+export const setDaysAllowed = (data) => {
     const horarios = data.horarios
     var daysAllowed = []
     for (let i = 0; i < horarios.length; i++) {
@@ -166,4 +166,30 @@ export const OrderByField = (data, field) => {
       }
     }
     return daysAllowed
-  }
+}
+
+export const getAvailableHours = (data) => {
+    const horarios = data.horarios.filter(h => h.status === "active").map(h => [h.horarioInicio, h.horarioFim])
+    const dataBase = '2024-01-01'
+    const blocosPorDia = horarios.map(([inicio, fim]) => {
+    const blocos = []
+
+    const inicioDate = new Date(`${dataBase}T${inicio}:00`)
+        if (inicioDate.getMinutes() > 0) {
+            inicioDate.setHours(inicioDate.getHours() + 1)
+            inicioDate.setMinutes(0)
+        }
+
+        const fimDate = new Date(`${dataBase}T${fim}:00`)
+        fimDate.setMinutes(0)
+        let atual = new Date(inicioDate)
+        while (atual <= fimDate) {
+            const horas = atual.getHours().toString().padStart(2, '0')
+            const minutos = atual.getMinutes().toString().padStart(2, '0')
+            blocos.push(`${horas}:${minutos}`)
+            atual.setHours(atual.getHours() + 1)
+        }
+        return blocos
+    })
+    return blocosPorDia
+}
