@@ -7,6 +7,8 @@ import DialogContent from '@mui/material/DialogContent';
 import { DateInput } from "../../components/DatePicker";
 import { getDay } from "date-fns";
 import { setDaysAllowed, getAvailableHours } from "../../shared/utils";
+import { getAppointment, addAppointment, updateAppointment } from "../../store/collections/appointmentWorker";
+import { data } from "react-router-dom";
 
 class Home extends React.Component {
     constructor(props) {
@@ -19,6 +21,7 @@ class Home extends React.Component {
             isLoading: true,
             appointmentModalOpen: false,
             selectedDate: new Date(),
+            availableHours: [],
             dayOfWeek: getDay(new Date()),
             daysAllowed: [],
             isDayAllowed: false,
@@ -31,7 +34,7 @@ class Home extends React.Component {
             const horarios = this.state.sessao.horarios
             const daysAllowed = setDaysAllowed(horarios)
             const isDayAllowed = daysAllowed.includes(this.state.dayOfWeek)
-            const availableHours = getAvailableHours(horarios)
+            const availableHours = getAvailableHours(this.state.selectedDate, horarios)
     
             this.setState({ 
                 establishment: sessao.estabelecimento, 
@@ -67,7 +70,28 @@ class Home extends React.Component {
             selectedDate: date,
             dayOfWeek: date.getDay(),
             isDayAllowed: this.state.daysAllowed.includes(date.getDay()),
+            availableHours: getAvailableHours(this.state.selectedDate, this.state.horarios)
         })
+    }
+
+    async handleAppointment (bloco) {
+        const [hora, minuto] = bloco.split(':').map(Number);
+        const dia = new Date(this.state.selectedDate);
+        dia.setHours(hora, minuto, 0, 0)
+
+        const data = {
+            horario: bloco,
+            usuario: this.state.user,
+            data: dia,
+        }
+        try {
+
+                await addAppointment(data)
+
+            alert("Agendamento salvo com sucesso!")
+        } catch (error) {
+            console.error("Erro ao cadastrar agendamento:", error.message)
+        }
     }
 
     render() {
@@ -103,20 +127,17 @@ class Home extends React.Component {
                                                 <>
                                                     <div key={index}>
                                                         <h3>{hour.dia}</h3>
-                                                        <p>das {hour.horarioInicio} as {hour.horarioFim}</p>
+                                                        <p>Atendimento das {hour.horarioInicio} as {hour.horarioFim}</p>
                                                     </div>
-                                                    <div>
+                                                    <div className="row">
                                                         {
-                                                            console.log(this.state.availableHours)
-                                                        }
-                                                        {
-                                                            this.state.availableHours.map((bloco, index) => {
-                                                                return (
-                                                                    <div key={index}>
-                                                                        <p>{bloco}</p>
-                                                                    </div>
-                                                                )
-                                                            })
+                                                            this.state.availableHours.map((bloco, index) => (
+                                                            <div key={index} className="col-6 col-md-4 mb-3 d-flex justify-content-center">
+                                                                <button className="btn btn-primary w-100" onClick={() => this.handleAppointment(bloco)}>
+                                                                    {bloco}
+                                                                </button>
+                                                            </div>
+                                                            ))
                                                         }
                                                     </div>
                                                 </>

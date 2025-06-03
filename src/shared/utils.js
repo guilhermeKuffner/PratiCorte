@@ -168,35 +168,31 @@ export const setDaysAllowed = (data) => {
     return daysAllowed
 }
 
-export const getAvailableHours = (data) => {
+export const getAvailableHours = (selectedDate, data) => {
     const dataBase = '2024-01-01'
-    const blocosPorDia = data.horarios.map(horario => {
-        const { status, horarioInicio: inicio, horarioFim: fim } = horario
-        if (status !== "active") {
-            return ["inactive"]
-        }
-        const blocos = []
-
-        const inicioDate = new Date(`${dataBase}T${inicio}:00`)
-            if (inicioDate.getMinutes() > 0) {
-                inicioDate.setHours(inicioDate.getHours() + 1)
-                inicioDate.setMinutes(0)
-            }
-
-            const fimDate = new Date(`${dataBase}T${fim}:00`)
-            fimDate.setMinutes(0)
-            let atual = new Date(inicioDate)
-            while (atual <= fimDate) {
-                const horas = atual.getHours().toString().padStart(2, '0')
-                const minutos = atual.getMinutes().toString().padStart(2, '0')
-                blocos.push(`${horas}:${minutos}`)
-                atual.setHours(atual.getHours() + 1)
-            }
-            return blocos
-        }
-    )
-    return blocosPorDia
-}
+    const diaDaSemana = selectedDate.getDay()
+    const horarioDoDia = data.horarios[diaDaSemana]
+    if (!horarioDoDia || horarioDoDia.status !== "active") {
+      return ["inactive"]
+    }
+    const { horarioInicio: inicio, horarioFim: fim } = horarioDoDia
+    const blocos = []
+    const inicioDate = new Date(`${dataBase}T${inicio}:00`)
+    if (inicioDate.getMinutes() > 0) {
+      inicioDate.setHours(inicioDate.getHours() + 1)
+      inicioDate.setMinutes(0)
+    }
+    const fimDate = new Date(`${dataBase}T${fim}:00`)
+    fimDate.setMinutes(0)
+    let atual = new Date(inicioDate)
+    while (atual <= fimDate) {
+      const horas = atual.getHours().toString().padStart(2, '0')
+      const minutos = atual.getMinutes().toString().padStart(2, '0')
+      blocos.push(`${horas}:${minutos}`)
+      atual.setHours(atual.getHours() + 1)
+    }
+    return blocos
+  }
 
 export const isValidMinutes = (hour) => {
     const [hh, mm] = hour.split(":").map(Number)
