@@ -39,7 +39,8 @@ class Home extends React.Component {
                 user: sessao.usuario,
                 daysAllowed: daysAllowed,
                 isDayAllowed: isDayAllowed,
-                isLoading: false 
+                isLoading: false,
+                availableHours: availableHours
             })
         } catch (error) {
             handleLogout()
@@ -105,7 +106,18 @@ class Home extends React.Component {
                                                         <p>das {hour.horarioInicio} as {hour.horarioFim}</p>
                                                     </div>
                                                     <div>
-                                                        teste
+                                                        {
+                                                            console.log(this.state.availableHours)
+                                                        }
+                                                        {
+                                                            this.state.availableHours.map((bloco, index) => {
+                                                                return (
+                                                                    <div key={index}>
+                                                                        <p>{bloco}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
                                                     </div>
                                                 </>
                                             )

@@ -169,28 +169,32 @@ export const setDaysAllowed = (data) => {
 }
 
 export const getAvailableHours = (data) => {
-    const horarios = data.horarios.filter(h => h.status === "active").map(h => [h.horarioInicio, h.horarioFim])
     const dataBase = '2024-01-01'
-    const blocosPorDia = horarios.map(([inicio, fim]) => {
-    const blocos = []
-
-    const inicioDate = new Date(`${dataBase}T${inicio}:00`)
-        if (inicioDate.getMinutes() > 0) {
-            inicioDate.setHours(inicioDate.getHours() + 1)
-            inicioDate.setMinutes(0)
+    const blocosPorDia = data.horarios.map(horario => {
+        const { status, horarioInicio: inicio, horarioFim: fim } = horario
+        if (status !== "active") {
+            return ["inactive"]
         }
+        const blocos = []
 
-        const fimDate = new Date(`${dataBase}T${fim}:00`)
-        fimDate.setMinutes(0)
-        let atual = new Date(inicioDate)
-        while (atual <= fimDate) {
-            const horas = atual.getHours().toString().padStart(2, '0')
-            const minutos = atual.getMinutes().toString().padStart(2, '0')
-            blocos.push(`${horas}:${minutos}`)
-            atual.setHours(atual.getHours() + 1)
+        const inicioDate = new Date(`${dataBase}T${inicio}:00`)
+            if (inicioDate.getMinutes() > 0) {
+                inicioDate.setHours(inicioDate.getHours() + 1)
+                inicioDate.setMinutes(0)
+            }
+
+            const fimDate = new Date(`${dataBase}T${fim}:00`)
+            fimDate.setMinutes(0)
+            let atual = new Date(inicioDate)
+            while (atual <= fimDate) {
+                const horas = atual.getHours().toString().padStart(2, '0')
+                const minutos = atual.getMinutes().toString().padStart(2, '0')
+                blocos.push(`${horas}:${minutos}`)
+                atual.setHours(atual.getHours() + 1)
+            }
+            return blocos
         }
-        return blocos
-    })
+    )
     return blocosPorDia
 }
 
