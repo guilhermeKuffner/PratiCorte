@@ -9,6 +9,7 @@ import { getDay } from "date-fns";
 import { setDaysAllowed, getAvailableHours } from "../../shared/utils";
 import { getAppointment, addAppointment, updateAppointment } from "../../store/collections/appointmentWorker";
 import { data } from "react-router-dom";
+import { Appointment } from "./appointment";
 
 class Home extends React.Component {
     constructor(props) {
@@ -104,55 +105,9 @@ class Home extends React.Component {
             <>
                 <NavBar />
                 <div className="container d-flex flex-column justify-content-center align-items-center">
-                    <div className="card p-4 shadow-lg bg-white rounded">
-                        <button className="btn btn-success" onClick={() => this.showAppointmentModal()}>Agendar</button>
-                    </div>
+                    <Appointment />
                 </div>
-                <Dialog onClose={this.hideAppointmentModal} fullWidth maxWidth={"xs"} open={this.state.appointmentModalOpen}>
-                    {
-                        this.state.appointmentModalOpen &&
-                        <DialogContent>
-                            <h2>Agendar serviço</h2>
-                            <DateInput
-                                days={this.state.daysAllowed}
-                                value={this.state.selectedDate}
-                                onChange={this.handleDateChange}
-                            />
-                            <div>
-                                {
-                                    this.state.dayOfWeek && this.state.isDayAllowed ?
-                                    this.state.horarios.horarios.map((hour, index) => {
-                                        if (hour.day === this.state.dayOfWeek) {
-                                            return (
-                                                <>
-                                                    <div key={index}>
-                                                        <h3>{hour.dia}</h3>
-                                                        <p>Atendimento das {hour.horarioInicio} as {hour.horarioFim}</p>
-                                                    </div>
-                                                    <div className="row">
-                                                        {
-                                                            this.state.availableHours.map((bloco, index) => (
-                                                            <div key={index} className="col-6 col-md-4 mb-3 d-flex justify-content-center">
-                                                                <button className="btn btn-primary w-100" onClick={() => this.handleAppointment(bloco)}>
-                                                                    {bloco}
-                                                                </button>
-                                                            </div>
-                                                            ))
-                                                        }
-                                                    </div>
-                                                </>
-                                            )
-                                        } 
-                                    }) : 
-                                    <div> 
-                                        <h3>{this.state.horarios.horarios[this.state.dayOfWeek].dia}</h3>
-                                        <p>Não realizamos atendimento nesse dia da semana, por favor selecione outra data.</p>
-                                    </div>
-                                }
-                            </div>
-                        </DialogContent>
-                    }
-                </Dialog>
+                
             </>
         );
     }

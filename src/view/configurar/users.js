@@ -11,7 +11,7 @@ class Users extends React.Component {
         super(props);
         this.state = {
             establishment: getEstabelecimento(),
-            newUserStatus: "Ativo",
+            newUserStatus: "active",
             newUserAgendavel: true,
             newUserNome: "",
             newUserCelular: "",
@@ -62,7 +62,7 @@ class Users extends React.Component {
     }
 
     cleanFields = () => {
-        this.setState({ newUserStatus: "Ativo", newUserNome: "", newUserCelular: "", newUserEmail: "", newUserSenha: "" })
+        this.setState({ newUserStatus: "active", newUserNome: "", newUserCelular: "", newUserEmail: "", newUserSenha: "" })
     }
 
     verifyFields = (data, checkEmailAndPassword = true) => {
@@ -149,6 +149,11 @@ class Users extends React.Component {
                                     <option value="active">Ativo</option>
                                     <option value="inactive">Inativo</option>
                                 </select>
+                                <label>Permitir agendamentos</label>
+                                <select name="agendavel" id="agendavel" className="form-control" onChange={(e) => this.setState({ newUserAgendavel: e.target.value })}>
+                                    <option value="true">SIM</option>
+                                    <option value="false">NÃO</option>
+                                </select>
                                 <label>Nome</label>
                                 <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
                                     value={this.state.newUserNome} onChange={(e) => this.setState({ newUserNome: e.target.value, newUserNomeAlert: "" })} />
@@ -162,7 +167,6 @@ class Users extends React.Component {
                                 <input type="password" name="senha" id="senha" placeholder="Senha" className={`form-control ${this.state.newUserSenhaAlert}`}
                                     value={this.state.newUserSenha} onChange={(e) => this.setState({ newUserSenha: e.target.value, newUserSenhaAlert: "" })} />
                                 <button className="btn btn-primary mt-3" onClick={this.handleNewUser}>Cadastrar</button>
-
                             </div>
                         </div>
                         <div className="col-12 col-md-8 mb-4">
@@ -173,6 +177,7 @@ class Users extends React.Component {
                                     <table className="table table-striped">
                                         <thead>
                                             <tr>
+                                                <th scope="col" className="text-start col-md-3">Status</th>
                                                 <th scope="col" className="text-start col-md-3">Nome</th>
                                                 <th scope="col" className="text-start col-md-4">email</th>
                                                 <th scope="col" className="text-start col-md-2">celular</th>
@@ -180,9 +185,23 @@ class Users extends React.Component {
                                         </thead>
                                         <tbody>
                                             {
+                                                console.log(this.state.users)
+                                            }
+                                            {
                                                 this.state.users.map((user, index) => {
                                                     return (
                                                         <tr key={index}>
+                                                            <td className="text-start">
+                                                                {
+                                                                    user.status === "active" ?
+                                                                    <span className="badge bg-success me-2">Ativo</span> :
+                                                                    <span className="badge bg-danger">Inativo</span>
+                                                                }
+                                                                {
+                                                                    user.agendavel === true && user.status === "active" &&
+                                                                    <span className="badge bg-success">(Agendavel)</span>
+                                                                }
+                                                            </td>
                                                             <td className="text-start">{user.nome}</td>
                                                             <td className="text-start">{user.email}</td>
                                                             <td className="text-start">{user.celular}</td>

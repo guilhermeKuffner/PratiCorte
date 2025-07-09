@@ -23,6 +23,17 @@ export const getUsers = async (id) => {
     })
 }
 
+export const getActiveUsersAppointmentAllowed = async (id) => {
+    return await getAllDocs({
+        collection: "usuarios",
+        queries: [
+            where("estabelecimentoId", "==", id),
+            where("status", "==", "active"),
+            where("agendavel", "==", true)
+        ]
+    })
+}
+
 export const updateUser = async (data) => {
     return await updateDoc({ collection: "usuarios", data: data })
 }
