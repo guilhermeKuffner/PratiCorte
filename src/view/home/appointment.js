@@ -7,12 +7,7 @@ class Appointment extends react.Component {
         super(props);
         this.state = {
             establishment: getEstabelecimento(),
-            users: [
-                // Example user data
-                { nome: "John Doe", status: "active", agendavel: true },
-                { nome: "Jane Smith", status: "inactive", agendavel: false },
-                { nome: "Alice Johnson", status: "active", agendavel: true },
-            ],
+            users: [],
             appointments: [],
         }
     }

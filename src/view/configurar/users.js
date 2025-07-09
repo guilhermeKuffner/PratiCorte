@@ -2,6 +2,7 @@ import React from "react";
 import { NavBar } from "../../components/navbar"
 import { isEmpty } from "../../shared/utils";
 import { addUser, getUsers, updateUser, deleteUser } from "../../store/collections/userWorker";
+import { getServices } from "../../store/collections/servicesWorker";
 import { getEstabelecimento } from "../../config/auth";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -34,10 +35,11 @@ class Users extends React.Component {
     }
 
     load = async () => {
-        console.log(this.state.users)
         const users = await getUsers(this.state.establishment.id)
-        console.log(users)
         this.setState({ users: users })
+        const services = await getServices(this.state.establishment.id)
+        this.setState({ services: services })
+        console.log(services)
     }
 
     handleNewUser = async () => {
@@ -144,28 +146,38 @@ class Users extends React.Component {
                         <div className="col-12 col-md-4 mb-4">
                             <div className="card p-3 shadow-lg bg-white rounded">
                                 <h2>Cadastrar usuário</h2>
-                                <label>Status</label>
-                                <select name="status" id="status" className="form-control" onChange={(e) => this.setState({ newUserStatus: e.target.value })}>
-                                    <option value="active">Ativo</option>
-                                    <option value="inactive">Inativo</option>
-                                </select>
-                                <label>Permitir agendamentos</label>
-                                <select name="agendavel" id="agendavel" className="form-control" onChange={(e) => this.setState({ newUserAgendavel: e.target.value })}>
-                                    <option value="true">SIM</option>
-                                    <option value="false">NÃO</option>
-                                </select>
-                                <label>Nome</label>
-                                <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
-                                    value={this.state.newUserNome} onChange={(e) => this.setState({ newUserNome: e.target.value, newUserNomeAlert: "" })} />
-                                <label>Celular</label>
-                                <input type="text" name="celular" id="celular" placeholder="Celular" className={`form-control ${this.state.newUserCelularAlert}`}
-                                    value={this.state.newUserCelular} onChange={(e) => this.setState({ newUserCelular: e.target.value, newUserCelularAlert: "" })} />
-                                <label>Email</label>
-                                <input type="text" name="email" id="email" placeholder="Email" className={`form-control ${this.state.newUserEmailAlert}`}
-                                    value={this.state.newUserEmail} onChange={(e) => this.setState({ newUserEmail: e.target.value, newUserEmailAlert: "" })} />
-                                <label>Senha</label>
-                                <input type="password" name="senha" id="senha" placeholder="Senha" className={`form-control ${this.state.newUserSenhaAlert}`}
-                                    value={this.state.newUserSenha} onChange={(e) => this.setState({ newUserSenha: e.target.value, newUserSenhaAlert: "" })} />
+                                    <div>
+                                        <label>Status</label>
+                                        <select name="status" id="status" className="form-control" onChange={(e) => this.setState({ newUserStatus: e.target.value })}>
+                                            <option value="active">Ativo</option>
+                                            <option value="inactive">Inativo</option>
+                                        </select>
+                                        <label>Permitir agendamentos</label>
+                                        <select name="agendavel" id="agendavel" className="form-control" onChange={(e) => this.setState({ newUserAgendavel: e.target.value })}>
+                                            <option value="true">SIM</option>
+                                            <option value="false">NÃO</option>
+                                        </select>
+                                        <label>Nome</label>
+                                        <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
+                                            value={this.state.newUserNome} onChange={(e) => this.setState({ newUserNome: e.target.value, newUserNomeAlert: "" })} />
+                                        <label>Celular</label>
+                                        <input type="text" name="celular" id="celular" placeholder="Celular" className={`form-control ${this.state.newUserCelularAlert}`}
+                                            value={this.state.newUserCelular} onChange={(e) => this.setState({ newUserCelular: e.target.value, newUserCelularAlert: "" })} />
+                                        <label>Email</label>
+                                        <input type="text" name="email" id="email" placeholder="Email" className={`form-control ${this.state.newUserEmailAlert}`}
+                                            value={this.state.newUserEmail} onChange={(e) => this.setState({ newUserEmail: e.target.value, newUserEmailAlert: "" })} />
+                                        <label>Senha</label>
+                                        <input type="password" name="senha" id="senha" placeholder="Senha" className={`form-control ${this.state.newUserSenhaAlert}`}
+                                            value={this.state.newUserSenha} onChange={(e) => this.setState({ newUserSenha: e.target.value, newUserSenhaAlert: "" })} />
+                                    </div>
+                                    {
+                                        this.state.newUserAgendavel === true &&
+                                        <div>
+                                            {
+                                                //carregar serviços e colocar flag em quais quero habilitar para esse usuario
+                                            }
+                                        </div>
+                                    }
                                 <button className="btn btn-primary mt-3" onClick={this.handleNewUser}>Cadastrar</button>
                             </div>
                         </div>
@@ -184,9 +196,6 @@ class Users extends React.Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {
-                                                console.log(this.state.users)
-                                            }
                                             {
                                                 this.state.users.map((user, index) => {
                                                     return (
