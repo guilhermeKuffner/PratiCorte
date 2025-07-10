@@ -29,7 +29,7 @@ export const getActiveUsersAppointmentAllowed = async (id) => {
         queries: [
             where("estabelecimentoId", "==", id),
             where("status", "==", "active"),
-            where("agendavel", "==", true)
+            where("isProvider", "==", "true")
         ]
     })
 }

@@ -13,7 +13,7 @@ class Users extends React.Component {
         this.state = {
             establishment: getEstabelecimento(),
             newUserStatus: "active",
-            newUserAgendavel: true,
+            newUserIsProvider: true,
             newUserNome: "",
             newUserCelular: "",
             newUserEmail: "",
@@ -45,7 +45,7 @@ class Users extends React.Component {
     handleNewUser = async () => {
         const data = {
             status: this.state.newUserStatus,
-            agendavel: this.state.newUserAgendavel,
+            isProvider: this.state.newUserIsProvider,
             nome: this.state.newUserNome,
             celular: this.state.newUserCelular,
             email: this.state.newUserEmail,
@@ -112,7 +112,7 @@ class Users extends React.Component {
     handleEditUser = async () => {
         const data = {
             id: this.state.editingUser.id,
-            agendavel: this.state.editingUser.agendavel,
+            isProvider: this.state.editingUser.isProvider ?? "false",
             status: this.state.editingUser.status,
             nome: this.state.editingUser.nome,
             celular: this.state.editingUser.celular,
@@ -153,9 +153,9 @@ class Users extends React.Component {
                                             <option value="inactive">Inativo</option>
                                         </select>
                                         <label>Permitir agendamentos</label>
-                                        <select name="agendavel" id="agendavel" className="form-control" onChange={(e) => this.setState({ newUserAgendavel: e.target.value })}>
-                                            <option value="true">SIM</option>
-                                            <option value="false">NÃO</option>
+                                        <select name="isProvider" id="isProvider" className="form-control" onChange={(e) => this.setState({ newUserIsProvider: e.target.value })}>
+                                            <option value="true">Sim</option>
+                                            <option value="false">Não</option>
                                         </select>
                                         <label>Nome</label>
                                         <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
@@ -171,7 +171,7 @@ class Users extends React.Component {
                                             value={this.state.newUserSenha} onChange={(e) => this.setState({ newUserSenha: e.target.value, newUserSenhaAlert: "" })} />
                                     </div>
                                     {
-                                        this.state.newUserAgendavel === true &&
+                                        this.state.newUserIsProvider === true &&
                                         <div>
                                             {
                                                 //carregar serviços e colocar flag em quais quero habilitar para esse usuario
@@ -197,6 +197,9 @@ class Users extends React.Component {
                                         </thead>
                                         <tbody>
                                             {
+                                                console.log(this.state.users)
+                                            }
+                                            {
                                                 this.state.users.map((user, index) => {
                                                     return (
                                                         <tr key={index}>
@@ -207,8 +210,8 @@ class Users extends React.Component {
                                                                     <span className="badge bg-danger">Inativo</span>
                                                                 }
                                                                 {
-                                                                    user.agendavel === true && user.status === "active" &&
-                                                                    <span className="badge bg-success">(Agendavel)</span>
+                                                                    user.isProvider === "true" && user.status === "active" &&
+                                                                    <span className="badge bg-success">Agendavel</span>
                                                                 }
                                                             </td>
                                                             <td className="text-start">{user.nome}</td>
@@ -247,11 +250,11 @@ class Users extends React.Component {
                                     <option value="active">Ativo</option>
                                     <option value="inactive">Inativo</option>
                                 </select>
-                                <label>Tipo</label>
-                                <select name="agendavel" id="agendavel" className="form-control" value={this.state.editingUser.agendavel}
-                                    onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, agendavel: e.target.value }})}>
-                                    <option value={true}>Barbeiro</option>
-                                    <option value={false}>Administrativo</option>
+                                <label>Permitir agendamentos</label>
+                                <select name="isProvider" id="isProvider" className="form-control" value={this.state.editingUser.isProvider ?? "false"}
+                                    onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, isProvider: e.target.value }})}>
+                                    <option value={"true"}>Sim</option>
+                                    <option value={"false"}>Não</option>
                                 </select>
                                 <label>Nome</label>
                                 <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}

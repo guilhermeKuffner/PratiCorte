@@ -23,6 +23,7 @@ class Appointment extends react.Component {
     load = async () => {
         console.log(this.state)
         const providers = await getActiveUsersAppointmentAllowed(this.state.establishment.id)
+        console.log(providers)
         this.setState({ 
             providers: providers,
             appointmentTitle: 'Realize um agendamento'
