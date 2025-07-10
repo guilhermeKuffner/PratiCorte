@@ -119,7 +119,7 @@ class Users extends React.Component {
             status: this.state.editingUser.status,
             nome: this.state.editingUser.nome,
             celular: this.state.editingUser.celular,
-            servicos: this.state.editingUser.servicos ?? [],
+            services: this.state.editingUser.services ?? [],
         }
         if (this.verifyFields(data, false)) {
             try {
@@ -150,6 +150,23 @@ class Users extends React.Component {
             services.push(item)
         }
         this.setState({ newUserServices: services })
+    }
+
+    handleServiceSelectedOnEdit = (item) => {
+        var editingUser = { ...this.state.editingUser }
+        var services = editingUser.services || []
+        const isServiceSelected = services.some(service => service.id === item.id)
+        if (isServiceSelected) {
+            services.splice(services.findIndex(service => service.id === item.id), 1)
+        } else {
+            services.push(item)
+        }
+        editingUser.services = services
+        this.setState({ editingUser })
+    }
+
+    verifyServiceOnEdit = (item) => {
+        return this.state.editingUser?.services.some(e => e.id === item.id)
     }
 
 
@@ -221,9 +238,6 @@ class Users extends React.Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {
-                                                console.log(this.state.users)
-                                            }
                                             {
                                                 this.state.users.map((user, index) => {
                                                     return (
@@ -301,7 +315,7 @@ class Users extends React.Component {
                                                         <div className="d-flex d-flex justify-content-between mb-2">
                                                             <div className="me-1 text-nowrap">{service.nome} - <PriceFormat value={service.preco} /></div>
                                                             <div className="form-check form-switch">
-                                                                <input className="form-check-input" type="checkbox" id="servicos" onChange={() => this.handleServiceSelected(service)}/>
+                                                                <input className="form-check-input" type="checkbox" id="servicos" checked={this.verifyServiceOnEdit(service)} onChange={() => this.handleServiceSelectedOnEdit(service)}/>
                                                             </div>
                                                         </div>
                                                     )
