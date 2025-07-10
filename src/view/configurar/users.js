@@ -1,6 +1,6 @@
 import React from "react";
 import { NavBar } from "../../components/navbar"
-import { isEmpty } from "../../shared/utils";
+import { isEmpty, PriceFormat } from "../../shared/utils";
 import { addUser, getUsers, updateUser, deleteUser } from "../../store/collections/userWorker";
 import { getServices } from "../../store/collections/servicesWorker";
 import { getEstabelecimento } from "../../config/auth";
@@ -19,6 +19,7 @@ class Users extends React.Component {
             newUserEmail: "",
             newUserSenha: "",
             users : [],
+            newUserServices: [],
 
             newUserNomeAlert: "",
             newUserCelularAlert: "",
@@ -27,6 +28,7 @@ class Users extends React.Component {
 
             editingUserModalOpen: false,
             editingUser: null,
+            editingUserServices: [],
         }
     }
 
@@ -50,6 +52,7 @@ class Users extends React.Component {
             celular: this.state.newUserCelular,
             email: this.state.newUserEmail,
             senha: this.state.newUserSenha,
+            services: this.state.newUserServices || [],
         }
         if (this.verifyFields(data)) {
             try {
@@ -64,7 +67,7 @@ class Users extends React.Component {
     }
 
     cleanFields = () => {
-        this.setState({ newUserStatus: "active", newUserNome: "", newUserCelular: "", newUserEmail: "", newUserSenha: "" })
+        this.setState({ newUserStatus: "active", newUserNome: "", newUserCelular: "", newUserEmail: "", newUserSenha: "", newUserServices: [] })
     }
 
     verifyFields = (data, checkEmailAndPassword = true) => {
@@ -116,6 +119,7 @@ class Users extends React.Component {
             status: this.state.editingUser.status,
             nome: this.state.editingUser.nome,
             celular: this.state.editingUser.celular,
+            servicos: this.state.editingUser.servicos ?? [],
         }
         if (this.verifyFields(data, false)) {
             try {
@@ -136,6 +140,18 @@ class Users extends React.Component {
             this.load()
         }
     }
+
+    handleServiceSelected = (item) => {
+        var services = this.state.newUserServices || []
+        const isServiceSelected = services.some(service => service.id === item.id)
+        if (isServiceSelected) {
+            services.splice(services.findIndex(service => service.id === item.id), 1)
+        } else {
+            services.push(item)
+        }
+        this.setState({ newUserServices: services })
+    }
+
 
     render() {
         return (
@@ -171,10 +187,19 @@ class Users extends React.Component {
                                             value={this.state.newUserSenha} onChange={(e) => this.setState({ newUserSenha: e.target.value, newUserSenhaAlert: "" })} />
                                     </div>
                                     {
-                                        this.state.newUserIsProvider === true &&
-                                        <div>
+                                        this.state.newUserIsProvider === true && this.state.services?.length > 0 &&
+                                        <div className="mt-3">
                                             {
-                                                //carregar serviços e colocar flag em quais quero habilitar para esse usuario
+                                                this.state.services.map((service, index) => {
+                                                    return (
+                                                        <div className="d-flex d-flex justify-content-between mb-2">
+                                                            <div className="me-1 text-nowrap">{service.nome} - <PriceFormat value={service.preco} /></div>
+                                                            <div className="form-check form-switch">
+                                                                <input className="form-check-input" type="checkbox" id="servicos" onChange={() => this.handleServiceSelected(service)}/>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
                                             }
                                         </div>
                                     }
@@ -244,26 +269,47 @@ class Users extends React.Component {
                         <DialogContent>
                             <div className="card p-4 shadow-lg bg-white rounded">
                                 <h2>Editar usuário</h2>
-                                <label>Status</label>
-                                <select name="status" id="status" className="form-control" value={this.state.editingUser.status}
-                                    onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, status: e.target.value }})}>
-                                    <option value="active">Ativo</option>
-                                    <option value="inactive">Inativo</option>
-                                </select>
-                                <label>Permitir agendamentos</label>
-                                <select name="isProvider" id="isProvider" className="form-control" value={this.state.editingUser.isProvider ?? "false"}
-                                    onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, isProvider: e.target.value }})}>
-                                    <option value={"true"}>Sim</option>
-                                    <option value={"false"}>Não</option>
-                                </select>
-                                <label>Nome</label>
-                                <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
-                                    value={this.state.editingUser.nome} onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, nome: e.target.value } })} />
-                                <label>Celular</label>
-                                <input type="text" name="celular" id="celular" placeholder="Celular" className={`form-control ${this.state.newUserCelularAlert}`}
-                                    value={this.state.editingUser.celular} onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, celular: e.target.value } })} />
-                                <label>Email</label>
-                                <input type="text" name="email" id="email" placeholder="Email" className={`form-control`} value={this.state.editingUser.email} disabled/>
+                                <div>
+                                    <label>Status</label>
+                                    <select name="status" id="status" className="form-control" value={this.state.editingUser.status}
+                                        onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, status: e.target.value }})}>
+                                        <option value="active">Ativo</option>
+                                        <option value="inactive">Inativo</option>
+                                    </select>
+                                    <label>Permitir agendamentos</label>
+                                    <select name="isProvider" id="isProvider" className="form-control" value={this.state.editingUser.isProvider ?? "false"}
+                                        onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, isProvider: e.target.value }})}>
+                                        <option value={"true"}>Sim</option>
+                                        <option value={"false"}>Não</option>
+                                    </select>
+                                    <label>Nome</label>
+                                    <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
+                                        value={this.state.editingUser.nome} onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, nome: e.target.value } })} />
+                                    <label>Celular</label>
+                                    <input type="text" name="celular" id="celular" placeholder="Celular" className={`form-control ${this.state.newUserCelularAlert}`}
+                                        value={this.state.editingUser.celular} onChange={(e) => this.setState({ editingUser: { ...this.state.editingUser, celular: e.target.value } })} />
+                                    <label>Email</label>
+                                    <input type="text" name="email" id="email" placeholder="Email" className={`form-control`} value={this.state.editingUser.email} disabled/>
+                                </div>
+                                <div>
+                                    {
+                                        this.state.newUserIsProvider === true && this.state.services?.length > 0 &&
+                                        <div className="mt-3">
+                                            {
+                                                this.state.services.map((service, index) => {
+                                                    return (
+                                                        <div className="d-flex d-flex justify-content-between mb-2">
+                                                            <div className="me-1 text-nowrap">{service.nome} - <PriceFormat value={service.preco} /></div>
+                                                            <div className="form-check form-switch">
+                                                                <input className="form-check-input" type="checkbox" id="servicos" onChange={() => this.handleServiceSelected(service)}/>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    }
+                                </div>
                                 <button className="btn btn-primary mt-3" onClick={this.handleEditUser}>Editar</button>
                             </div>
                         </DialogContent>
