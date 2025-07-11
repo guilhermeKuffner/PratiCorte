@@ -166,7 +166,7 @@ class Users extends React.Component {
     }
 
     verifyServiceOnEdit = (item) => {
-        return this.state.editingUser?.services.some(e => e.id === item.id)
+        return this.state.editingUser?.services?.some(e => e.id === item.id)
     }
 
 
