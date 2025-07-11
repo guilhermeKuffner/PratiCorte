@@ -1,6 +1,7 @@
 import React from "react";
 import { PatternFormat } from "react-number-format";
 import { parse } from "uuid";
+import { getDay } from "date-fns";
 
 export const PhoneNumberInput = ({ value, onChange }) => {
     return (
@@ -205,4 +206,31 @@ export const isValidMinutes = (hour) => {
         return false
     }
     return true
+}
+
+export const getNext7Days = () => {
+    const today = new Date()
+    const next7Days = []
+    for (var i = 0; i < 7; i++) {
+        const nextDay = new Date(today)
+        nextDay.setDate(today.getDate() + i)
+        next7Days.push({
+            date: nextDay, 
+            dayOfWeek: nextDay.getDay()
+        })
+    }
+    return next7Days
+}
+
+export const completeAvailableHours = (horarios) => {
+    const next7Days = getNext7Days()
+    const completed = next7Days.map((day) => {
+        const horarioDoDia = horarios.horarios[getDay(day.date)]
+        if (!horarioDoDia || horarioDoDia.status !== "active") {
+            return { ...day, isDayAllowed: false, availableHours: [] }
+        }
+        const availableHours = getAvailableHours(day.date, horarios)
+        return { ...day, isDayAllowed: true, availableHours: availableHours }
+    })
+    return completed
 }

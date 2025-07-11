@@ -1,12 +1,14 @@
 import react from 'react';
-import { getEstabelecimento } from '../../config/auth';
-import { isEmpty, PhoneNumberFormat } from '../../shared/utils';
+import { getEstabelecimento, getSessao } from '../../config/auth';
+import { isEmpty, PhoneNumberFormat, completeAvailableHours, setDaysAllowed, getNext7Days } from '../../shared/utils';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
+import { getDay } from "date-fns";
 
 class Appointment extends react.Component {
     constructor(props) {
         super(props);
         this.state = {
+            sessao: getSessao(),
             appointmentTitle: '',
             appointmentsStep: 1,
             selectedProvider: null,
@@ -21,12 +23,13 @@ class Appointment extends react.Component {
     }
 
     load = async () => {
-        console.log(this.state)
         const providers = await getActiveUsersAppointmentAllowed(this.state.establishment.id)
-        console.log(providers)
+        const horarios = this.state.sessao.horarios
+        const completedAvailableHours = completeAvailableHours(horarios)
         this.setState({ 
             providers: providers,
-            appointmentTitle: 'Realize um agendamento'
+            appointmentTitle: 'Realize um agendamento',
+            horarios: completedAvailableHours,
         })
     }
 
@@ -51,13 +54,13 @@ class Appointment extends react.Component {
 
     handleStepTitle = () => {
         if (this.state.appointmentsStep === 1) {
-            this.setState({ appointmentTitle: 'Selecione o horário' });
+            this.setState({ appointmentTitle: 'Selecione uma data' })
         }
         if (this.state.appointmentsStep === 2) {
-            this.setState({ appointmentTitle: 'Confirme o agendamento' });
+            this.setState({ appointmentTitle: 'Selecione um horário' })
         }
         if (this.state.appointmentsStep === 3) {
-            this.setState({ appointmentTitle: 'Realize um agendamento', selectedProvider: null });
+            this.setState({ appointmentTitle: 'Selecione um serviço' })
         }
     }
 
@@ -84,7 +87,7 @@ class Appointment extends react.Component {
                         }
                         {
                             this.state.appointmentsStep === 2 && 
-                                <>
+                                <>{console.log(this.state.horarios)}
                                     <button className="btn btn-outline-primary" onClick={this.handleNextStep}>
                                         <h6>ir para etapa 3</h6>
                                     </button>
