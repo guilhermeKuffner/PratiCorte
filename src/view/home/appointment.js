@@ -11,10 +11,12 @@ class Appointment extends react.Component {
             sessao: getSessao(),
             appointmentTitle: '',
             appointmentsStep: 1,
-            selectedProvider: null,
             establishment: getEstabelecimento(),
             providers: [],
             appointments: [],
+            selectedProvider: null,
+            selectedDay: null,
+            selectedHour: null,
         }
     }
 
@@ -41,6 +43,11 @@ class Appointment extends react.Component {
 
     handleSelectedDay = (day) => {
         this.setState({ selectedDay: day })
+        this.handleNextStep()
+    }
+
+    handleSelectedHour = (hour) => {
+        this.setState({ selectedHour: hour })
         this.handleNextStep()
     }
 
@@ -115,14 +122,20 @@ class Appointment extends react.Component {
                         {
                             this.state.appointmentsStep === 3 && 
                                 <>
-                                    <button className="btn btn-outline-primary" onClick={this.handleNextStep}>
-                                        <h6>ir para etapa 4</h6>
-                                    </button>
+                                    {
+                                        this.state.selectedDay.availableHours.map((hour, index) => {
+                                            return (
+                                                <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour)}>
+                                                    <h6 className="mb-1">{hour}</h6>
+                                                </button>
+                                            )
+                                        })
+                                    }
                                 </>
                         }
                         {
                             this.state.appointmentsStep === 4 && 
-                                <>
+                                <>{console.log(this.state.selectedHour)}
                                     <button className="btn btn-outline-primary" onClick={this.finishAppointment}>
                                         <h6>finalizar agendamento</h6>
                                     </button>
