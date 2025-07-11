@@ -3,6 +3,7 @@ import { getEstabelecimento, getSessao } from '../../config/auth';
 import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, PriceFormat } from '../../shared/utils';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { getDay } from "date-fns";
+import { addAppointment, getAppointmentByProviderAndDate } from '../../store/collections/appointmentWorker';
 
 class Appointment extends react.Component {
     constructor(props) {
@@ -41,8 +42,11 @@ class Appointment extends react.Component {
         this.handleNextStep()
     }
 
-    handleSelectedDay = (day) => {
+    handleSelectedDay = async (day) => {
         this.setState({ selectedDay: day })
+        var appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(this.state.selectedProvider.id, day.date)
+        console.log(appointmentsByProviderAndDate)
+        //agora que pegamos todos os agendamentos dos dias, vamos bloquear os horários que já estão ocupados
         this.handleNextStep()
     }
 
@@ -89,11 +93,40 @@ class Appointment extends react.Component {
         }
     }
 
-    finishAppointment = () => {
+     finishAppointment = async () => {
+        const data = {
+            provider: this.state.selectedProvider,
+            providerId: this.state.selectedProvider.id,
+            appointmentDate: this.state.selectedDay.date,
+            appointmentHour: this.state.selectedHour,
+            appoitmentIndexDayOfWeek:this.state.selectedDay.dayOfWeek,
+            appoitmentTitleDayOfWeek: this.state.selectedDay.dia,
+            service: this.state.selectedService,
+            serviceId: this.state.selectedService.id,
+            establishment: this.state.establishment,
+            establishmentId: this.state.establishment.id,
+        }
+        if (this.verifyFields(data)) {
+            try {
+                await addAppointment(data)
+                alert("Agendamento feito com sucesso!")
+                this.cleanFields()
+            } catch (error) {
+                console.error("Erro ao realizar agendamento:", error.message)
+            }
+        }
         this.setState({ appointmentsStep: 1, selectedProvider: null }, () => {
             this.handleStepTitle()
         })
         console.log("Agendamento finalizado com sucesso!")
+    }
+
+    verifyFields = (data) => {
+        return true
+    }
+
+    cleanFields = () => {
+        return
     }
 
     render() {

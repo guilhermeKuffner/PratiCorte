@@ -1,4 +1,5 @@
-import { addDoc, getDoc, updateDoc } from "./collectionBaseWorker";
+import { addDoc, getDoc, updateDoc, getAllDocs } from "./collectionBaseWorker";
+import { startOfDay, endOfDay } from 'date-fns';
 import { where } from "firebase/firestore"
 
 export const addAppointment = async (data) => {
@@ -14,6 +15,19 @@ export const getAppointment = async (id) => {
          collection: "agendamentos" ,
          queries: [
             where("estabelecimentoId", "==", id)
+        ]
+    })
+}
+
+export const getAppointmentByProviderAndDate = async (providerId, date) => {
+    console.log(startOfDay(date))
+    console.log(endOfDay(date))
+    return await getAllDocs({
+        collection: "agendamentos",
+        queries: [
+            where("providerId", "==", providerId),
+            where("appointmentDate", ">=", startOfDay(date)),
+            where("appointmentDate", "<=", endOfDay(date))
         ]
     })
 }
