@@ -1,6 +1,6 @@
 import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
-import { isEmpty, PhoneNumberFormat, completeAvailableHours, setDaysAllowed, getNext7Days } from '../../shared/utils';
+import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, getNext7Days } from '../../shared/utils';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { getDay } from "date-fns";
 
@@ -33,8 +33,14 @@ class Appointment extends react.Component {
         })
     }
 
-    handleSelectedProvider = (provider) => () => {
+    handleSelectedProvider = (provider) => {
+        console.log("teste")
         this.setState({ selectedProvider: provider })
+        this.handleNextStep()
+    }
+
+    handleSelectedDay = (day) => {
+        this.setState({ selectedDay: day })
         this.handleNextStep()
     }
 
@@ -78,7 +84,7 @@ class Appointment extends react.Component {
                         {
                             this.state.appointmentsStep === 1 && this.state.providers.map((provider, index) => {
                                 return (
-                                    <button key={index} className="btn btn-outline-primary text-start" onClick={this.handleSelectedProvider(provider)}>
+                                    <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedProvider(provider)}>
                                         <h6 className="mb-1">{provider?.nome}</h6>
                                         <div> Celular: {!isEmpty(provider?.celular) ? (<PhoneNumberFormat value={provider?.celular} />) : ("Não informado")}</div>
                                     </button>
@@ -87,10 +93,23 @@ class Appointment extends react.Component {
                         }
                         {
                             this.state.appointmentsStep === 2 && 
-                                <>{console.log(this.state.horarios)}
-                                    <button className="btn btn-outline-primary" onClick={this.handleNextStep}>
-                                        <h6>ir para etapa 3</h6>
-                                    </button>
+                                <>
+                                    {
+                                        this.state.horarios.map((day, index) => {
+                                            if (day.isDayAllowed === false) {
+                                                return (
+                                                    <button key={index} className="btn btn-outline-secondary text-start" disabled>
+                                                        <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
+                                                    </button>
+                                                )
+                                            }
+                                            return (
+                                                <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedDay(day)}>
+                                                    <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
+                                                </button>
+                                            )
+                                        })
+                                    }
                                 </>
                         }
                         {

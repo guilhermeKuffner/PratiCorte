@@ -227,10 +227,18 @@ export const completeAvailableHours = (horarios) => {
     const completed = next7Days.map((day) => {
         const horarioDoDia = horarios.horarios[getDay(day.date)]
         if (!horarioDoDia || horarioDoDia.status !== "active") {
-            return { ...day, isDayAllowed: false, availableHours: [] }
+            return { ...day, isDayAllowed: false, availableHours: [], dia: horarioDoDia?.dia || null}
         }
         const availableHours = getAvailableHours(day.date, horarios)
-        return { ...day, isDayAllowed: true, availableHours: availableHours }
+        return { ...day, isDayAllowed: true, availableHours: availableHours, dia: horarioDoDia?.dia || null }
     })
     return completed
+}
+
+export const dateToString = (date) => {
+    if (!date) return ""
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    return `${day}/${month}/${year}`
 }
