@@ -1,6 +1,6 @@
 import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
-import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, getNext7Days } from '../../shared/utils';
+import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, PriceFormat } from '../../shared/utils';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { getDay } from "date-fns";
 
@@ -36,7 +36,6 @@ class Appointment extends react.Component {
     }
 
     handleSelectedProvider = (provider) => {
-        console.log("teste")
         this.setState({ selectedProvider: provider })
         this.handleNextStep()
     }
@@ -48,6 +47,11 @@ class Appointment extends react.Component {
 
     handleSelectedHour = (hour) => {
         this.setState({ selectedHour: hour })
+        this.handleNextStep()
+    }
+
+    handleServiceSelected = (service) => {
+        this.setState({ selectedService: service })
         this.handleNextStep()
     }
 
@@ -67,12 +71,18 @@ class Appointment extends react.Component {
 
     handleStepTitle = () => {
         if (this.state.appointmentsStep === 1) {
-            this.setState({ appointmentTitle: 'Selecione uma data' })
+            this.setState({ appointmentTitle: 'Realize um agendamento' })
         }
         if (this.state.appointmentsStep === 2) {
-            this.setState({ appointmentTitle: 'Selecione um horário' })
+            this.setState({ appointmentTitle: 'Selecione uma data' })
         }
         if (this.state.appointmentsStep === 3) {
+            this.setState({ appointmentTitle: 'Selecione um horário' })
+        }
+        if (this.state.appointmentsStep === 4) {
+            this.setState({ appointmentTitle: 'Selecione um serviço' })
+        }
+        if (this.state.appointmentsStep === 5) {
             this.setState({ appointmentTitle: 'Selecione um serviço' })
         }
     }
@@ -99,47 +109,44 @@ class Appointment extends react.Component {
                             })
                         }
                         {
-                            this.state.appointmentsStep === 2 && 
-                                <>
-                                    {
-                                        this.state.horarios.map((day, index) => {
-                                            if (day.isDayAllowed === false) {
-                                                return (
-                                                    <button key={index} className="btn btn-outline-secondary text-start" disabled>
-                                                        <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
-                                                    </button>
-                                                )
-                                            }
-                                            return (
-                                                <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedDay(day)}>
-                                                    <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
-                                                </button>
-                                            )
-                                        })
-                                    }
-                                </>
-                        }
-                        {
-                            this.state.appointmentsStep === 3 && 
-                                <>
-                                    {
-                                        this.state.selectedDay.availableHours.map((hour, index) => {
-                                            return (
-                                                <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour)}>
-                                                    <h6 className="mb-1">{hour}</h6>
-                                                </button>
-                                            )
-                                        })
-                                    }
-                                </>
-                        }
-                        {
-                            this.state.appointmentsStep === 4 && 
-                                <>{console.log(this.state.selectedHour)}
-                                    <button className="btn btn-outline-primary" onClick={this.finishAppointment}>
-                                        <h6>finalizar agendamento</h6>
+                            this.state.appointmentsStep === 2 && this.state.horarios.map((day, index) => {
+                                if (day.isDayAllowed === false) {
+                                    return (
+                                        <button key={index} className="btn btn-outline-secondary text-start" disabled>
+                                            <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
+                                        </button>
+                                    )
+                                }
+                                return (
+                                    <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedDay(day)}>
+                                        <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
                                     </button>
-                                </>
+                                )
+                            })
+                        }
+                        {
+                            this.state.appointmentsStep === 3 && this.state.selectedDay.availableHours.map((hour, index) => {
+                                return (
+                                    <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour)}>
+                                        <h6 className="mb-1">{hour}</h6>
+                                    </button>
+                                )
+                            })
+                        }
+                        {
+                            this.state.appointmentsStep === 4 && (!isEmpty(this.state.selectedProvider?.services) ? (
+                                this.state.selectedProvider.services.map((service, index) => {
+                                    return (
+                                        <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleServiceSelected(service)}>
+                                            <h6 className="mb-1">{service.nome} - <PriceFormat value={service.preco}/></h6>
+                                        </button>
+                                    )
+                                })
+                            ) : (
+                                <div className="alert alert-warning" role="alert">
+                                    {this.state.selectedProvider ? "Nenhum serviço disponível para este prestador." : "Selecione um prestador primeiro."}
+                                </div>
+                            ))
                         }
                     </div>
                 </div>
