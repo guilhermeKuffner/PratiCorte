@@ -17,6 +17,7 @@ class Appointment extends react.Component {
             selectedProvider: null,
             selectedDay: null,
             selectedHour: null,
+            selectedService: null,
         }
     }
 
@@ -56,9 +57,10 @@ class Appointment extends react.Component {
     }
 
     handleNextStep = () => {
-        if (this.state.appointmentsStep <= 4) {
-            this.setState({ appointmentsStep: this.state.appointmentsStep + 1 })
+        if (this.state.appointmentsStep <= 5) {
+            this.setState({ appointmentsStep: this.state.appointmentsStep + 1 }, () => {
             this.handleStepTitle()
+            })
         }
     }
 
@@ -83,12 +85,14 @@ class Appointment extends react.Component {
             this.setState({ appointmentTitle: 'Selecione um serviço' })
         }
         if (this.state.appointmentsStep === 5) {
-            this.setState({ appointmentTitle: 'Selecione um serviço' })
+            this.setState({ appointmentTitle: 'Confirme os dados' })
         }
     }
 
     finishAppointment = () => {
-        this.setState({ appointmentsStep: 1, selectedProvider: null })
+        this.setState({ appointmentsStep: 1, selectedProvider: null }, () => {
+            this.handleStepTitle()
+        })
         console.log("Agendamento finalizado com sucesso!")
     }
 
@@ -147,6 +151,12 @@ class Appointment extends react.Component {
                                     {this.state.selectedProvider ? "Nenhum serviço disponível para este prestador." : "Selecione um prestador primeiro."}
                                 </div>
                             ))
+                        }
+                        {
+                            this.state.appointmentsStep === 5 && 
+                            <button className="btn btn-success" onClick={this.finishAppointment}>
+                                <h6 className="mb-1">Finalizar</h6>
+                            </button>
                         }
                     </div>
                 </div>
