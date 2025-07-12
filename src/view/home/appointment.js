@@ -1,6 +1,6 @@
 import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
-import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, PriceFormat } from '../../shared/utils';
+import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, PriceFormat, PhoneNumberInput, removeSimbols } from '../../shared/utils';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { getDay } from "date-fns";
 import { addAppointment, getAppointmentByProviderAndDate } from '../../store/collections/appointmentWorker';
@@ -19,6 +19,8 @@ class Appointment extends react.Component {
             selectedDay: null,
             selectedHour: null,
             selectedService: null,
+            appointmentCliente: '',
+            appointmentCelular: '',
         }
     }
 
@@ -94,22 +96,27 @@ class Appointment extends react.Component {
             this.setState({ selectedService: null })
         }
         if (this.state.appointmentsStep === 5) {
-            this.setState({ appointmentTitle: 'Confirme os dados' })
+            this.setState({ appointmentTitle: 'Resumo do Agendamento' })
         }
     }
 
      finishAppointment = async () => {
         const data = {
             provider: this.state.selectedProvider,
-            providerId: this.state.selectedProvider.id,
-            appointmentDate: this.state.selectedDay.date,
-            appointmentHour: this.state.selectedHour,
-            appoitmentIndexDayOfWeek:this.state.selectedDay.dayOfWeek,
-            appoitmentTitleDayOfWeek: this.state.selectedDay.dia,
+            dateInfo: {
+                date: this.state.selectedDay.date,
+                hour: this.state.selectedHour,
+                indexDayOfWeek:this.state.selectedDay.dayOfWeek,
+                titleDayOfWeek: this.state.selectedDay.dia,
+            },
             service: this.state.selectedService,
-            serviceId: this.state.selectedService.id,
             establishment: this.state.establishment,
             establishmentId: this.state.establishment.id,
+            cliente: {
+                nome: this.state.appointmentCliente,
+                celular: removeSimbols(this.state.appointmentCelular),
+                observação: this.state.appointmentObservation,
+            }
         }
         if (this.verifyFields(data)) {
             try {
@@ -200,9 +207,27 @@ class Appointment extends react.Component {
                         }
                         {
                             this.state.appointmentsStep === 5 && 
-                            <button className="btn btn-success" onClick={this.finishAppointment}>
-                                <h6 className="mb-1">Finalizar</h6>
-                            </button>
+                            <>
+                                <div className="card p-3">
+                                    <p><strong>Prestador:</strong> {this.state.selectedProvider?.nome}</p>
+                                    <p><strong>Data:</strong> {this.state.selectedDay ? `${this.state.selectedDay.dia} - ${dateToString(this.state.selectedDay.date)}` : "Não selecionada"}</p>
+                                    <p><strong>Horário:</strong> {this.state.selectedHour || "Não selecionado"}</p>
+                                    <p><strong>Serviço:</strong> {this.state.selectedService?.nome || "Não selecionado"} - <PriceFormat value={this.state.selectedService?.preco}/></p>
+                                </div>
+                                <div className="card p-3">
+                                    <label>Cliente Nome</label>
+                                    <input type="text" name="nome" id="nome" placeholder="Nome do cliente" className={`form-control`}
+                                        value={this.state.appointmentCliente} onChange={(e) => this.setState({ appointmentCliente: e.target.value })} />
+                                    <label className="form-label" htmlFor="celular">Cliente Celular</label>
+                                        <PhoneNumberInput value={this.state.appointmentCelular} onChange={(e) => this.setState({ appointmentCelular: e.target.value })} />
+                                    <label className="form-label" htmlFor="celular">Observação</label>
+                                    <textarea name="observação" id="observação" placeholder="Observação" className={`form-control`}
+                                        value={this.state.appointmentObservation} onChange={(e) => this.setState({ appointmentObservation: e.target.value })} />
+                                </div>
+                                <button className="btn btn-success" onClick={this.finishAppointment}>
+                                    <h6 className="mb-1">Finalizar</h6>
+                                </button>
+                            </>
                         }
                     </div>
                     {
