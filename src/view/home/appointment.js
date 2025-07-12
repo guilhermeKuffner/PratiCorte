@@ -167,13 +167,21 @@ class Appointment extends react.Component {
                             })
                         }
                         {
-                            this.state.appointmentsStep === 3 && this.state.selectedDay.availableHours.map((hour, index) => {
-                                return (
-                                    <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour)}>
-                                        <h6 className="mb-1">{hour}</h6>
-                                    </button>
-                                )
-                            })
+                            this.state.appointmentsStep === 3 && (this.state.selectedDay.availableHours.length > 0 ? (
+                                this.state.selectedDay.availableHours.map((hour, index) => {
+                                    return (
+                                        <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour)}>
+                                            <h6 className="mb-1">{hour}</h6>
+                                        </button>
+                                    )
+                                })
+                            ) : (
+                                <div className="alert alert-warning" role="alert">
+                                    "Nenhum horário configurado para este dia da semana."
+                                </div>
+                            ))
+                        }
+                        {
                         }
                         {
                             this.state.appointmentsStep === 4 && (!isEmpty(this.state.selectedProvider?.services) ? (
@@ -199,9 +207,11 @@ class Appointment extends react.Component {
                     </div>
                     {
                         this.state.appointmentsStep !== 1 &&
-                        <button className="btn btn-primary mt-3 w-50" onClick={this.handleLastStep}>
-                            Voltar
-                        </button>
+                        <div className="d-flex justify-content-start mt-3">
+                            <button className="btn btn-primary w-auto" onClick={this.handleLastStep}>
+                                Voltar
+                            </button>
+                        </div>
                     }
                 </div>
             </div>
