@@ -70,23 +70,28 @@ class Appointment extends react.Component {
 
     handleLastStep = () => {
         if (this.state.appointmentsStep > 1) {
-            this.setState({ appointmentsStep: this.state.appointmentsStep - 1 })
+            this.setState({ appointmentsStep: this.state.appointmentsStep - 1 }, () => {
             this.handleStepTitle()
+            })
         }
     }
 
     handleStepTitle = () => {
         if (this.state.appointmentsStep === 1) {
             this.setState({ appointmentTitle: 'Realize um agendamento' })
+            this.setState({ selectedProvider: null })
         }
         if (this.state.appointmentsStep === 2) {
             this.setState({ appointmentTitle: 'Selecione uma data' })
+            this.setState({ selectedDay: null })
         }
         if (this.state.appointmentsStep === 3) {
             this.setState({ appointmentTitle: 'Selecione um horário' })
+            this.setState({ selectedHour: null })
         }
         if (this.state.appointmentsStep === 4) {
             this.setState({ appointmentTitle: 'Selecione um serviço' })
+            this.setState({ selectedService: null })
         }
         if (this.state.appointmentsStep === 5) {
             this.setState({ appointmentTitle: 'Confirme os dados' })
@@ -192,6 +197,12 @@ class Appointment extends react.Component {
                             </button>
                         }
                     </div>
+                    {
+                        this.state.appointmentsStep !== 1 &&
+                        <button className="btn btn-primary mt-3 w-50" onClick={this.handleLastStep}>
+                            Voltar
+                        </button>
+                    }
                 </div>
             </div>
         )
