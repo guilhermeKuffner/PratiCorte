@@ -186,7 +186,7 @@ export const getAvailableHours = (selectedDate, data) => {
     const fimDate = new Date(`${dataBase}T${fim}:00`)
     fimDate.setMinutes(0)
     let atual = new Date(inicioDate)
-    while (atual <= fimDate) {
+    while ((fimDate - atual) >= 60 * 60 * 1000) {
       const horas = atual.getHours().toString().padStart(2, '0')
       const minutos = atual.getMinutes().toString().padStart(2, '0')
       blocos.push(`${horas}:${minutos}`)
