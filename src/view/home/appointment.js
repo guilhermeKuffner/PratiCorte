@@ -14,6 +14,7 @@ class Appointment extends react.Component {
             appoitmentSubTitle:'',
             appointmentsStep: 1,
             establishment: getEstabelecimento(),
+            availableHours: [],
             providers: [],
             appointments: [],
             selectedProvider: null,
@@ -61,10 +62,24 @@ class Appointment extends react.Component {
     setAvailableHours = async (day) => {
         const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(this.state.selectedProvider.id, day.date)
         const bookedHours = appointmentsByProviderAndDate.map(a => a.dateInfo.hour)
-        const availableHoursWithStatus = day.availableHours.map(hour => ({
-            hour,
-            available: !bookedHours.includes(hour)
-        }))
+
+        //verificando se ainda pode agendar hoje
+        if (day.availableHours.length > 0) {
+            const now = new Date()
+            const isToday = day.date.toDateString() === now.toDateString()
+            var hourNow = now.getHours()
+            var LastHour = day.availableHours[day.availableHours.length - 1].split(':')[0]
+            var blockAll = null
+
+            if (isToday && (hourNow >= LastHour)) {
+                blockAll = false
+            }
+
+            var availableHoursWithStatus = day.availableHours.map(hour => ({
+                hour,
+                available: isEmpty(blockAll) ? !bookedHours.includes(hour) : blockAll
+            }))
+        }
         this.setState({ availableHours: availableHoursWithStatus })
     }
 
@@ -231,7 +246,7 @@ class Appointment extends react.Component {
                             })
                         }
                         {
-                            this.state.appointmentsStep === 3 && !this.state.isloading && (this.state.availableHours.length > 0 ? (
+                            this.state.appointmentsStep === 3 && !this.state.isloading && (this.state.availableHours?.length > 0 ? (
                                 //Selecione um horário
                                 this.state.availableHours.map((hour, index) => {
                                     if (!hour.available) {
