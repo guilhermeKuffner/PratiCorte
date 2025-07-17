@@ -57,10 +57,13 @@ class Appointment extends react.Component {
     }
 
     setAvailableHours = async (day) => {
-        var appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(this.state.selectedProvider.id, day.date)
-        console.log("Appointments by provider and date:", appointmentsByProviderAndDate)
-        console.log("Selected day:", day)
-        var availableHours = []
+        const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(this.state.selectedProvider.id, day.date)
+        const bookedHours = appointmentsByProviderAndDate.map(a => a.appointmentHour)
+        const availableHoursWithStatus = day.availableHours.map(hour => ({
+            hour,
+            available: !bookedHours.includes(hour)
+        }))
+        this.setState({ availableHours: availableHoursWithStatus })
     }
 
     handleSelectedHour = (hour) => {
@@ -120,7 +123,7 @@ class Appointment extends react.Component {
         this.setState({ isloading: false })
     }
 
-     savePreAppointment = async () => {
+     finishAppointment = async () => {
         const data = {
             provider: this.state.selectedProvider,
             dateInfo: {
@@ -132,8 +135,13 @@ class Appointment extends react.Component {
             service: this.state.selectedService,
             establishment: this.state.establishment,
             establishmentId: this.state.establishment.id,
+            cliente: {
+                nome: this.state.appointmentCliente,
+                celular: removeSimbols(this.state.appointmentCelular),
+                observacao: this.state.appointmentObservation
+            },
         }
-        if (this.verifyFields(data)) {
+        if (this.verifyFields(data) && this.verifyAppointmentStillAvailable) {
             try {
                 await addAppointment(data)
                 alert("Agendamento feito com sucesso!")
@@ -148,29 +156,8 @@ class Appointment extends react.Component {
         console.log("Agendamento finalizado com sucesso!")
     }
 
-    finishAppointment = async (appointment) => {
-        const data = {
-            ... appointment,
-            cliente: {
-                nome: this.state.appointmentCliente,
-                celular: removeSimbols(this.state.appointmentCelular),
-                observação: this.state.appointmentObservation,
-            },
-            confirmed: true
-        }
-        if (this.verifyFields(data)) {
-            try {
-                await updateAppointment(data)
-                alert("Agendamento feito com sucesso!")
-                this.cleanFields()
-            } catch (error) {
-                console.error("Erro ao realizar agendamento:", error.message)
-            }
-        }
-        this.setState({ appointmentsStep: 1, selectedProvider: null }, () => {
-            this.handleStepTitle()
-        })
-        console.log("Agendamento finalizado com sucesso!")
+    verifyAppointmentStillAvailable = () => {
+
     }
 
     verifyFields = (data) => {
@@ -197,7 +184,7 @@ class Appointment extends react.Component {
                             )
                         }
                         {
-                            this.state.appointmentsStep === 1 && this.state.providers.map((provider, index) => {
+                            this.state.appointmentsStep === 1 && !this.state.isloading && this.state.providers.map((provider, index) => {
                                 //Realize um agendamento
                                 return (
                                     <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedProvider(provider)}>
@@ -208,7 +195,7 @@ class Appointment extends react.Component {
                             })
                         }
                         {
-                            this.state.appointmentsStep === 2 && this.state.horarios.map((day, index) => {
+                            this.state.appointmentsStep === 2 && !this.state.isloading && this.state.horarios.map((day, index) => {
                                 //Selecione uma data
                                 if (day.isDayAllowed === false) {
                                     return (
@@ -225,7 +212,7 @@ class Appointment extends react.Component {
                             })
                         }
                         {
-                            this.state.appointmentsStep === 3 && (this.state.selectedDay.availableHours.length > 0 ? (
+                            this.state.appointmentsStep === 3 && !this.state.isloading && (this.state.selectedDay.availableHours.length > 0 ? (
                                 //Selecione um horário
                                 this.state.selectedDay.availableHours.map((hour, index) => {
                                     return (
@@ -243,7 +230,7 @@ class Appointment extends react.Component {
                         {
                         }
                         {
-                            this.state.appointmentsStep === 4 && (!isEmpty(this.state.selectedProvider?.services) ? (
+                            this.state.appointmentsStep === 4 && !this.state.isloading && (!isEmpty(this.state.selectedProvider?.services) ? (
                                 //Selecione um serviço
                                 this.state.selectedProvider.services.map((service, index) => {
                                     return (
@@ -259,7 +246,7 @@ class Appointment extends react.Component {
                             ))
                         }
                         {
-                            this.state.appointmentsStep === 5 &&
+                            this.state.appointmentsStep === 5 && !this.state.isloading &&
                             //Resumo do Agendamento
                             <>
                                 <div className="card p-3">
