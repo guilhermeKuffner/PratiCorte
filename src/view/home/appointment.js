@@ -58,7 +58,7 @@ class Appointment extends react.Component {
 
     setAvailableHours = async (day) => {
         const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(this.state.selectedProvider.id, day.date)
-        const bookedHours = appointmentsByProviderAndDate.map(a => a.appointmentHour)
+        const bookedHours = appointmentsByProviderAndDate.map(a => a.dateInfo.hour)
         const availableHoursWithStatus = day.availableHours.map(hour => ({
             hour,
             available: !bookedHours.includes(hour)
@@ -136,9 +136,9 @@ class Appointment extends react.Component {
             establishment: this.state.establishment,
             establishmentId: this.state.establishment.id,
             cliente: {
-                nome: this.state.appointmentCliente,
-                celular: removeSimbols(this.state.appointmentCelular),
-                observacao: this.state.appointmentObservation
+                nome: this.state.appointmentCliente ?? "",
+                celular: removeSimbols(this.state.appointmentCelular) ?? "",
+                observacao: this.state.appointmentObservation ?? ""
             },
         }
         if (this.verifyFields(data) && this.verifyAppointmentStillAvailable) {
@@ -212,12 +212,19 @@ class Appointment extends react.Component {
                             })
                         }
                         {
-                            this.state.appointmentsStep === 3 && !this.state.isloading && (this.state.selectedDay.availableHours.length > 0 ? (
+                            this.state.appointmentsStep === 3 && !this.state.isloading && (this.state.availableHours.length > 0 ? (
                                 //Selecione um horário
-                                this.state.selectedDay.availableHours.map((hour, index) => {
+                                this.state.availableHours.map((hour, index) => {
+                                    if (!hour.available) {
+                                        return (
+                                            <button key={index} className="btn btn-outline-secondary text-start" disabled>
+                                                <h6 className="mb-1">{hour.hour}</h6>
+                                            </button>
+                                        )
+                                    }
                                     return (
-                                        <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour)}>
-                                            <h6 className="mb-1">{hour}</h6>
+                                        <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour.hour)}>
+                                            <h6 className="mb-1">{hour.hour}</h6>
                                         </button>
                                     )
                                 })
@@ -265,7 +272,7 @@ class Appointment extends react.Component {
                                     <textarea name="observação" id="observação" placeholder="Observação" className={`form-control`}
                                         value={this.state.appointmentObservation} onChange={(e) => this.setState({ appointmentObservation: e.target.value })} />
                                 </div>
-                                <button className="btn btn-success" onClick={() => this.finishAppointment(this.state.preAppointment)}>
+                                <button className="btn btn-success" onClick={() => this.finishAppointment()}>
                                     <h6 className="mb-1">Finalizar</h6>
                                 </button>
                             </>

@@ -22,7 +22,7 @@ export const addDoc = async ({ collection, data }) => {
     data.createdAt = new Date()
     data.isDeleted = false
     try {
-        await setDoc(doc(db, collection, data.id), data)       
+        await setDoc(doc(db, collection, data.id), data)
         return data
     } catch (error) {
         console.log(error)
