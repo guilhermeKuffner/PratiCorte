@@ -11,6 +11,7 @@ class Appointment extends react.Component {
         this.state = {
             sessao: getSessao(),
             appointmentTitle: '',
+            appoitmentSubTitle:'',
             appointmentsStep: 1,
             establishment: getEstabelecimento(),
             providers: [],
@@ -45,6 +46,7 @@ class Appointment extends react.Component {
     }
 
     handleSelectedDay = async (day) => {
+        console.log(day)
         this.setState({ selectedDay: day, isloading: true });
         try {
             await this.setAvailableHours(day)
@@ -102,23 +104,39 @@ class Appointment extends react.Component {
 
     handleStepTitle = () => {
         if (this.state.appointmentsStep === 1) {
-            this.setState({ appointmentTitle: 'Realize um agendamento' })
-            this.setState({ selectedProvider: null })
+            this.setState({ 
+                appointmentTitle: 'Realize um agendamento',
+                appoitmentSubTitle: '',
+                selectedProvider: null
+            })
         }
         if (this.state.appointmentsStep === 2) {
-            this.setState({ appointmentTitle: 'Selecione uma data' })
-            this.setState({ selectedDay: null })
+            this.setState({ 
+                appointmentTitle: 'Selecione uma data', 
+                appoitmentSubTitle: '',
+                selectedDay: null 
+            })
         }
         if (this.state.appointmentsStep === 3) {
-            this.setState({ appointmentTitle: 'Selecione um horário' })
-            this.setState({ selectedHour: null })
+            this.setState({ 
+                appointmentTitle: 'Selecione um horário',
+                appoitmentSubTitle: this.state.selectedDay.dia,
+                selectedHour: null 
+            })
         }
         if (this.state.appointmentsStep === 4) {
-            this.setState({ appointmentTitle: 'Selecione um serviço' })
-            this.setState({ selectedService: null })
+            this.setState({ 
+                appointmentTitle: 'Selecione um serviço',
+                appoitmentSubTitle: `${this.state.selectedDay.dia} - ${this.state.selectedHour}`,
+                selectedService: null
+
+            })
         }
         if (this.state.appointmentsStep === 5) {
-            this.setState({ appointmentTitle: 'Resumo do Agendamento' })
+            this.setState({
+                appointmentTitle: 'Resumo do Agendamento',
+                appoitmentSubTitle: ''
+            })
         }
         this.setState({ isloading: false })
     }
@@ -172,7 +190,8 @@ class Appointment extends react.Component {
         return (
             <div className={`d-flex justify-content-center py-5 ${this.state.providers.length > 0 ? 'd-block' : 'd-none'}`}>
                 <div className="card p-4 shadow bg-white rounded w-auto">
-                    <h5 className="mb-4">{this.state.appointmentTitle}</h5>
+                    <h5 className="mb-3 text-center">{this.state.appointmentTitle}</h5>
+                    <h6 className="mb-3 text-center">{this.state.appoitmentSubTitle}</h6>
                     <div className="d-flex flex-column gap-2" >
                         {
                             this.state.isloading && (
