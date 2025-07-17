@@ -25,9 +25,9 @@ export const getAppointmentByProviderAndDate = async (providerId, date) => {
     return await getAllDocs({
         collection: "agendamentos",
         queries: [
-            where("providerId", "==", providerId),
-            where("appointmentDate", ">=", startOfDay(date)),
-            where("appointmentDate", "<=", endOfDay(date))
+            where("provider.id", "==", providerId),
+            where("dateInfo.date", ">=", startOfDay(date)),
+            where("dateInfo.date", "<=", endOfDay(date))
         ]
     })
 }
