@@ -45,21 +45,40 @@ class Appointment extends react.Component {
     }
 
     handleSelectedDay = async (day) => {
-        this.setState({ selectedDay: day })
+        this.setState({ selectedDay: day, isloading: true });
+        try {
+            await this.setAvailableHours(day)
+            this.handleNextStep()
+        } catch (error) {
+            alert("Erro ao buscar horários disponíveis:", error)
+        } finally {
+            this.setState({ isloading: false })
+        }
+    }
+
+    setAvailableHours = async (day) => {
         var appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(this.state.selectedProvider.id, day.date)
-        console.log(appointmentsByProviderAndDate)
-        //agora que pegamos todos os agendamentos dos dias, vamos bloquear os horários que já estão ocupados
-        this.handleNextStep()
+        console.log("Appointments by provider and date:", appointmentsByProviderAndDate)
+        console.log("Selected day:", day)
+        var availableHours = []
     }
 
     handleSelectedHour = (hour) => {
-        this.setState({ selectedHour: hour })
-        this.handleNextStep()
+        this.setState({ 
+            selectedHour: hour,
+            isloading: true
+         }, () => {
+            this.handleNextStep()
+        })
     }
 
     handleServiceSelected = (service) => {
-        this.setState({ selectedService: service })
-        this.handleNextStep()
+        this.setState({ 
+            selectedService: service,
+            isloading: true
+        }, () => {
+            this.handleNextStep()
+        })
     }
 
     handleNextStep = () => {
@@ -98,9 +117,10 @@ class Appointment extends react.Component {
         if (this.state.appointmentsStep === 5) {
             this.setState({ appointmentTitle: 'Resumo do Agendamento' })
         }
+        this.setState({ isloading: false })
     }
 
-     finishAppointment = async () => {
+     savePreAppointment = async () => {
         const data = {
             provider: this.state.selectedProvider,
             dateInfo: {
@@ -112,15 +132,35 @@ class Appointment extends react.Component {
             service: this.state.selectedService,
             establishment: this.state.establishment,
             establishmentId: this.state.establishment.id,
-            cliente: {
-                nome: this.state.appointmentCliente,
-                celular: removeSimbols(this.state.appointmentCelular),
-                observação: this.state.appointmentObservation,
-            }
         }
         if (this.verifyFields(data)) {
             try {
                 await addAppointment(data)
+                alert("Agendamento feito com sucesso!")
+                this.cleanFields()
+            } catch (error) {
+                console.error("Erro ao realizar agendamento:", error.message)
+            }
+        }
+        this.setState({ appointmentsStep: 1, selectedProvider: null }, () => {
+            this.handleStepTitle()
+        })
+        console.log("Agendamento finalizado com sucesso!")
+    }
+
+    finishAppointment = async (appointment) => {
+        const data = {
+            ... appointment,
+            cliente: {
+                nome: this.state.appointmentCliente,
+                celular: removeSimbols(this.state.appointmentCelular),
+                observação: this.state.appointmentObservation,
+            },
+            confirmed: true
+        }
+        if (this.verifyFields(data)) {
+            try {
+                await updateAppointment(data)
                 alert("Agendamento feito com sucesso!")
                 this.cleanFields()
             } catch (error) {
@@ -148,7 +188,17 @@ class Appointment extends react.Component {
                     <h5 className="mb-4">{this.state.appointmentTitle}</h5>
                     <div className="d-flex flex-column gap-2" >
                         {
+                            this.state.isloading && (
+                                <div className="d-flex justify-content-center">
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            )
+                        }
+                        {
                             this.state.appointmentsStep === 1 && this.state.providers.map((provider, index) => {
+                                //Realize um agendamento
                                 return (
                                     <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedProvider(provider)}>
                                         <h6 className="mb-1">{provider?.nome}</h6>
@@ -159,6 +209,7 @@ class Appointment extends react.Component {
                         }
                         {
                             this.state.appointmentsStep === 2 && this.state.horarios.map((day, index) => {
+                                //Selecione uma data
                                 if (day.isDayAllowed === false) {
                                     return (
                                         <button key={index} className="btn btn-outline-secondary text-start" disabled>
@@ -175,6 +226,7 @@ class Appointment extends react.Component {
                         }
                         {
                             this.state.appointmentsStep === 3 && (this.state.selectedDay.availableHours.length > 0 ? (
+                                //Selecione um horário
                                 this.state.selectedDay.availableHours.map((hour, index) => {
                                     return (
                                         <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour)}>
@@ -192,6 +244,7 @@ class Appointment extends react.Component {
                         }
                         {
                             this.state.appointmentsStep === 4 && (!isEmpty(this.state.selectedProvider?.services) ? (
+                                //Selecione um serviço
                                 this.state.selectedProvider.services.map((service, index) => {
                                     return (
                                         <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleServiceSelected(service)}>
@@ -206,7 +259,8 @@ class Appointment extends react.Component {
                             ))
                         }
                         {
-                            this.state.appointmentsStep === 5 && 
+                            this.state.appointmentsStep === 5 &&
+                            //Resumo do Agendamento
                             <>
                                 <div className="card p-3">
                                     <p><strong>Prestador:</strong> {this.state.selectedProvider?.nome}</p>
@@ -224,7 +278,7 @@ class Appointment extends react.Component {
                                     <textarea name="observação" id="observação" placeholder="Observação" className={`form-control`}
                                         value={this.state.appointmentObservation} onChange={(e) => this.setState({ appointmentObservation: e.target.value })} />
                                 </div>
-                                <button className="btn btn-success" onClick={this.finishAppointment}>
+                                <button className="btn btn-success" onClick={() => this.finishAppointment(this.state.preAppointment)}>
                                     <h6 className="mb-1">Finalizar</h6>
                                 </button>
                             </>
