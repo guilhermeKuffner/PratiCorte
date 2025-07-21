@@ -251,3 +251,12 @@ export const secondsToDateString = (seconds) => {
   const day = date.getDate().toString().padStart(2, '0')
   return `${day}/${month}/${year}`
 }
+
+export const isPastDateTime = (dateInfo) => {
+    if (!dateInfo?.date?.seconds || !dateInfo?.hour) return false
+    const date = new Date(dateInfo.date.seconds * 1000)
+    const [hours, minutes] = dateInfo.hour.split(':').map(Number)
+    date.setHours(hours, minutes, 0, 0)
+    const diffInMs = Date.now() - date.getTime()
+    return diffInMs >= 3600000
+}

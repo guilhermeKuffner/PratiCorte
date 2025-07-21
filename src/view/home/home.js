@@ -105,7 +105,7 @@ class Home extends React.Component {
         return (
             <>
                 <NavBar />
-                <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div className="container d-flex flex-column flex-md-row justify-content-between align-items-start">
                     <Appointment />
                     <History />
                 </div>

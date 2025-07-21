@@ -1,7 +1,7 @@
 import React from "react";
 import { getAppointmentsByDate } from "../../store/collections/appointmentWorker";
 import { getEstabelecimento, getSessao } from '../../config/auth';
-import { secondsToDateString } from "../../shared/utils";
+import { AppointmentCard } from "../../components/AppointmentCard";
 
 
 class History extends React.Component {
@@ -23,12 +23,7 @@ class History extends React.Component {
         const today = new Date()
         const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7)
         const appointments = await getAppointmentsByDate(this.state.establishment.id, today, endDate)
-        const providers = appointments.map(appointment => {
-            return {
-                id: appointment.provider.id,
-                name: appointment.provider.nome
-            }
-        })
+        const providers = [...new Map(appointments.map(a => [a.provider.id, a.provider])).values()]
         this.setState({ 
             appointmentsOriginal: appointments,
             appointments: appointments,
@@ -76,7 +71,7 @@ class History extends React.Component {
                                                         <>
                                                             <input type="radio" class="btn-check" name="btnradio" id={`btnradio${index}`} autocomplete="off" />
                                                             <label class="btn btn-outline-primary rounded" for={`btnradio${index}`} key={index} onClick={this.selectProvider(provider)}>
-                                                                {provider.name}
+                                                                {provider.nome}
                                                             </label>
                                                         </>
                                                     ))
@@ -88,15 +83,12 @@ class History extends React.Component {
                                 <ul className="list-group">
                                     {
                                         this.state.appointments.map((appointment, index) => (
-                                            console.log(appointment),
-                                            <li key={index} className="list-group-item">
-                                                <div>
-                                                    <strong>Data:</strong> {secondsToDateString(appointment.dateInfo.date.seconds)}<br />
-                                                    <strong>Horário:</strong> {appointment.dateInfo?.hour}<br />
-                                                    <strong>Serviço:</strong> {appointment.service?.nome}<br />
-                                                    <strong>Cliente:</strong> {appointment.cliente?.nome}
-                                                </div>
-                                            </li>
+                                            console.log(appointment, 1),
+                                            <AppointmentCard 
+                                                key={Math.random()}
+                                                appointment={appointment}
+                                                index={index}
+                                            />
                                         ))
                                     }
                                 </ul>
