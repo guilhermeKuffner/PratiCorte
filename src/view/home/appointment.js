@@ -269,8 +269,6 @@ class Appointment extends react.Component {
                             ))
                         }
                         {
-                        }
-                        {
                             this.state.appointmentsStep === 4 && !this.state.isloading && (!isEmpty(this.state.selectedProvider?.services) ? (
                                 //Selecione um serviço
                                 this.state.selectedProvider.services.map((service, index) => {

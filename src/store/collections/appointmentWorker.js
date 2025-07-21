@@ -31,3 +31,14 @@ export const getAppointmentByProviderAndDate = async (providerId, date) => {
         ]
     })
 }
+
+export const getAppointmentsByDate = async (establishmentId, startDate, endDate) => {
+    return await getAllDocs({
+        collection: "agendamentos",
+        queries: [
+            where("estabelecimentoId", "==", establishmentId),
+            where("dateInfo.date", ">=", startOfDay(startDate)),
+            where("dateInfo.date", "<=", endOfDay(endDate))
+        ]
+    })
+}

@@ -10,6 +10,7 @@ import { setDaysAllowed, getAvailableHours } from "../../shared/utils";
 import { getAppointment, addAppointment, updateAppointment } from "../../store/collections/appointmentWorker";
 import { data } from "react-router-dom";
 import { Appointment } from "./appointment";
+import { History } from "./history";
 
 class Home extends React.Component {
     constructor(props) {
@@ -104,10 +105,10 @@ class Home extends React.Component {
         return (
             <>
                 <NavBar />
-                <div className="container d-flex flex-column justify-content-center align-items-center">
+                <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <Appointment />
+                    <History />
                 </div>
-                
             </>
         );
     }
