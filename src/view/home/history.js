@@ -8,10 +8,10 @@ class History extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            establishment: getEstabelecimento(),
-            providers: [],
-            appointmentsOriginal: [],
-            appointments: []
+        establishment: getEstabelecimento(),
+        providers: [],
+        appointmentsOriginal: props.appointments || [],
+        appointments: props.appointments || []
         }
     }
 
@@ -19,16 +19,21 @@ class History extends React.Component {
         this.load()
     }
 
-    load = async () => {
-        const today = new Date()
-        const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7)
-        const appointments = await getAppointmentsByDate(this.state.establishment.id, today, endDate)
+    componentDidUpdate(prevProps) {
+            if (prevProps.appointments !== this.props.appointments) {
+            this.setState({
+                appointmentsOriginal: this.props.appointments || [],
+                appointments: this.props.appointments || []
+                }, () => {
+                this.load()
+            })
+        }
+    }
+
+  load = () => {
+        const appointments = this.state.appointmentsOriginal
         const providers = [...new Map(appointments.map(a => [a.provider.id, a.provider])).values()]
-        this.setState({ 
-            appointmentsOriginal: appointments,
-            appointments: appointments,
-            providers: providers
-        })
+        this.setState({ providers: providers })
     }
 
     selectProvider = (provider) => () => {
@@ -62,15 +67,15 @@ class History extends React.Component {
                                         <div className="mb-3">
                                             <strong>Profissionais:</strong>
                                             <div className="d-flex flex-column gap-2 btn-group">
-                                                <input type="radio" class="btn-check" name="btnradio" id={`btnradio`} autocomplete="off"/>
-                                                <label class="btn btn-outline-primary rounded" for={`btnradio`} onClick={this.selectProvider()}>
+                                                <input type="radio" className="btn-check" name="btnradio" id={`btnradio`} />
+                                                <label className="btn btn-outline-primary rounded" htmlFor={`btnradio`} key={"btnradio"} onClick={this.selectProvider()}>
                                                     Todos
                                                 </label>
                                                 {
                                                     this.state.providers.map((provider, index) => (
                                                         <>
-                                                            <input type="radio" class="btn-check" name="btnradio" id={`btnradio${index}`} autocomplete="off" />
-                                                            <label class="btn btn-outline-primary rounded" for={`btnradio${index}`} key={index} onClick={this.selectProvider(provider)}>
+                                                            <input type="radio" className="btn-check" name="btnradio" id={`btnradio${index}`} />
+                                                            <label className="btn btn-outline-primary rounded" htmlFor={`btnradio${index}`} key={index} onClick={this.selectProvider(provider)}>
                                                                 {provider.nome}
                                                             </label>
                                                         </>
@@ -83,7 +88,6 @@ class History extends React.Component {
                                 <ul className="list-group">
                                     {
                                         this.state.appointments.map((appointment, index) => (
-                                            console.log(appointment, 1),
                                             <AppointmentCard 
                                                 key={Math.random()}
                                                 appointment={appointment}

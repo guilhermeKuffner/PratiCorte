@@ -182,6 +182,7 @@ class Appointment extends react.Component {
             } catch (error) {
                 console.error("Erro ao realizar agendamento:", error.message)
             }
+            this.props.onAddAppointment(data)
         }
         this.setState({ appointmentsStep: 1, selectedProvider: null }, () => {
             this.handleStepTitle()
