@@ -260,3 +260,40 @@ export const isPastDateTime = (dateInfo) => {
     const diffInMs = Date.now() - date.getTime()
     return diffInMs >= 3600000
 }
+
+export const groupAgendamentosByDayOfWeek = (agendamentos) => {
+    if (!Array.isArray(agendamentos)) return []
+
+    const getTimestamp = (item) => {
+        const segundos = item?.dateInfo?.date?.seconds || 0
+        const hora = item?.dateInfo?.hour || "00:00"
+        const [h, m] = hora.split(":").map(Number)
+        return (segundos * 1000) + (h * 3600000) + (m * 60000)
+    }
+
+    const ordenados = [...agendamentos].sort((a, b) => getTimestamp(a) - getTimestamp(b))
+
+    const agrupadosObj = {}
+
+    ordenados.forEach(item => {
+        const dia = item?.dateInfo?.titleDayOfWeek
+        const indexDayOfWeek = item?.dateInfo?.indexDayOfWeek
+        if (!dia) return
+
+        if (!agrupadosObj[dia]) {
+        agrupadosObj[dia] = {
+            indexDayOfWeek,
+            agendamentos: []
+        }
+        }
+        agrupadosObj[dia].agendamentos.push(item)
+    })
+
+    const agrupadosArray = Object.entries(agrupadosObj).map(([day, obj]) => ({
+        day,
+        indexDayOfWeek: obj.indexDayOfWeek,
+        agendamentos: obj.agendamentos
+    }))
+
+    return agrupadosArray
+}

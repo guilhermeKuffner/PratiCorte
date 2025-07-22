@@ -4,6 +4,7 @@ import { NavBar } from "../../components/navbar";
 import { getAppointmentsByDate } from "../../store/collections/appointmentWorker";
 import { Appointment } from "./appointment";
 import { History } from "./history";
+import { groupAgendamentosByDayOfWeek } from "../../shared/utils";
 
 class Home extends React.Component {
     constructor(props) {
@@ -19,7 +20,8 @@ class Home extends React.Component {
         const today = new Date()
         const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7)
         const appointments = await getAppointmentsByDate(this.state.establishment.id, today, endDate)
-        this.setState({ appointments: appointments })
+        const groupedAppointments = groupAgendamentosByDayOfWeek(appointments)
+        this.setState({ appointments: groupedAppointments })
     }
 
     onAddAppointment = async (data) => {

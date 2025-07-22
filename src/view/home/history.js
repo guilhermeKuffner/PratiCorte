@@ -7,11 +7,12 @@ import { AppointmentCard } from "../../components/AppointmentCard";
 class History extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-        establishment: getEstabelecimento(),
-        providers: [],
-        appointmentsOriginal: props.appointments || [],
-        appointments: props.appointments || []
+            this.state = {
+            establishment: getEstabelecimento(),
+            providers: [],
+            appointmentsOriginal: props.appointments || [],
+            appointments: props.appointments || [],
+            TodaysDayOfWeek: new Date().getDay()
         }
     }
 
@@ -32,7 +33,7 @@ class History extends React.Component {
 
   load = () => {
         const appointments = this.state.appointmentsOriginal
-        const providers = [...new Map(appointments.map(a => [a.provider.id, a.provider])).values()]
+        const providers = [...new Map(appointments.flatMap(d => d.agendamentos).map(a => [a.provider.id, a.provider])).values()]
         this.setState({ providers: providers })
     }
 
@@ -44,12 +45,22 @@ class History extends React.Component {
             return
         }
 
-        const filteredAppointments = this.state.appointmentsOriginal.filter(appointment => appointment.provider.id === provider.id)
+        const filteredAppointments = this.state.appointmentsOriginal.map(day => ({
+            day: day.day,
+            indexDayOfWeek: day.indexDayOfWeek,
+            agendamentos: day.agendamentos.filter(appointment => appointment.provider.id === provider.id)
+        })).filter(day => day.agendamentos.length > 0)
         this.setState({ 
             appointments: filteredAppointments,
         })
     }
 
+    verifyIfToday = (indexDayOfWeek) => {
+        if (indexDayOfWeek === this.state.TodaysDayOfWeek) {
+            return "  (Hoje)"
+        }
+        return ""
+    }
 
     render() {
         return (
@@ -88,11 +99,18 @@ class History extends React.Component {
                                 <ul className="list-group">
                                     {
                                         this.state.appointments.map((appointment, index) => (
-                                            <AppointmentCard 
-                                                key={Math.random()}
-                                                appointment={appointment}
-                                                index={index}
-                                            />
+                                            <>
+                                                <h5 className="mt-2 text-center">{appointment.day}{this.verifyIfToday(appointment.indexDayOfWeek)}</h5>
+                                                {
+                                                    this.state.appointments[index].agendamentos.map((agendamento) => (
+                                                        <AppointmentCard 
+                                                            key={Math.random()}
+                                                            appointment={agendamento}
+                                                            establishment={this.state.establishment}
+                                                        />
+                                                    ))
+                                                }
+                                            </>
                                         ))
                                     }
                                 </ul>
