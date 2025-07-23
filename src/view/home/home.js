@@ -1,7 +1,7 @@
 import React from "react";
 import { getSessao, getEstabelecimento } from "../../config/auth";
 import { NavBar } from "../../components/navbar";
-import { getAppointmentsByDate } from "../../store/collections/appointmentWorker";
+import { getAppointmentsByDate, updateAppointment } from "../../store/collections/appointmentWorker";
 import { Appointment } from "./appointment";
 import { History } from "./history";
 import { groupAgendamentosByDayOfWeek } from "../../shared/utils";
@@ -28,17 +28,22 @@ class Home extends React.Component {
     }
 
     async componentDidMount() {
-        const today = new Date()
-        const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7)
-        const appointments = await getAppointmentsByDate(this.state.establishment.id, today, endDate)
-        const groupedAppointments = groupAgendamentosByDayOfWeek(appointments)
-        this.setState({ appointments: groupedAppointments })
+        this.load()
     }
 
     onAddAppointment = async (data) => {
         this.setState(prevState => ({
             appointments: [...prevState.appointments, data]
         }))
+    }
+
+    load = async () => {
+        const today = new Date()
+        const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7)
+        const appointments = await getAppointmentsByDate(this.state.establishment.id, today, endDate)
+        const groupedAppointments = groupAgendamentosByDayOfWeek(appointments)
+        this.setState({ appointments: groupedAppointments })
+        console.log(this.state)
     }
 
     showEditingAppointmentModal = (appointment) => {
@@ -63,6 +68,23 @@ class Home extends React.Component {
         this.hideEditingAppointment()
     }
 
+    handleCancelAppointment = async () => {
+        const data = {
+            ...this.state.editingAppointment,
+            canceledAt: new Date(),
+            canceledBy: this.state.sessao.usuario.id,
+            isCanceled: true,
+        }
+        try {
+            console.log("Cancelando agendamento:", data)
+            await updateAppointment(data)
+            this.load()
+            this.hideEditingAppointment()
+        } catch (error) {
+            console.error("Erro ao realizar agendamento:", error.message)
+        }
+    }
+
     render() {
         return (
             <>
@@ -74,34 +96,39 @@ class Home extends React.Component {
                         {
                             this.state.editingAppointmentModalOpen && (
                                 <DialogContent>
-                                    <h5>Editando Agendamento</h5>
-                                    <h6>Prestador: {this.state.editingAppointment.provider.nome}</h6>
+                                    <div>
+                                        <h5>Editando Agendamento</h5>
+                                        <h6>Prestador: {this.state.editingAppointment.provider.nome}</h6>
 
-                                    <label>Data do agendamento</label>
-                                    <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentDate: e.target.value })}>
-                                        <option value="true">{secondsToDateString(this.state.editingAppointmentDate.seconds)}</option>
-                                    </select>
+                                        <label>Data do agendamento</label>
+                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentDate: e.target.value })}>
+                                            <option value="true">{secondsToDateString(this.state.editingAppointmentDate.seconds)}</option>
+                                        </select>
 
-                                    <label>Horário do agendamento</label>
-                                    <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentHour: e.target.value })}>
-                                        <option value="true">{this.state.editingAppointmentHour}</option>
-                                    </select>    
+                                        <label>Horário do agendamento</label>
+                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentHour: e.target.value })}>
+                                            <option value="true">{this.state.editingAppointmentHour}</option>
+                                        </select>    
 
-                                    <label>Serviço selecionado</label>
-                                    <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentService: e.target.value })}>
-                                        <option value="true">{this.state.editingAppointmentService.nome}</option>
-                                    </select>
+                                        <label>Serviço selecionado</label>
+                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentService: e.target.value })}>
+                                            <option value="true">{this.state.editingAppointmentService.nome}</option>
+                                        </select>
 
-                                    <label>Cliente</label>
-                                    <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
-                                        value={this.state.editingAppointmentClientName} onChange={(e) => this.setState({ editingAppointmentClientName: e.target.value })} />
+                                        <label>Cliente</label>
+                                        <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
+                                            value={this.state.editingAppointmentClientName} onChange={(e) => this.setState({ editingAppointmentClientName: e.target.value })} />
 
-                                    <label>Celular</label>
-                                    <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
-                                        value={this.state.editingAppointmentClientPhone} onChange={(e) => this.setState({ editingAppointmentClientPhone: e.target.value })} />
+                                        <label>Celular</label>
+                                        <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
+                                            value={this.state.editingAppointmentClientPhone} onChange={(e) => this.setState({ editingAppointmentClientPhone: e.target.value })} />
+                                    </div>
+                                    <div className="d-flex justify-content-between gap-2 mt-3">
+                                        <button className="btn btn-primary" onClick={this.handleEditAppointment}>Salvar</button>
+                                        <button className="btn btn-danger" onClick={this.handleCancelAppointment}>CANCELAR</button>
+                                        <button className="btn btn-secondary" onClick={this.hideEditingAppointment}>Fechar</button>
+                                    </div>
 
-                                    <button className="btn btn-primary" onClick={this.handleEditAppointment}>Salvar</button>
-                                    <button className="btn btn-secondary" onClick={this.hideEditingAppointment}>Cancelar</button>
                                 </DialogContent>
                             )
                         }

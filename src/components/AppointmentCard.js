@@ -1,6 +1,7 @@
 import React from 'react';
 import { secondsToDateString, isPastDateTime } from "../shared/utils";
 import { updateAppointment } from "../store/collections/appointmentWorker";
+import { getSessao } from '../config/auth';
 
 class AppointmentCard extends React.Component {
     constructor(props) {
@@ -8,7 +9,8 @@ class AppointmentCard extends React.Component {
         this.state = {
             appointment: props.appointment,
             statusColor: this.handleStatusColor(props.appointment),
-            status: this.handleStatus(props.appointment)
+            status: this.handleStatus(props.appointment),
+            sessao: getSessao(),
         }
     }
 
@@ -39,8 +41,10 @@ class AppointmentCard extends React.Component {
     }
 
     handleFinalizeAppoitment = async () => {
+        console.log(this.state)
         const data = {
             ...this.state.appointment,
+            finishedBy: this.state.sessao.usuario.id,
             finishedAt: new Date(),
             isFinished: true,
         }
@@ -68,7 +72,7 @@ class AppointmentCard extends React.Component {
                             <strong>Prestador:</strong> {this.state.appointment.provider?.nome}<br />
                             <strong>Serviço:</strong> {this.state.appointment.service?.nome}<br />
                             <strong>Cliente:</strong> {this.state.appointment.cliente?.nome}<br />
-                            <strong>Telefone:</strong> {this.state.appointment.cliente?.telefone}<br />
+                            <strong>Celular:</strong> {this.state.appointment.cliente?.celular}<br />
                         </div>
                         <div className="d-flex flex-column gap-2">
                             {
