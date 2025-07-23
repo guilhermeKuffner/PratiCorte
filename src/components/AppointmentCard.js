@@ -1,5 +1,6 @@
 import React from 'react';
 import { secondsToDateString, isPastDateTime } from "../shared/utils";
+import { updateAppointment } from "../store/collections/appointmentWorker";
 
 class AppointmentCard extends React.Component {
     constructor(props) {
@@ -37,6 +38,20 @@ class AppointmentCard extends React.Component {
         return "text-bg-primary";
     }
 
+    handleFinalizeAppoitment = async () => {
+        const data = {
+            ...this.state.appointment,
+            finishedAt: new Date(),
+            isFinished: true,
+        }
+        try {
+            await updateAppointment(data)
+            this.setState({ status: "Finalizado", statusColor: "text-bg-success" })
+        } catch (error) {
+            console.error("Erro ao realizar agendamento:", error.message)
+        }
+    }
+
 
     render() {
         return (
@@ -55,14 +70,14 @@ class AppointmentCard extends React.Component {
                         <div className="d-flex flex-column gap-2">
                             {
                                 this.state.status !== "Finalizado" && this.state.status !== "Cancelado" && 
-                                <button className="btn btn-success border border-white" onClick={this.handleFinalize}>
+                                <button className="btn btn-success border border-white" onClick={this.handleFinalizeAppoitment}>
                                     <i className="fas fa-check" />
                                 </button>
                             }
                             {
                                 this.state.status !== "Cancelado" && 
-                                <button className="btn btn-danger border border-white" onClick={this.handleCancel}>
-                                    <i className="fas fa-times" />
+                                <button className="btn btn-dark border border-white" onClick={this.handleEditAppoitment}>
+                                    <i className="fas fa-edit" />
                                 </button>
                             }
                         </div>
