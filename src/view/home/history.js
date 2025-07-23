@@ -62,6 +62,10 @@ class History extends React.Component {
         return ""
     }
 
+    showEditingAppointmentModal = (appointment) => {
+        this.props.showEditingAppointmentModal(appointment)()
+    }
+
     render() {
         return (
             <div className="history">
@@ -107,6 +111,7 @@ class History extends React.Component {
                                                             key={Math.random()}
                                                             appointment={agendamento}
                                                             establishment={this.state.establishment}
+                                                            showEditingAppointmentModal={() => this.showEditingAppointmentModal(agendamento)}
                                                         />
                                                     ))
                                                 }

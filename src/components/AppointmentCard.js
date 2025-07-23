@@ -52,6 +52,9 @@ class AppointmentCard extends React.Component {
         }
     }
 
+    handleEditAppointment = () => {
+        this.props.showEditingAppointmentModal(this.state.appointment)
+    }
 
     render() {
         return (
@@ -76,7 +79,7 @@ class AppointmentCard extends React.Component {
                             }
                             {
                                 this.state.status !== "Cancelado" && 
-                                <button className="btn btn-dark border border-white" onClick={this.handleEditAppoitment}>
+                                <button className="btn btn-dark border border-white" onClick={this.handleEditAppointment}>
                                     <i className="fas fa-edit" />
                                 </button>
                             }
