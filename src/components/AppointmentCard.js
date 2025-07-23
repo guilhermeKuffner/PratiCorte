@@ -41,7 +41,6 @@ class AppointmentCard extends React.Component {
     }
 
     handleFinalizeAppoitment = async () => {
-        console.log(this.state)
         const data = {
             ...this.state.appointment,
             finishedBy: this.state.sessao.usuario.id,
