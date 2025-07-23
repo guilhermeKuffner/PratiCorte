@@ -2,6 +2,7 @@ import React from "react";
 import { PatternFormat } from "react-number-format";
 import { parse } from "uuid";
 import { getDay } from "date-fns";
+import { addAppointment, getAppointmentByProviderAndDate } from '../store/collections/appointmentWorker';
 
 export const PhoneNumberInput = ({ value, onChange }) => {
     return (
@@ -297,3 +298,25 @@ export const groupAgendamentosByDayOfWeek = (agendamentos) => {
 
     return agrupadosArray
 }
+
+    export const setAvailableHours = async (providerId, day) => {
+        const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(providerId, day.date)
+        const bookedHours = appointmentsByProviderAndDate.map(a => a.dateInfo.hour)
+        if (day.availableHours.length > 0) {
+            const now = new Date()
+            const isToday = day.date.toDateString() === now.toDateString()
+            var hourNow = now.getHours()
+            var LastHour = day.availableHours[day.availableHours.length - 1].split(':')[0]
+            var blockAll = null
+
+            if (isToday && (hourNow >= LastHour)) {
+                blockAll = false
+            }
+
+            var availableHoursWithStatus = day.availableHours.map(hour => ({
+                hour,
+                available: isEmpty(blockAll) ? !bookedHours.includes(hour) : blockAll
+            }))
+        }
+        return availableHoursWithStatus
+    }

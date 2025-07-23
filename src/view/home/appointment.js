@@ -1,6 +1,6 @@
 import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
-import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, PriceFormat, PhoneNumberInput, removeSimbols } from '../../shared/utils';
+import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, PriceFormat, PhoneNumberInput, removeSimbols, setAvailableHours } from '../../shared/utils';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { getDay } from "date-fns";
 import { addAppointment, getAppointmentByProviderAndDate } from '../../store/collections/appointmentWorker';
@@ -60,27 +60,8 @@ class Appointment extends react.Component {
     }
 
     setAvailableHours = async (day) => {
-        const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(this.state.selectedProvider.id, day.date)
-        const bookedHours = appointmentsByProviderAndDate.map(a => a.dateInfo.hour)
-
-        //verificando se ainda pode agendar hoje
-        if (day.availableHours.length > 0) {
-            const now = new Date()
-            const isToday = day.date.toDateString() === now.toDateString()
-            var hourNow = now.getHours()
-            var LastHour = day.availableHours[day.availableHours.length - 1].split(':')[0]
-            var blockAll = null
-
-            if (isToday && (hourNow >= LastHour)) {
-                blockAll = false
-            }
-
-            var availableHoursWithStatus = day.availableHours.map(hour => ({
-                hour,
-                available: isEmpty(blockAll) ? !bookedHours.includes(hour) : blockAll
-            }))
-        }
-        this.setState({ availableHours: availableHoursWithStatus })
+        const availableHours = await setAvailableHours(this.state.selectedProvider.id, day);
+        this.setState({ availableHours: availableHours })
     }
 
     handleSelectedHour = (hour) => {
