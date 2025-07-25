@@ -100,7 +100,7 @@ class History extends React.Component {
             ...this.state.editingAppointment,
             canceledAt: new Date(),
             canceledBy: this.state.sessao.usuario.id,
-            isDeleted: true,
+            isCanceled: true,
         }
         try {
             await updateAppointment(data)
