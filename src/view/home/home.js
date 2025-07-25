@@ -33,7 +33,6 @@ class Home extends React.Component {
         const appointments = await getAppointmentsByDate(this.state.establishment.id, today, endDate)
         const groupedAppointments = groupAgendamentosByDayOfWeek(appointments)
         this.setState({ appointments: groupedAppointments })
-        console.log(this.state)
     }
 
     render() {

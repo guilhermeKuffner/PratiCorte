@@ -75,7 +75,6 @@ class Establishment extends React.Component {
             return false
         } 
         if (!isValidDocument(data.documento)) {
-            console.log(isValidDocument(data.documento))
             alert("Informe um CPF ou CNPJ no documento válido")
             return false
         }

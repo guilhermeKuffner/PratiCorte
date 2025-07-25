@@ -50,7 +50,6 @@ export const saveTime = (value) => {
     } else {
         const hh = time.substring(0, 2)
         const mm = time.substring(2, 4)
-        console.log(hh, mm)
         return `${hh}:${mm}`
     }
 }
@@ -64,7 +63,6 @@ export const removeSimbols = (value) => {
 }
 
 export const DocumentFormat = ({ value }) => {
-    console.log(value)
     const rawValue = value?.replace(/\D/g, '') || ''
     const isCPF = rawValue.length <= 11
 
@@ -136,7 +134,6 @@ export const isValidCNPJ = (cnpj) => {
 }
 
 export const isValidDocument = (doc) => {
-    console.log(doc)
     const cleaned = removeSimbols(doc)
     if (cleaned?.length <= 11) {
         return isValidCPF(cleaned)

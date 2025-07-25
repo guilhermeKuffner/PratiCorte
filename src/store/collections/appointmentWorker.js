@@ -20,8 +20,6 @@ export const getAppointment = async (id) => {
 }
 
 export const getAppointmentByProviderAndDate = async (providerId, date) => {
-    console.log(startOfDay(date))
-    console.log(endOfDay(date))
     return await getAllDocs({
         collection: "agendamentos",
         queries: [

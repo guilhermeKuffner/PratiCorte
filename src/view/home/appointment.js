@@ -48,7 +48,6 @@ class Appointment extends react.Component {
     }
 
     handleSelectedDay = async (day) => {
-        console.log(day)
         this.setState({ selectedDay: day, isloading: true });
         try {
             await this.setAvailableHours(day)

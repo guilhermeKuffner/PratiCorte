@@ -34,7 +34,6 @@ class Services extends React.Component {
     }
 
     handleNewService = async () => {
-        console.log(this.state.newServiceDuracao)
         const data = {
             status: this.state.newServiceStatus,
             nome: this.state.newServiceNome,

@@ -103,7 +103,6 @@ class History extends React.Component {
             isDeleted: true,
         }
         try {
-            console.log("Cancelando agendamento:", data)
             await updateAppointment(data)
             this.props.load()
             this.hideEditingAppointment()

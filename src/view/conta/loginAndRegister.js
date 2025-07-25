@@ -122,7 +122,6 @@ class Register extends React.Component {
         if (this.verifyFields(data)) {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password)
-                console.log("Usuário cadastrado:", userCredential.user)
                 const establishmentData = {
                     email: data.email,
                     nomeEstabelecimento: data.establishment,

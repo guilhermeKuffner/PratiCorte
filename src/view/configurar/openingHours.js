@@ -71,10 +71,8 @@ class OpeningHours extends React.Component {
             }
             try {
                 if (this.state.horariosId === "") {
-                    console.log("adicionando")
                     await addOpeningHours(data)
                 } else {
-                    console.log("atualizando")
                     await updateOpeningHours(data)
                 }
                 setHorarios(data)
@@ -98,7 +96,6 @@ class OpeningHours extends React.Component {
             if (!isValidMinutes(data.horarios[i].horarioInicio) || !isValidMinutes(data.horarios[i].horarioFim)) {
                 return false
             }
-            console.log(data.horarios[i])
         }
         return true
     }

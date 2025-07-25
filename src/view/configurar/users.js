@@ -41,7 +41,6 @@ class Users extends React.Component {
         this.setState({ users: users })
         const services = await getServices(this.state.establishment.id)
         this.setState({ services: services })
-        console.log(services)
     }
 
     handleNewUser = async () => {
