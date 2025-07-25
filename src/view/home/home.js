@@ -4,7 +4,7 @@ import { NavBar } from "../../components/navbar";
 import { getAppointmentsByDate } from "../../store/collections/appointmentWorker";
 import { Appointment } from "./appointment";
 import { History } from "./history";
-import { groupAgendamentosByDayOfWeek } from "../../shared/utils";
+import { groupAgendamentosByDayOfWeek } from "../../services/appointment/appointmentService";
 
 
 class Home extends React.Component {

@@ -1,9 +1,10 @@
 import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
-import { isEmpty, PhoneNumberFormat, completeAvailableHours, dateToString, PriceFormat, PhoneNumberInput, removeSimbols, setAvailableHours } from '../../shared/utils';
+import { isEmpty, PhoneNumberFormat, dateToString, PriceFormat, PhoneNumberInput, removeSimbols } from '../../shared/utils';
+import { setAvailableHours } from '../../services/appointment/appointmentService';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
-import { getDay } from "date-fns";
-import { addAppointment, getAppointmentByProviderAndDate } from '../../store/collections/appointmentWorker';
+import { addAppointment } from '../../store/collections/appointmentWorker';
+import { completeAvailableHours } from '../../services/appointment/appointmentService';
 
 class Appointment extends react.Component {
     constructor(props) {
@@ -257,6 +258,7 @@ class Appointment extends react.Component {
                                     return (
                                         <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleServiceSelected(service)}>
                                             <h6 className="mb-1">{service.nome} - <PriceFormat value={service.preco}/></h6>
+                                            <div>Duração: {service.duracao}</div>
                                         </button>
                                     )
                                 })

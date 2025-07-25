@@ -3,7 +3,8 @@ import { NavBar } from "../../components/navbar"
 import { TimeInput } from "../../shared/utils";
 import { getEstabelecimento, setHorarios, getHorarios } from "../../config/auth";
 import { getOpeningHours, addOpeningHours, updateOpeningHours } from "../../store/collections/openingHoursWorker";
-import { isEmpty, isValidMinutes } from "../../shared/utils";
+import { isEmpty } from "../../shared/utils";
+import { isValidMinutes } from "../../services/appointment/appointmentService";
 
 class OpeningHours extends React.Component {
 

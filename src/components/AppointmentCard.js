@@ -1,5 +1,6 @@
 import React from 'react';
-import { secondsToDateString, isPastDateTime } from "../shared/utils";
+import { secondsToDateString } from "../shared/utils";
+import { isPastDateTime } from "../services/appointment/appointmentService";
 import { updateAppointment } from "../store/collections/appointmentWorker";
 import { getSessao } from '../config/auth';
 
