@@ -1,5 +1,5 @@
 import { getAppointmentByProviderAndDate } from '../../store/collections/appointmentWorker';
-import { isEmpty } from '../../shared/utils';
+import { isEmpty, convertTimeToMinutes } from '../../shared/utils';
 import { getDay } from "date-fns";
 
 export const setDaysAllowed = (data) => {
@@ -148,9 +148,12 @@ export const setAvailableHours = async (providerId, day) => {
     return availableHoursWithStatus
 }
 
-export const hourStillAvailable = async(prividerId, day, hour) => {
-    const availableHours = await setAvailableHours(prividerId, day)
+export const hourStillAvailable = async(availableHours, hour) => {
     if (availableHours.length === 0) return false
     const hourObj = availableHours.find(h => h.hour === hour)
     return hourObj ? hourObj.available : false
+}
+
+export const verifyServiceTimeInBlocks = (service) => {
+    return Math.ceil(convertTimeToMinutes(service.duracao) / 60)
 }

@@ -147,15 +147,15 @@ export const isValidDocument = (doc) => {
 
 export const OrderByField = (data, field) => {
     return data.sort((a, b) => {
-      const valA = a[field]
-      const valB = b[field]
-      if (typeof valA === "string" && typeof valB === "string") {
-        return valA.localeCompare(valB)
-      }
-      if (typeof valA === "number" && typeof valB === "number") {
-        return valA - valB
-      }
-      return 0
+        const valA = a[field]
+        const valB = b[field]
+        if (typeof valA === "string" && typeof valB === "string") {
+            return valA.localeCompare(valB)
+        }
+        if (typeof valA === "number" && typeof valB === "number") {
+            return valA - valB
+        }
+        return 0
     })
   }
   
@@ -169,10 +169,10 @@ export const dateToString = (date) => {
 }
 
 export const secondsToDateString = (seconds) => {
-  if (!seconds) return ""
-  const date = new Date(seconds * 1000)
-  const year = date.getFullYear()
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const day = date.getDate().toString().padStart(2, '0')
-  return `${day}/${month}/${year}`
+    if (!seconds) return ""
+    const date = new Date(seconds * 1000)
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    return `${day}/${month}/${year}`
 }
