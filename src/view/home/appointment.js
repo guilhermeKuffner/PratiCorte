@@ -73,7 +73,7 @@ class Appointment extends react.Component {
             return alert("Horário não está mais disponível, selecione outro horário.");
         }
         this.setState({ 
-            selectedHour: hour,
+            selectedHour: [hour],
             isloading: true
          }, () => {
             this.handleNextStep()
@@ -86,7 +86,7 @@ class Appointment extends react.Component {
         if (blocks > 1) {
             this.setState({ isloading: true })
             var availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay)
-            var startCheck = availableHours.findIndex(item => item.hour === this.state.selectedHour)
+            var startCheck = availableHours.findIndex(item => item.hour === this.state.selectedHour?.[0])
             var endCheck = startCheck + blocks
             var newSelectedHours = []
             for (var i = startCheck; i < endCheck; i++){
