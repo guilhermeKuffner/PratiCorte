@@ -21,12 +21,6 @@ class Home extends React.Component {
         this.load()
     }
 
-    onAddAppointment = async (data) => {
-        this.setState(prevState => ({
-            appointments: [...prevState.appointments, data]
-        }))
-    }
-
     load = async () => {
         const today = new Date()
         const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7)
@@ -40,7 +34,7 @@ class Home extends React.Component {
             <>
                 <NavBar />
                 <div className="container d-flex flex-column flex-md-row justify-content-between align-items-start">
-                    <Appointment onAddAppointment={this.onAddAppointment} />
+                    <Appointment onAddAppointment={this.load} />
                     <History appointments={this.state.appointments} load={this.load} />
                 </div>
             </>
