@@ -1,5 +1,5 @@
 import React from 'react';
-import { secondsToDateString } from "../shared/utils";
+import { secondsToDateString, hoursArrayToString } from "../shared/utils";
 import { isPastDateTime } from "../services/appointment/appointmentService";
 import { updateAppointment } from "../store/collections/appointmentWorker";
 import { getSessao } from '../config/auth';
@@ -66,7 +66,7 @@ class AppointmentCard extends React.Component {
                 <div className="card-header">
                     <strong>Status:</strong> {this.state.status}<br />
                     <strong>Data:</strong> {secondsToDateString(this.state.appointment.dateInfo?.date.seconds)}<br />
-                    <strong>Horário:</strong> {this.state.appointment.dateInfo?.hour}
+                    <strong>Horário:</strong> {hoursArrayToString(this.state.appointment.dateInfo?.hour)}
                     </div>
                         <div className="card-body d-flex justify-content-between align-items-center">
                         <div className="me-3">

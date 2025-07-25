@@ -81,10 +81,12 @@ export const completeAvailableHours = (horarios) => {
 
 export const isPastDateTime = (dateInfo) => {
     if (!dateInfo?.date?.seconds || !dateInfo?.hour) return false
-    const date = new Date(dateInfo.date.seconds * 1000)
-    const [hours, minutes] = dateInfo.hour.split(':').map(Number)
-    date.setHours(hours, minutes, 0, 0)
-    const diffInMs = Date.now() - date.getTime()
+    const baseDate = new Date(dateInfo.date.seconds * 1000)
+    const hoursArray = Array.isArray(dateInfo.hour) ? dateInfo.hour : [dateInfo.hour]
+    const lastHour = hoursArray[hoursArray.length - 1]
+    const [h, m] = lastHour.split(':').map(Number)
+    baseDate.setHours(h, m, 0, 0)
+    const diffInMs = Date.now() - baseDate.getTime()
     return diffInMs >= 3600000
 }
 
@@ -93,20 +95,19 @@ export const groupAgendamentosByDayOfWeek = (agendamentos) => {
 
     const getTimestamp = (item) => {
         const segundos = item?.dateInfo?.date?.seconds || 0
-        const hora = item?.dateInfo?.hour || "00:00"
-        const [h, m] = hora.split(":").map(Number)
+        const horas = item?.dateInfo?.hour
+        const horaStr = Array.isArray(horas) ? horas[0] : horas || "00:00"
+        const [h, m] = horaStr.split(":").map(Number)
         return (segundos * 1000) + (h * 3600000) + (m * 60000)
     }
 
     const ordenados = [...agendamentos].sort((a, b) => getTimestamp(a) - getTimestamp(b))
 
     const agrupadosObj = {}
-
     ordenados.forEach(item => {
         const dia = item?.dateInfo?.titleDayOfWeek
         const indexDayOfWeek = item?.dateInfo?.indexDayOfWeek
         if (!dia) return
-
         if (!agrupadosObj[dia]) {
         agrupadosObj[dia] = {
             indexDayOfWeek,
@@ -148,10 +149,12 @@ export const setAvailableHours = async (providerId, day) => {
     return availableHoursWithStatus
 }
 
-export const hourStillAvailable = async(availableHours, hour) => {
-    if (availableHours.length === 0) return false
-    const hourObj = availableHours.find(h => h.hour === hour)
-    return hourObj ? hourObj.available : false
+export const hourStillAvailable = async (availableHours, hours) => {
+  if (availableHours.length === 0 || hours.length === 0) return false;
+
+  return hours.some(h =>
+    availableHours.some(ah => ah.hour === h && ah.available)
+  )
 }
 
 export const verifyServiceTimeInBlocks = (service) => {

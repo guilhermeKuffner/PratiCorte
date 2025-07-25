@@ -176,3 +176,9 @@ export const secondsToDateString = (seconds) => {
     const day = date.getDate().toString().padStart(2, '0')
     return `${day}/${month}/${year}`
 }
+
+export const hoursArrayToString = (input) => {
+    const array = Array.isArray(input) ? input : typeof input === "string" && input !== "" ? [input] : []
+    if (array.length === 0) return "Não selecionado"
+    return array.join(", ").replace(/, ([^,]*)$/, " e $1")
+}

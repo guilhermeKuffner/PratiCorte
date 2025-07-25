@@ -1,6 +1,6 @@
 import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
-import { isEmpty, PhoneNumberFormat, dateToString, PriceFormat, PhoneNumberInput, removeSimbols } from '../../shared/utils';
+import { isEmpty, PhoneNumberFormat, dateToString, PriceFormat, PhoneNumberInput, removeSimbols, hoursArrayToString } from '../../shared/utils';
 import { setAvailableHours } from '../../services/appointment/appointmentService';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { addAppointment } from '../../store/collections/appointmentWorker';
@@ -68,7 +68,7 @@ class Appointment extends react.Component {
     handleSelectedHour = async (hour) => {
         this.setState({ isloading: true });
         const availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay);
-        if (!await hourStillAvailable(availableHours, hour)) {
+        if (!await hourStillAvailable(availableHours, [hour])) {
             this.setAvailableHours(this.state.selectedDay)
             this.setState({ isloading: false })
             return alert("Horário não está mais disponível, selecione outro horário.");
@@ -91,8 +91,8 @@ class Appointment extends react.Component {
             var endCheck = startCheck + blocks
             var newSelectedHours = []
             for (var i = startCheck; i < endCheck; i++){
-                if (availableHours[i].available === false) {
-                    alert(`Esse serviço leva ${blocks} horarios e o horario das ${availableHours[i].hour} está indisponivel`)
+                if (availableHours[i]?.available !== true) {
+                    alert(`Esse serviço leva ${blocks} horarios e o horario das ${availableHours[i]?.hour} está indisponivel`)
                     this.setState({ isloading: false })
                     return
                 } else {
@@ -183,7 +183,8 @@ class Appointment extends react.Component {
             },
         }
         this.setState({ isloading: true });
-        if (!await hourStillAvailable(this.state.selectedProvider.id, this.state.selectedDay, this.state.selectedHour)) {
+        const availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay);
+        if (!await hourStillAvailable(availableHours, this.state.selectedHour)) {
             this.setState({ isloading: false })
             return alert("Horário não está mais disponível, selecione outro horário.");
         }
@@ -306,7 +307,7 @@ class Appointment extends react.Component {
                                 <div className="card p-3">
                                     <p><strong>Prestador:</strong> {this.state.selectedProvider?.nome}</p>
                                     <p><strong>Data:</strong> {this.state.selectedDay ? `${this.state.selectedDay.dia} - ${dateToString(this.state.selectedDay.date)}` : "Não selecionada"}</p>
-                                    <p><strong>Horário:</strong> {this.state.selectedHour.join(", ").replace(/, ([^,]*)$/, " e $1") || "Não selecionado"}</p>
+                                    <p><strong>Horário:</strong> {hoursArrayToString(this.state.selectedHour)}</p>
                                     <p><strong>Serviço:</strong> {this.state.selectedService?.nome || "Não selecionado"} - <PriceFormat value={this.state.selectedService?.preco}/></p>
                                 </div>
                                 <div className="card p-3">
