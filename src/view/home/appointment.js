@@ -4,7 +4,7 @@ import { isEmpty, PhoneNumberFormat, dateToString, PriceFormat, PhoneNumberInput
 import { setAvailableHours } from '../../services/appointment/appointmentService';
 import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { addAppointment } from '../../store/collections/appointmentWorker';
-import { completeAvailableHours } from '../../services/appointment/appointmentService';
+import { completeAvailableHours, hourStillAvailable} from '../../services/appointment/appointmentService';
 
 class Appointment extends react.Component {
     constructor(props) {
@@ -65,7 +65,13 @@ class Appointment extends react.Component {
         this.setState({ availableHours: availableHours })
     }
 
-    handleSelectedHour = (hour) => {
+    handleSelectedHour = async (hour) => {
+        this.setState({ isloading: true });
+        if (!await hourStillAvailable(this.state.selectedProvider.id, this.state.selectedDay, hour)) {
+            this.setAvailableHours(this.state.selectedDay)
+            this.setState({ isloading: false })
+            return alert("Horário não está mais disponível, selecione outro horário.");
+        }
         this.setState({ 
             selectedHour: hour,
             isloading: true
@@ -155,6 +161,11 @@ class Appointment extends react.Component {
                 celular: removeSimbols(this.state.appointmentCelular) ?? "",
                 observacao: this.state.appointmentObservation ?? ""
             },
+        }
+        this.setState({ isloading: true });
+        if (!await hourStillAvailable(this.state.selectedProvider.id, this.state.selectedDay, this.state.selectedHour)) {
+            this.setState({ isloading: false })
+            return alert("Horário não está mais disponível, selecione outro horário.");
         }
         if (this.verifyFields(data) && this.verifyAppointmentStillAvailable) {
             try {
