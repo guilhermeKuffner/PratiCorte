@@ -5,7 +5,7 @@ import { AppointmentCard } from "../../components/AppointmentCard";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { hoursArrayToString, dateToString } from "../../shared/utils";
-import { completeAvailableHours } from '../../services/appointment/appointmentService'
+import { completeAvailableHours, setAvailableHours } from '../../services/appointment/appointmentService'
 
 class History extends React.Component {
     constructor(props) {
@@ -79,18 +79,26 @@ class History extends React.Component {
         return ""
     }
 
-    showEditingAppointmentModal = (appointment) => {
-        return () => {
-                this.setState({ 
-                    editingAppointmentModalOpen: true, 
-                    editingAppointment: {...appointment},
-                    editingAppointmentDate: appointment.dateInfo.date,
-                    editingAppointmentHour: appointment.dateInfo.hour,
-                    editingAppointmentService: appointment.service,
-                    editingAppointmentClientName: appointment.cliente.nome,
-                    editingAppointmentClientPhone: appointment.cliente.celular
-            })
+    showEditingAppointmentModal = async (appointment) => {
+        console.log(appointment)
+        let availableHours = [appointment.dateInfo.hour[0]];
+        console.log(availableHours)
+        try {
+            availableHours = await setAvailableHours(appointment.provider.id, appointment.dateInfo.date)
+            
+        } catch (error) {
+            // alert("Erro ao buscar horários disponíveis:", error)
         }
+        console.log(availableHours)
+        this.setState({ 
+            editingAppointmentModalOpen: true, 
+            editingAppointment: { ...appointment },
+            editingAppointmentDate: appointment.dateInfo.date,
+            editingAvailableHours: availableHours,
+            editingAppointmentService: appointment.service,
+            editingAppointmentClientName: appointment.cliente.nome,
+            editingAppointmentClientPhone: appointment.cliente.celular
+        })
     }
 
     hideEditingAppointment = () => {
@@ -167,7 +175,7 @@ class History extends React.Component {
                                                             key={Math.random()}
                                                             appointment={agendamento}
                                                             establishment={this.state.establishment}
-                                                            showEditingAppointmentModal={this.showEditingAppointmentModal(agendamento)}
+                                                            showEditingAppointmentModal={() => this.showEditingAppointmentModal(agendamento)}
                                                         />
                                                     ))
                                                 }
@@ -204,7 +212,15 @@ class History extends React.Component {
 
                                         <label>Horário do agendamento</label>
                                         <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentHour: e.target.value })}>
-                                            <option value="true">{hoursArrayToString(this.state.editingAppointmentHour)}</option>
+                                            {
+                                                this.state.editingAvailableHours.map((hour, index) => {
+                                                    if (!hour?.available) {
+                                                        return (
+                                                            <option value={hour?.hour}>{hour?.hour ?? hour}</option>
+                                                        )
+                                                    }
+                                                })
+                                            }
                                         </select>    
 
                                         <label>Serviço selecionado</label>

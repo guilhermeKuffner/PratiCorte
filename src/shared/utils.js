@@ -174,6 +174,10 @@ export const secondsToDateString = (seconds) => {
     return `${day}/${month}/${year}`
 }
 
+export const secondsToDate = (seconds) => {
+    return new Date(seconds * 1000)
+}
+
 export const hoursArrayToString = (input) => {
     const array = Array.isArray(input) ? input : typeof input === "string" && input !== "" ? [input] : []
     if (array.length === 0) return "Não selecionado"

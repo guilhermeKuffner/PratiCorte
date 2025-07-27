@@ -1,5 +1,5 @@
 import { getAppointmentByProviderAndDate } from '../../store/collections/appointmentWorker';
-import { isEmpty, convertTimeToMinutes } from '../../shared/utils';
+import { isEmpty, convertTimeToMinutes, secondsToDate } from '../../shared/utils';
 import { getDay } from "date-fns";
 
 export const setDaysAllowed = (data) => {
@@ -127,7 +127,14 @@ export const groupAgendamentosByDayOfWeek = (agendamentos) => {
 }
 
 export const setAvailableHours = async (providerId, day) => {
-    const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(providerId, day.date)
+    var date = day
+    console.log(date)
+
+    if (date.seconds) {
+        date = secondsToDate(date.seconds)
+    }
+    console.log(date)
+    const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(providerId, date)
     const bookedHours = appointmentsByProviderAndDate.map(a => a.dateInfo.hour).flat()
     if (day.availableHours.length > 0) {
         const now = new Date()

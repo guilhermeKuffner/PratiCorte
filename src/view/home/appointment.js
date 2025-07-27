@@ -168,6 +168,7 @@ class Appointment extends react.Component {
                 hour: this.state.selectedHour,
                 indexDayOfWeek:this.state.selectedDay.dayOfWeek,
                 titleDayOfWeek: this.state.selectedDay.dia,
+                selectedDay: this.state.selectedDay
             },
             service: this.state.selectedService,
             establishment: this.state.establishment,

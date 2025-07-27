@@ -56,8 +56,8 @@ class AppointmentCard extends React.Component {
         }
     }
 
-    handleEditAppointment = () => {
-        this.props.showEditingAppointmentModal(this.state.appointment)
+    handleEditAppointment = async () => {
+        await this.props.showEditingAppointmentModal(this.state.appointment)
     }
 
     render() {
