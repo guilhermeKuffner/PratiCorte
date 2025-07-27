@@ -2,15 +2,16 @@ import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
 import { isEmpty, PhoneNumberFormat, dateToString, PriceFormat, PhoneNumberInput, removeSimbols, hoursArrayToString } from '../../shared/utils';
 import { setAvailableHours } from '../../services/appointment/appointmentService';
-import { getActiveUsersAppointmentAllowed } from '../../store/collections/userWorker';
 import { addAppointment } from '../../store/collections/appointmentWorker';
-import { completeAvailableHours, hourStillAvailable, verifyServiceTimeInBlocks } from '../../services/appointment/appointmentService';
+import { hourStillAvailable, verifyServiceTimeInBlocks } from '../../services/appointment/appointmentService';
 
 class Appointment extends react.Component {
     constructor(props) {
         super(props);
         this.state = {
             sessao: getSessao(),
+            providers: props.appoitmentData?.providers || [],
+            horarios: props.appoitmentData?.horarios || [],
             appointmentTitle: '',
             appoitmentSubTitle:'',
             appointmentsStep: 1,
@@ -24,22 +25,18 @@ class Appointment extends react.Component {
             selectedService: null,
             appointmentCliente: '',
             appointmentCelular: '',
+            appointmentTitle: 'Realize um agendamento'
         }
     }
 
-    componentDidMount() {
-        this.load()
-    }
-
-    load = async () => {
-        const providers = await getActiveUsersAppointmentAllowed(this.state.establishment.id)
-        const horarios = this.state.sessao.horarios
-        const completedAvailableHours = completeAvailableHours(horarios)
-        this.setState({ 
-            providers: providers,
-            appointmentTitle: 'Realize um agendamento',
-            horarios: completedAvailableHours,
-        })
+    componentDidUpdate(prevProps) {
+        if (prevProps.appoitmentData !== this.props.appoitmentData) {
+            this.setState({ 
+                providers: this.props.appoitmentData.providers,
+                appointmentTitle: this.props.appoitmentData.appointmentTitle,
+                horarios: this.props.appoitmentData.horarios
+            })
+        }
     }
 
     handleSelectedProvider = (provider) => {

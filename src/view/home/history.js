@@ -4,14 +4,16 @@ import { getEstabelecimento, getSessao } from '../../config/auth';
 import { AppointmentCard } from "../../components/AppointmentCard";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import { secondsToDateString } from "../../shared/utils";
+import { hoursArrayToString, dateToString } from "../../shared/utils";
+import { completeAvailableHours } from '../../services/appointment/appointmentService'
 
 class History extends React.Component {
     constructor(props) {
         super(props);
             this.state = {
             establishment: getEstabelecimento(),
-            providers: [],
+            providers: props.appoitmentData?.providers || [],
+            horarios: props.appoitmentData?.horarios || [],
             appointmentsOriginal: props.appointments || [],
             appointments: props.appointments || [],
             TodaysDayOfWeek: new Date().getDay(),
@@ -24,6 +26,8 @@ class History extends React.Component {
             editingAppointmentService: null,
             editingAppointmentClientName: null,
             editingAppointmentClientPhone: null,
+            editingAppointmentDates: [],
+            editingAppoitmentAvailableHours: [],
         }
     }
 
@@ -35,7 +39,9 @@ class History extends React.Component {
             if (prevProps.appointments !== this.props.appointments) {
             this.setState({
                 appointmentsOriginal: this.props.appointments || [],
-                appointments: this.props.appointments || []
+                appointments: this.props.appointments || [],
+                providers: this.props.appoitmentData.providers,
+                horarios: this.props.appoitmentData.horarios
                 }, () => {
                 this.load()
             })
@@ -93,6 +99,11 @@ class History extends React.Component {
 
     handleEditAppointment = async () => {
         this.hideEditingAppointment()
+    }
+
+    handleEditDate = (day) => {
+        const selectedDate = day.target.value
+        this.setState({ editingAppointmentDate: selectedDate });
     }
 
     handleCancelAppointment = async () => {
@@ -174,17 +185,26 @@ class History extends React.Component {
                             this.state.editingAppointmentModalOpen && (
                                 <DialogContent>
                                     <div>
+                                        <p>id: {this.state.editingAppointment.id}</p>
                                         <h5>Editando Agendamento</h5>
                                         <h6>Prestador: {this.state.editingAppointment.provider.nome}</h6>
 
                                         <label>Data do agendamento</label>
-                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentDate: e.target.value })}>
-                                            <option value="true">{secondsToDateString(this.state.editingAppointmentDate.seconds)}</option>
+                                        <select name="editingDate" id="editingDate" className="form-control" onChange={this.handleEditDate}>
+                                            {
+                                                this.state.horarios.map((day, index) => {
+                                                    if (day.isDayAllowed == true) {
+                                                        return (
+                                                            <option value={day}>{day.dia} - {dateToString(day.date)}</option>
+                                                        )
+                                                    }
+                                                })
+                                            }
                                         </select>
 
                                         <label>Horário do agendamento</label>
                                         <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentHour: e.target.value })}>
-                                            <option value="true">{this.state.editingAppointmentHour}</option>
+                                            <option value="true">{hoursArrayToString(this.state.editingAppointmentHour)}</option>
                                         </select>    
 
                                         <label>Serviço selecionado</label>
