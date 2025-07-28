@@ -28,6 +28,8 @@ class History extends React.Component {
             editingAppointmentClientPhone: null,
             editingAppointmentDates: [],
             editingAppoitmentAvailableHours: [],
+            edditingAppointmentHourSelected: [],
+            edditingAppointmentHourSelectedOriginal: []
         }
     }
 
@@ -80,20 +82,18 @@ class History extends React.Component {
     }
 
     showEditingAppointmentModal = async (appointment) => {
-        console.log(appointment)
         let availableHours = [appointment.dateInfo.hour[0]];
-        console.log(availableHours)
         try {
-            availableHours = await setAvailableHours(appointment.provider.id, appointment.dateInfo.date)
-            
+            availableHours = await setAvailableHours(appointment.provider.id, appointment.dateInfo.selectedDay)
         } catch (error) {
-            // alert("Erro ao buscar horários disponíveis:", error)
+            alert("Erro ao buscar horários disponíveis:", error)
         }
-        console.log(availableHours)
         this.setState({ 
             editingAppointmentModalOpen: true, 
             editingAppointment: { ...appointment },
             editingAppointmentDate: appointment.dateInfo.date,
+            edditingAppointmentHourSelectedOriginal: appointment.dateInfo.hour,
+            edditingAppointmentHourSelected: appointment.dateInfo.hour,
             editingAvailableHours: availableHours,
             editingAppointmentService: appointment.service,
             editingAppointmentClientName: appointment.cliente.nome,
@@ -211,17 +211,24 @@ class History extends React.Component {
                                         </select>
 
                                         <label>Horário do agendamento</label>
-                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentHour: e.target.value })}>
+                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ edditingAppointmentHourSelected: e.target.value })}>
+                                            <option value={this.state.edditingAppointmentHourSelectedOriginal[0]}>
+                                                {this.state.edditingAppointmentHourSelectedOriginal[0]} - horário original
+                                            </option>
                                             {
                                                 this.state.editingAvailableHours.map((hour, index) => {
-                                                    if (!hour?.available) {
+                                                    if (hour?.available) {
+                                                        const hourValue = hour?.hour ?? hour
                                                         return (
-                                                            <option value={hour?.hour}>{hour?.hour ?? hour}</option>
+                                                            <option key={index} value={hourValue}>
+                                                                {hourValue}
+                                                            </option>
                                                         )
                                                     }
+                                                    return null
                                                 })
                                             }
-                                        </select>    
+                                        </select>
 
                                         <label>Serviço selecionado</label>
                                         <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentService: e.target.value })}>

@@ -128,17 +128,16 @@ export const groupAgendamentosByDayOfWeek = (agendamentos) => {
 
 export const setAvailableHours = async (providerId, day) => {
     var date = day
-    console.log(date)
-
-    if (date.seconds) {
-        date = secondsToDate(date.seconds)
+    if (date.date?.seconds) {
+        date = secondsToDate(date.date.seconds)
+    } else {
+        date = date.date
     }
-    console.log(date)
     const appointmentsByProviderAndDate = await getAppointmentByProviderAndDate(providerId, date)
     const bookedHours = appointmentsByProviderAndDate.map(a => a.dateInfo.hour).flat()
     if (day.availableHours.length > 0) {
         const now = new Date()
-        const isToday = day.date.toDateString() === now.toDateString()
+        const isToday = date.toDateString() === now.toDateString()
         var hourNow = now.getHours()
         var LastHour = day.availableHours[day.availableHours.length - 1].split(':')[0]
         var blockAll = null
