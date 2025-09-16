@@ -8,6 +8,7 @@ import { hourStillAvailable, verifyServiceTimeInBlocks } from '../../services/ap
 class Appointment extends react.Component {
     constructor(props) {
         super(props);
+        console.log(props.appoitmentData)
         this.state = {
             sessao: getSessao(),
             providers: props.appoitmentData?.providers || [],
@@ -29,14 +30,12 @@ class Appointment extends react.Component {
         }
     }
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.appoitmentData !== this.props.appoitmentData) {
-            this.setState({ 
-                providers: this.props.appoitmentData.providers,
-                appointmentTitle: this.props.appoitmentData.appointmentTitle,
-                horarios: this.props.appoitmentData.horarios
-            })
-        }
+    componentDidMount() {
+        this.setState({ 
+            providers: this.props.appoitmentData.providers,
+            appointmentTitle: this.props.appoitmentData.appointmentTitle,
+            horarios: this.props.appoitmentData.horarios
+        })
     }
 
     handleSelectedProvider = (provider) => {

@@ -6,6 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { hoursArrayToString, dateToString } from "../../shared/utils";
 import { completeAvailableHours, setAvailableHours } from '../../services/appointment/appointmentService'
+import { Appointment } from "./appointment";
 
 class History extends React.Component {
     constructor(props) {
@@ -82,22 +83,20 @@ class History extends React.Component {
     }
 
     showEditingAppointmentModal = async (appointment) => {
-        let availableHours = [appointment.dateInfo.hour[0]];
-        try {
-            availableHours = await setAvailableHours(appointment.provider.id, appointment.dateInfo.selectedDay)
-        } catch (error) {
-            alert("Erro ao buscar horários disponíveis:", error)
+        const horarios = this.state.sessao.horarios
+        const completedAvailableHours = completeAvailableHours(horarios)
+        const appoitmentData = {
+            horarios: completedAvailableHours,
+            providers: [appointment.provider],
+            appointmentTitle: 'Selecione um horário',
+            mininumStep: 2,
+            originalHourSelected: appointment.dateInfo.hour[0],
+            originalContinuousHours: appointment.dateInfo.hour,
         }
-        this.setState({ 
+        this.setState({
             editingAppointmentModalOpen: true, 
-            editingAppointment: { ...appointment },
-            editingAppointmentDate: appointment.dateInfo.date,
-            edditingAppointmentHourSelectedOriginal: appointment.dateInfo.hour,
-            edditingAppointmentHourSelected: appointment.dateInfo.hour,
-            editingAvailableHours: availableHours,
-            editingAppointmentService: appointment.service,
-            editingAppointmentClientName: appointment.cliente.nome,
-            editingAppointmentClientPhone: appointment.cliente.celular
+            appoitmentData: appoitmentData,
+            editingAppointment: { ...appointment }
         })
     }
 
@@ -188,67 +187,13 @@ class History extends React.Component {
                     }
                     </div>
                 </div>
-                    <Dialog onClose={this.hideEditingAppointment} fullWidth maxWidth={"xs"} open={this.state.editingAppointmentModalOpen}>
+                    <Dialog onClose={this.hideEditingAppointment} fullWidth={false} maxWidth={false} open={this.state.editingAppointmentModalOpen}>
                         {
                             this.state.editingAppointmentModalOpen && (
-                                <DialogContent>
-                                    <div>
-                                        <p>id: {this.state.editingAppointment.id}</p>
-                                        <h5>Editando Agendamento</h5>
-                                        <h6>Prestador: {this.state.editingAppointment.provider.nome}</h6>
-
-                                        <label>Data do agendamento</label>
-                                        <select name="editingDate" id="editingDate" className="form-control" onChange={this.handleEditDate}>
-                                            {
-                                                this.state.horarios.map((day, index) => {
-                                                    if (day.isDayAllowed == true) {
-                                                        return (
-                                                            <option value={day}>{day.dia} - {dateToString(day.date)}</option>
-                                                        )
-                                                    }
-                                                })
-                                            }
-                                        </select>
-
-                                        <label>Horário do agendamento</label>
-                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ edditingAppointmentHourSelected: e.target.value })}>
-                                            <option value={this.state.edditingAppointmentHourSelectedOriginal[0]}>
-                                                {this.state.edditingAppointmentHourSelectedOriginal[0]} - horário original
-                                            </option>
-                                            {
-                                                this.state.editingAvailableHours.map((hour, index) => {
-                                                    if (hour?.available) {
-                                                        const hourValue = hour?.hour ?? hour
-                                                        return (
-                                                            <option key={index} value={hourValue}>
-                                                                {hourValue}
-                                                            </option>
-                                                        )
-                                                    }
-                                                    return null
-                                                })
-                                            }
-                                        </select>
-
-                                        <label>Serviço selecionado</label>
-                                        <select name="editingDate" id="editingDate" className="form-control" onChange={(e) => this.setState({ editingAppointmentService: e.target.value })}>
-                                            <option value="true">{this.state.editingAppointmentService.nome}</option>
-                                        </select>
-
-                                        <label>Cliente</label>
-                                        <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
-                                            value={this.state.editingAppointmentClientName} onChange={(e) => this.setState({ editingAppointmentClientName: e.target.value })} />
-
-                                        <label>Celular</label>
-                                        <input type="text" name="nome" id="nome" placeholder="Nome do serviço" className={`form-control ${this.state.newUserNomeAlert}`}
-                                            value={this.state.editingAppointmentClientPhone} onChange={(e) => this.setState({ editingAppointmentClientPhone: e.target.value })} />
-                                    </div>
-                                    <div className="d-flex justify-content-between gap-2 mt-3">
-                                        <button className="btn btn-primary" onClick={this.handleEditAppointment}>Salvar</button>
-                                        <button className="btn btn-danger" onClick={this.handleCancelAppointment}>CANCELAR</button>
-                                        <button className="btn btn-secondary" onClick={this.hideEditingAppointment}>Fechar</button>
-                                    </div>
-                                </DialogContent>
+                                <div className="container d-flex flex-column align-items-center">
+                                    <h5 className="text-center mt-3">Editando Agendamento</h5>
+                                    <Appointment isEditingAppointment={true} appoitmentData={this.state.appoitmentData}/>
+                                </div>
                             )
                         }
                     </Dialog>
