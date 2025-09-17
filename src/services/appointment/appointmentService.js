@@ -126,7 +126,7 @@ export const groupAgendamentosByDayOfWeek = (agendamentos) => {
     return agrupadosArray
 }
 
-export const setAvailableHours = async (providerId, day) => {
+export const setAvailableHours = async (providerId, day, originalHourSelected = []) => {
     var date = day
     if (date.date?.seconds) {
         date = secondsToDate(date.date.seconds)
@@ -148,18 +148,19 @@ export const setAvailableHours = async (providerId, day) => {
 
         var availableHoursWithStatus = day.availableHours.map(hour => ({
             hour,
-            available: isEmpty(blockAll) ? !bookedHours.includes(hour) : blockAll
+            available: isEmpty(blockAll) ? !bookedHours.includes(hour) : blockAll,
+            isEditing: bookedHours.includes(hour) && originalHourSelected.includes(hour)
         }))
     }
     return availableHoursWithStatus
 }
 
 export const hourStillAvailable = async (availableHours, hours) => {
-  if (availableHours.length === 0 || hours.length === 0) return false;
+    if (availableHours.length === 0 || hours.length === 0) return false
 
-  return hours.some(h =>
-    availableHours.some(ah => ah.hour === h && ah.available)
-  )
+    return hours.some(h =>
+        availableHours.some(ah => ah.hour === h && (ah.available || ah.isEditing))
+    )
 }
 
 export const verifyServiceTimeInBlocks = (service) => {

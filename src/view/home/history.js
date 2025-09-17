@@ -90,8 +90,7 @@ class History extends React.Component {
             providers: [appointment.provider],
             appointmentTitle: 'Selecione um horário',
             mininumStep: 2,
-            originalHourSelected: appointment.dateInfo.hour[0],
-            originalContinuousHours: appointment.dateInfo.hour,
+            originalHourSelected: appointment.dateInfo.hour,
         }
         this.setState({
             editingAppointmentModalOpen: true, 

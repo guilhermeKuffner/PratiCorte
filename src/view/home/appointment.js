@@ -21,9 +21,10 @@ class Appointment extends react.Component {
             availableHours: [],
             providers: [],
             appointments: [],
-            selectedProvider:  props.appoitmentData?.providers || null,
+            selectedProvider:  props.appoitmentData?.providers[0] || null,
             selectedDay: null,
             selectedHour: [],
+            originalHourSelected: props.appoitmentData?.originalHourSelected || [],
             selectedService: null,
             appointmentCliente: '',
             appointmentCelular: '',
@@ -57,13 +58,13 @@ class Appointment extends react.Component {
     }
 
     setAvailableHours = async (day) => {
-        const availableHours = await setAvailableHours(this.state.selectedProvider.id, day);
+        const availableHours = await setAvailableHours(this.state.selectedProvider.id, day, this.state.originalHourSelected)
         this.setState({ availableHours: availableHours })
     }
 
     handleSelectedHour = async (hour) => {
-        this.setState({ isloading: true });
-        const availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay);
+        this.setState({ isloading: true })
+        const availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay, this.state.originalHourSelected)
         if (!await hourStillAvailable(availableHours, [hour])) {
             this.setAvailableHours(this.state.selectedDay)
             this.setState({ isloading: false })
@@ -78,16 +79,15 @@ class Appointment extends react.Component {
     }
 
     handleServiceSelected = async (service) => {
-  
         var blocks = verifyServiceTimeInBlocks(service)
         if (blocks > 1) {
             this.setState({ isloading: true })
-            var availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay)
+            var availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay, this.state.originalHourSelected);
             var startCheck = availableHours.findIndex(item => item.hour === this.state.selectedHour?.[0])
             var endCheck = startCheck + blocks
             var newSelectedHours = []
             for (var i = startCheck; i < endCheck; i++){
-                if (availableHours[i]?.available !== true) {
+                if (availableHours[i]?.available !== true && !availableHours[i]?.isEditing) {
                     alert(`Esse serviço leva ${blocks} horarios e o horario das ${availableHours[i]?.hour} está indisponivel`)
                     this.setState({ isloading: false })
                     return
@@ -180,7 +180,7 @@ class Appointment extends react.Component {
             },
         }
         this.setState({ isloading: true });
-        const availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay);
+        const availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay, this.state.originalHourSelected)
         if (!await hourStillAvailable(availableHours, this.state.selectedHour)) {
             this.setState({ isloading: false })
             return alert("Horário não está mais disponível, selecione outro horário.");
@@ -261,18 +261,25 @@ class Appointment extends react.Component {
                             this.state.appointmentsStep === 3 && !this.state.isloading && (this.state.availableHours?.length > 0 ? (
                                 //Selecione um horário
                                 this.state.availableHours.map((hour, index) => {
-                                    if (!hour.available) {
+                                    if (!hour.available && !hour.isEditing) {
                                         return (
                                             <button key={index} className="btn btn-outline-secondary text-start" disabled>
                                                 <h6 className="mb-1">{hour.hour}</h6>
                                             </button>
                                         )
+                                    } if (hour.isEditing) {
+                                        return (
+                                            <button key={index} className="btn btn-outline-warning text-start" onClick={() => this.handleSelectedHour(hour.hour)}>
+                                                <h6 className="mb-1">{hour.hour}</h6>
+                                            </button>
+                                        )
+                                    } else{
+                                        return (
+                                            <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour.hour)}>
+                                                <h6 className="mb-1">{hour.hour}</h6>
+                                            </button>
+                                        ) 
                                     }
-                                    return (
-                                        <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour.hour)}>
-                                            <h6 className="mb-1">{hour.hour}</h6>
-                                        </button>
-                                    )
                                 })
                             ) : (
                                 <div className="alert alert-warning" role="alert">
