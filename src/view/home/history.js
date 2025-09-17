@@ -3,9 +3,7 @@ import { updateAppointment } from "../../store/collections/appointmentWorker";
 import { getEstabelecimento, getSessao } from '../../config/auth';
 import { AppointmentCard } from "../../components/AppointmentCard";
 import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import { hoursArrayToString, dateToString } from "../../shared/utils";
-import { completeAvailableHours, setAvailableHours } from '../../services/appointment/appointmentService'
+import { completeAvailableHours } from '../../services/appointment/appointmentService'
 import { Appointment } from "./appointment";
 
 class History extends React.Component {
@@ -136,74 +134,126 @@ class History extends React.Component {
     render() {
         return (
             <div className="history">
-                <div className={"d-flex justify-content-center py-5"}>
-                    <div className="card p-4 shadow bg-white rounded w-auto">
-                    <h5 className="mb-3 text-center">Proximos agendamentos</h5>
+                <div className="modern-card p-4 animate-slide-in-right" style={{maxWidth: '500px', width: '100%'}}>
+                    <div className="text-center mb-4">
+                        <h4 className="fw-bold text-dark mb-2">
+                            <i className="fas fa-calendar-alt me-2 text-primary"></i>
+                            Próximos Agendamentos
+                        </h4>
+                        <p className="text-muted">Visualize e gerencie seus agendamentos</p>
+                    </div>
                     {
                         this.state.appointments.length === 0 ? (
-                            <p className="text-center">Nenhum agendamento encontrado nos proximos 7 dias.</p>
+                            <div className="text-center py-5">
+                                <div className="mb-4">
+                                    <div className="empty-state-icon">
+                                        <i className="fas fa-calendar-times text-primary mb-3" style={{fontSize: '4rem'}}></i>
+                                    </div>
+                                </div>
+                                <h5 className="fw-bold text-dark mb-2">Nenhum agendamento encontrado</h5>
+                                <p className="text-muted mb-4">nos próximos 7 dias.</p>
+                                <div className="empty-state-actions">
+                                    <button className="btn btn-modern-secondary btn-sm">
+                                        <i className="fas fa-plus me-2"></i>
+                                        Criar Primeiro Agendamento
+                                    </button>
+                                </div>
+                            </div>
                         ) : (
                             <>
                                 {
                                     this.state.providers.length > 0 && (
-                                        <div className="mb-3">
-                                            <strong>Profissionais:</strong>
-                                            <div className="d-flex flex-column gap-2 btn-group">
-                                                <input type="radio" className="btn-check" name="btnradio" id={`btnradio`} />
-                                                <label className="btn btn-outline-primary rounded" htmlFor={`btnradio`} key={"btnradio"} onClick={this.selectProvider()}>
-                                                    Todos
-                                                </label>
-                                                {
-                                                    this.state.providers.map((provider, index) => (
-                                                        <>
-                                                            <input type="radio" className="btn-check" name="btnradio" id={`btnradio${index}`} />
-                                                            <label className="btn btn-outline-primary rounded" htmlFor={`btnradio${index}`} key={index} onClick={this.selectProvider(provider)}>
+                                        <div className="mb-4">
+                                            <div className="filter-section">
+                                                <h6 className="fw-semibold text-dark mb-3">
+                                                    <i className="fas fa-filter me-2 text-primary"></i>
+                                                    Filtrar por Profissional
+                                                </h6>
+                                                <div className="filter-buttons">
+                                                    <button className="btn btn-modern-secondary btn-sm filter-btn" onClick={this.selectProvider()}>
+                                                        <i className="fas fa-users me-2"></i>
+                                                        Todos
+                                                    </button>
+                                                    {
+                                                        this.state.providers.map((provider, index) => (
+                                                            <button key={index} className="btn btn-modern-secondary btn-sm filter-btn" onClick={this.selectProvider(provider)}>
+                                                                <i className="fas fa-user-tie me-2"></i>
                                                                 {provider.nome}
-                                                            </label>
-                                                        </>
-                                                    ))
-                                                }
+                                                            </button>
+                                                        ))
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
                                     )
                                 }
-                                <ul className="list-group">
+                                <div className="appointments-list">
                                     {
                                         this.state.appointments.map((appointment, index) => (
-                                            <>
-                                                <h5 className="mt-2 text-center">{appointment.day}{this.verifyIfToday(appointment.indexDayOfWeek)}</h5>
-                                                {
-                                                    this.state.appointments[index].agendamentos.map((agendamento) => (
-                                                        <AppointmentCard 
-                                                            key={Math.random()}
-                                                            appointment={agendamento}
-                                                            establishment={this.state.establishment}
-                                                            showEditingAppointmentModal={() => this.showEditingAppointmentModal(agendamento)}
-                                                        />
-                                                    ))
-                                                }
-                                            </>
+                                            <div key={index} className="day-section mb-4">
+                                                <div className="day-header">
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="day-icon">
+                                                            <i className="fas fa-calendar-day text-primary"></i>
+                                                        </div>
+                                                        <div className="day-info">
+                                                            <h5 className="fw-bold text-dark mb-0">
+                                                                {appointment.day}
+                                                            </h5>
+                                                            {this.verifyIfToday(appointment.indexDayOfWeek) && (
+                                                                <span className="badge bg-primary ms-2 today-badge">
+                                                                    <i className="fas fa-star me-1"></i>
+                                                                    Hoje
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="appointment-count">
+                                                        <span className="badge bg-light text-dark">
+                                                            {this.state.appointments[index].agendamentos.length} agendamento(s)
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="appointments-grid">
+                                                    {
+                                                        this.state.appointments[index].agendamentos.map((agendamento) => (
+                                                            <AppointmentCard 
+                                                                key={Math.random()}
+                                                                appointment={agendamento}
+                                                                establishment={this.state.establishment}
+                                                                showEditingAppointmentModal={() => this.showEditingAppointmentModal(agendamento)}
+                                                            />
+                                                        ))
+                                                    }
+                                                </div>
+                                            </div>
                                         ))
                                     }
-                                </ul>
+                                </div>
                             </>
                         )
                     }
-                    </div>
                 </div>
-                    <Dialog onClose={this.hideEditingAppointment} fullWidth={false} maxWidth={false} open={this.state.editingAppointmentModalOpen}>
-                        {
-                            this.state.editingAppointmentModalOpen && (
-                                <div className="container d-flex flex-column align-items-center">
-                                    <h5 className="text-center mt-3">Editando Agendamento</h5>
-                                    <Appointment isEditingAppointment={true} reload={this.reload} appoitmentData={this.state.appoitmentData} hideEditingAppointment={this.hideEditingAppointment}/>
-                                        <button className="btn btn-danger mb-3" onClick={this.handleCancelAppointment}>
-                                            Cancelar Agendamento
-                                        </button>
+                <Dialog onClose={this.hideEditingAppointment} fullWidth={false} maxWidth={false} open={this.state.editingAppointmentModalOpen}>
+                    {
+                        this.state.editingAppointmentModalOpen && (
+                            <div className="container d-flex flex-column align-items-center p-4">
+                                <div className="text-center mb-4">
+                                    <h4 className="fw-bold text-dark mb-2">
+                                        <i className="fas fa-edit me-2 text-primary"></i>
+                                        Editando Agendamento
+                                    </h4>
+                                    <p className="text-muted">Modifique os dados do agendamento</p>
                                 </div>
-                            )
-                        }
-                    </Dialog>
+                                <Appointment isEditingAppointment={true} reload={this.reload} appoitmentData={this.state.appoitmentData} hideEditingAppointment={this.hideEditingAppointment}/>
+                                <button className="btn btn-danger mt-3" onClick={this.handleCancelAppointment}>
+                                    <i className="fas fa-times me-2"></i>
+                                    Cancelar Agendamento
+                                </button>
+                            </div>
+                        )
+                    }
+                </Dialog>
             </div>
         );
     }

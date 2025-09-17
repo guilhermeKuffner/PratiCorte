@@ -14,13 +14,12 @@ class Appointment extends react.Component {
             editingAppointment: props.appoitmentData?.appointment || null,
             providers: props.appoitmentData?.providers || [],
             horarios: props.appoitmentData?.horarios || [],
-            appointmentTitle: '',
+            appointmentTitle: 'Realize um agendamento',
             appoitmentSubTitle:'',
             appointmentsStep: props.appoitmentData?.mininumStep || 1,
             mininumStep: props.appoitmentData?.mininumStep || 1,
             establishment: getEstabelecimento(),
             availableHours: [],
-            providers: [],
             appointments: [],
             selectedProvider:  props.appoitmentData?.providers[0] || null,
             selectedDay: null,
@@ -29,8 +28,7 @@ class Appointment extends react.Component {
             selectedService: null,
             appointmentCliente:  props.appoitmentData?.appointment?.cliente?.nome || "",
             appointmentCelular: props.appoitmentData?.appointment?.cliente?.celular || "",
-            appointmentObservation: props.appoitmentData?.appointment?.cliente?.observacao || "",
-            appointmentTitle: 'Realize um agendamento'
+            appointmentObservation: props.appoitmentData?.appointment?.cliente?.observacao || ""
         }
     }
 
@@ -256,15 +254,19 @@ class Appointment extends react.Component {
 
     render() {
         return (
-            <div className={`d-flex justify-content-center py-5 ${this.state.providers.length > 0 ? 'd-block' : 'd-none'}`}>
-                <div className="card p-4 shadow bg-white rounded w-auto">
-                    <h5 className="mb-3 text-center">{this.state.appointmentTitle}</h5>
-                    <h6 className="mb-3 text-center">{this.state.appoitmentSubTitle}</h6>
-                    <div className="d-flex flex-column gap-2" >
+            <div className={`appointment-container ${this.state.providers.length > 0 ? 'd-block' : 'd-none'}`}>
+                <div className="modern-card p-5 animate-fade-in-up">
+                    <div className="text-center mb-4">
+                        <h4 className="fw-bold text-dark mb-2">{this.state.appointmentTitle}</h4>
+                        {this.state.appoitmentSubTitle && (
+                            <p className="text-muted mb-0">{this.state.appoitmentSubTitle}</p>
+                        )}
+                    </div>
+                    <div className="d-flex flex-column gap-3" >
                         {
                             this.state.isloading && (
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-border text-primary" role="status">
+                                <div className="d-flex justify-content-center py-4">
+                                    <div className="spinner-modern" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
                                 </div>
@@ -274,9 +276,17 @@ class Appointment extends react.Component {
                             this.state.appointmentsStep === 1 && !this.state.isloading && this.state.providers.map((provider, index) => {
                                 //Realize um agendamento
                                 return (
-                                    <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedProvider(provider)}>
-                                        <h6 className="mb-1">{provider?.nome}</h6>
-                                        <div> Celular: {!isEmpty(provider?.celular) ? (<PhoneNumberFormat value={provider?.celular} />) : ("Não informado")}</div>
+                                    <button key={index} className="btn btn-modern-secondary text-start p-3" onClick={() => this.handleSelectedProvider(provider)}>
+                                        <div className="d-flex align-items-center">
+                                            <i className="fas fa-user-tie me-3 text-primary" style={{fontSize: '1.5rem'}}></i>
+                                            <div>
+                                                <h6 className="mb-1 fw-bold">{provider?.nome}</h6>
+                                                <small className="text-muted">
+                                                    <i className="fas fa-phone me-1"></i>
+                                                    {!isEmpty(provider?.celular) ? (<PhoneNumberFormat value={provider?.celular} />) : ("Não informado")}
+                                                </small>
+                                            </div>
+                                        </div>
                                     </button>
                                 )
                             })
@@ -286,14 +296,26 @@ class Appointment extends react.Component {
                                 //Selecione uma data
                                 if (day.isDayAllowed === false) {
                                     return (
-                                        <button key={index} className="btn btn-outline-secondary text-start" disabled>
-                                            <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
+                                        <button key={index} className="btn btn-outline-secondary text-start p-3" disabled>
+                                            <div className="d-flex align-items-center">
+                                                <i className="fas fa-calendar-times me-3 text-muted" style={{fontSize: '1.5rem'}}></i>
+                                                <div>
+                                                    <h6 className="mb-1 fw-bold text-muted">{day.dia}</h6>
+                                                    <small className="text-muted">{dateToString(day.date)}</small>
+                                                </div>
+                                            </div>
                                         </button>
                                     )
                                 }
                                 return (
-                                    <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedDay(day)}>
-                                        <h6 className="mb-1">{day.dia} - {dateToString(day.date)}</h6>
+                                    <button key={index} className="btn btn-modern-secondary text-start p-3" onClick={() => this.handleSelectedDay(day)}>
+                                        <div className="d-flex align-items-center">
+                                            <i className="fas fa-calendar-check me-3 text-primary" style={{fontSize: '1.5rem'}}></i>
+                                            <div>
+                                                <h6 className="mb-1 fw-bold">{day.dia}</h6>
+                                                <small className="text-muted">{dateToString(day.date)}</small>
+                                            </div>
+                                        </div>
                                     </button>
                                 )
                             })
@@ -304,27 +326,40 @@ class Appointment extends react.Component {
                                 this.state.availableHours.map((hour, index) => {
                                     if (!hour.available && !hour.isEditing) {
                                         return (
-                                            <button key={index} className="btn btn-outline-secondary text-start" disabled>
-                                                <h6 className="mb-1">{hour.hour}</h6>
+                                            <button key={index} className="btn btn-outline-secondary text-start p-3" disabled>
+                                                <div className="d-flex align-items-center">
+                                                    <i className="fas fa-clock me-3 text-muted" style={{fontSize: '1.5rem'}}></i>
+                                                    <h6 className="mb-0 fw-bold text-muted">{hour.hour}</h6>
+                                                </div>
                                             </button>
                                         )
                                     } if (hour.isEditing) {
                                         return (
-                                            <button key={index} className="btn btn-outline-warning text-start" onClick={() => this.handleSelectedHour(hour.hour)}>
-                                                <h6 className="mb-1">{hour.hour}</h6>
+                                            <button key={index} className="btn btn-warning text-start p-3" onClick={() => this.handleSelectedHour(hour.hour)}>
+                                                <div className="d-flex align-items-center">
+                                                    <i className="fas fa-edit me-3 text-white" style={{fontSize: '1.5rem'}}></i>
+                                                    <h6 className="mb-0 fw-bold text-white">{hour.hour}</h6>
+                                                </div>
                                             </button>
                                         )
                                     } else{
                                         return (
-                                            <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleSelectedHour(hour.hour)}>
-                                                <h6 className="mb-1">{hour.hour}</h6>
+                                            <button key={index} className="btn btn-modern-secondary text-start p-3" onClick={() => this.handleSelectedHour(hour.hour)}>
+                                                <div className="d-flex align-items-center">
+                                                    <i className="fas fa-clock me-3 text-primary" style={{fontSize: '1.5rem'}}></i>
+                                                    <h6 className="mb-0 fw-bold">{hour.hour}</h6>
+                                                </div>
                                             </button>
                                         ) 
                                     }
                                 })
                             ) : (
-                                <div className="alert alert-warning" role="alert">
-                                    "Nenhum horário configurado para este dia da semana."
+                                <div className="alert alert-warning d-flex align-items-center" role="alert">
+                                    <i className="fas fa-exclamation-triangle me-3"></i>
+                                    <div>
+                                        <strong>Nenhum horário configurado</strong><br/>
+                                        <small>para este dia da semana.</small>
+                                    </div>
                                 </div>
                             ))
                         }
@@ -333,15 +368,36 @@ class Appointment extends react.Component {
                                 //Selecione um serviço
                                 this.state.selectedProvider.services.map((service, index) => {
                                     return (
-                                        <button key={index} className="btn btn-outline-primary text-start" onClick={() => this.handleServiceSelected(service)}>
-                                            <h6 className="mb-1">{service.nome} - <PriceFormat value={service.preco}/></h6>
-                                            <div>Duração: {service.duracao}</div>
+                                        <button key={index} className="btn btn-modern-secondary text-start p-3" onClick={() => this.handleServiceSelected(service)}>
+                                            <div className="d-flex align-items-center">
+                                                <i className="fas fa-scissors me-3 text-primary" style={{fontSize: '1.5rem'}}></i>
+                                                <div className="flex-grow-1">
+                                                    <h6 className="mb-1 fw-bold">{service.nome}</h6>
+                                                    <div className="d-flex justify-content-between">
+                                                        <small className="text-muted">
+                                                            <i className="fas fa-clock me-1"></i>
+                                                            Duração: {service.duracao}
+                                                        </small>
+                                                        <small className="fw-bold text-primary">
+                                                            <PriceFormat value={service.preco}/>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </button>
                                     )
                                 })
                             ) : (
-                                <div className="alert alert-warning" role="alert">
-                                    {this.state.selectedProvider ? "Nenhum serviço disponível para este prestador." : "Selecione um prestador primeiro."}
+                                <div className="alert alert-warning d-flex align-items-center" role="alert">
+                                    <i className="fas fa-exclamation-triangle me-3"></i>
+                                    <div>
+                                        <strong>
+                                            {this.state.selectedProvider ? "Nenhum serviço disponível" : "Selecione um prestador primeiro"}
+                                        </strong><br/>
+                                        <small>
+                                            {this.state.selectedProvider ? "para este prestador." : "para continuar."}
+                                        </small>
+                                    </div>
                                 </div>
                             ))
                         }
@@ -349,32 +405,87 @@ class Appointment extends react.Component {
                             this.state.appointmentsStep === 5 && !this.state.isloading &&
                             //Resumo do Agendamento
                             <>
-                                <div className="card p-3">
-                                    <p><strong>Prestador:</strong> {this.state.selectedProvider?.nome}</p>
-                                    <p><strong>Data:</strong> {this.state.selectedDay ? `${this.state.selectedDay.dia} - ${dateToString(this.state.selectedDay.date)}` : "Não selecionada"}</p>
-                                    <p><strong>Horário:</strong> {hoursArrayToString(this.state.selectedHour)}</p>
-                                    <p><strong>Serviço:</strong> {this.state.selectedService?.nome || "Não selecionado"} - <PriceFormat value={this.state.selectedService?.preco}/></p>
+                                <div className="modern-card p-4 mb-4">
+                                    <h6 className="fw-bold text-primary mb-3">
+                                        <i className="fas fa-clipboard-list me-2"></i>
+                                        Resumo do Agendamento
+                                    </h6>
+                                    <div className="row g-3">
+                                        <div className="col-12">
+                                            <div className="d-flex align-items-center">
+                                                <i className="fas fa-user-tie me-3 text-primary"></i>
+                                                <div>
+                                                    <small className="text-muted">Prestador</small>
+                                                    <p className="mb-0 fw-semibold">{this.state.selectedProvider?.nome}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-12">
+                                            <div className="d-flex align-items-center">
+                                                <i className="fas fa-calendar me-3 text-primary"></i>
+                                                <div>
+                                                    <small className="text-muted">Data</small>
+                                                    <p className="mb-0 fw-semibold">{this.state.selectedDay ? `${this.state.selectedDay.dia} - ${dateToString(this.state.selectedDay.date)}` : "Não selecionada"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-12">
+                                            <div className="d-flex align-items-center">
+                                                <i className="fas fa-clock me-3 text-primary"></i>
+                                                <div>
+                                                    <small className="text-muted">Horário</small>
+                                                    <p className="mb-0 fw-semibold">{hoursArrayToString(this.state.selectedHour)}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-12">
+                                            <div className="d-flex align-items-center">
+                                                <i className="fas fa-scissors me-3 text-primary"></i>
+                                                <div className="flex-grow-1">
+                                                    <small className="text-muted">Serviço</small>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <p className="mb-0 fw-semibold">{this.state.selectedService?.nome || "Não selecionado"}</p>
+                                                        <span className="fw-bold text-primary">
+                                                            <PriceFormat value={this.state.selectedService?.preco}/>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="card p-3">
-                                    <label>Cliente Nome</label>
-                                    <input type="text" name="nome" id="nome" placeholder="Nome do cliente" className={`form-control`}
+                                <div className="modern-card p-4 mb-4">
+                                    <h6 className="fw-bold text-primary mb-3">
+                                        <i className="fas fa-user me-2"></i>
+                                        Dados do Cliente
+                                    </h6>
+                                    <div className="mb-3">
+                                        <label className="form-label fw-semibold text-dark mb-2">Nome do Cliente</label>
+                                        <input type="text" name="nome" id="nome" placeholder="Nome do cliente" className="form-control-modern"
                                         value={this.state.appointmentCliente} onChange={(e) => this.setState({ appointmentCliente: e.target.value })} />
-                                    <label className="form-label" htmlFor="celular">Cliente Celular</label>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label fw-semibold text-dark mb-2">Celular</label>
                                         <PhoneNumberInput value={this.state.appointmentCelular} onChange={(e) => this.setState({ appointmentCelular: e.target.value })} />
-                                    <label className="form-label" htmlFor="celular">Observação</label>
-                                    <textarea name="observação" id="observação" placeholder="Observação" className={`form-control`}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label fw-semibold text-dark mb-2">Observação</label>
+                                        <textarea name="observação" id="observação" placeholder="Observação" className="form-control-modern"
                                         value={this.state.appointmentObservation} onChange={(e) => this.setState({ appointmentObservation: e.target.value })} />
+                                    </div>
                                 </div>
                                 {
                                     this.state.mininumStep === 1 &&
-                                    <button className="btn btn-success" onClick={() => this.finishAppointment()}>
-                                        <h6 className="mb-1">Finalizar</h6>
+                                    <button className="btn btn-modern w-100" onClick={() => this.finishAppointment()}>
+                                        <i className="fas fa-check me-2"></i>
+                                        Finalizar Agendamento
                                     </button>
                                 }
                                 {
                                     this.state.mininumStep === 2 &&
-                                    <button className="btn btn-primary" onClick={() => this.updateAppointment()}>
-                                        <h6 className="mb-1">Atualizar Agendamento</h6>
+                                    <button className="btn btn-modern w-100" onClick={() => this.updateAppointment()}>
+                                        <i className="fas fa-save me-2"></i>
+                                        Atualizar Agendamento
                                     </button>
                                 }
                             </>
@@ -382,8 +493,9 @@ class Appointment extends react.Component {
                     </div>
                     {
                         this.state.appointmentsStep > this.state.mininumStep  &&
-                        <div className="d-flex justify-content-start mt-3">
-                            <button className="btn btn-primary w-auto" onClick={this.handleLastStep}>
+                        <div className="d-flex justify-content-start mt-4">
+                            <button className="btn btn-modern-secondary" onClick={this.handleLastStep}>
+                                <i className="fas fa-arrow-left me-2"></i>
                                 Voltar
                             </button>
                         </div>

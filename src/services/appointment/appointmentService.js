@@ -3,6 +3,12 @@ import { isEmpty, convertTimeToMinutes, secondsToDate } from '../../shared/utils
 import { getDay } from "date-fns";
 
 export const setDaysAllowed = (data) => {
+    // Verificação de segurança
+    if (!data || !data.horarios || !Array.isArray(data.horarios)) {
+        console.warn('Dados de horários não disponíveis para setDaysAllowed:', data)
+        return []
+    }
+
     const horarios = data.horarios
     var daysAllowed = []
     for (let i = 0; i < horarios.length; i++) {
@@ -14,6 +20,12 @@ export const setDaysAllowed = (data) => {
 }
 
 export const getAvailableHours = (selectedDate, data) => {
+    // Verificação de segurança
+    if (!data || !data.horarios || !Array.isArray(data.horarios)) {
+        console.warn('Dados de horários não disponíveis ou formato inválido:', data)
+        return ["inactive"]
+    }
+
     const dataBase = '2024-01-01'
     const diaDaSemana = selectedDate.getDay()
     const horarioDoDia = data.horarios[diaDaSemana]
@@ -67,6 +79,12 @@ export const getNext7Days = () => {
 }
 
 export const completeAvailableHours = (horarios) => {
+    // Verificação de segurança para evitar erros
+    if (!horarios || !horarios.horarios || !Array.isArray(horarios.horarios)) {
+        console.warn('Horários não disponíveis ou formato inválido:', horarios)
+        return []
+    }
+
     const next7Days = getNext7Days()
     const completed = next7Days.map((day) => {
         const horarioDoDia = horarios.horarios[getDay(day.date)]

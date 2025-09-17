@@ -61,35 +61,88 @@ class AppointmentCard extends React.Component {
     }
 
     render() {
+        const getStatusClass = () => {
+            switch(this.state.status) {
+                case "Pendente": return "status-pending";
+                case "Finalizado": return "status-completed";
+                case "Cancelado": return "status-cancelled";
+                case "Vencido": return "status-expired";
+                default: return "status-pending";
+            }
+        };
+
         return (
-            <div className={`card ${this.state.statusColor} mb-2`}>
-                <div className="card-header">
-                    <strong>Status:</strong> {this.state.status}<br />
-                    <strong>Data:</strong> {secondsToDateString(this.state.appointment.dateInfo?.date.seconds)}<br />
-                    <strong>Horário:</strong> {hoursArrayToString(this.state.appointment.dateInfo?.hour)}
-                    </div>
-                        <div className="card-body d-flex justify-content-between align-items-center">
-                        <div className="me-3">
-                            <strong>Prestador:</strong> {this.state.appointment.provider?.nome}<br />
-                            <strong>Serviço:</strong> {this.state.appointment.service?.nome}<br />
-                            <strong>Cliente:</strong> {this.state.appointment.cliente?.nome}<br />
-                            <strong>Celular:</strong> {this.state.appointment.cliente?.celular}<br />
+            <div className="appointment-card-modern mb-3 animate-fade-in-up">
+                <div className="p-4">
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                        <div className="flex-grow-1">
+                            <div className="d-flex align-items-center mb-2">
+                                <span className={`status-badge ${getStatusClass()}`}>
+                                    {this.state.status}
+                                </span>
+                            </div>
+                            <div className="row g-3">
+                                <div className="col-md-6">
+                                    <div className="d-flex align-items-center mb-2">
+                                        <i className="fas fa-calendar-alt me-2 text-primary"></i>
+                                        <small className="text-muted">Data:</small>
+                                    </div>
+                                    <p className="mb-2 fw-semibold">{secondsToDateString(this.state.appointment.dateInfo?.date.seconds)}</p>
+                                    
+                                    <div className="d-flex align-items-center mb-2">
+                                        <i className="fas fa-clock me-2 text-primary"></i>
+                                        <small className="text-muted">Horário:</small>
+                                    </div>
+                                    <p className="mb-0 fw-semibold">{hoursArrayToString(this.state.appointment.dateInfo?.hour)}</p>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="d-flex align-items-center mb-2">
+                                        <i className="fas fa-user-tie me-2 text-primary"></i>
+                                        <small className="text-muted">Prestador:</small>
+                                    </div>
+                                    <p className="mb-2 fw-semibold">{this.state.appointment.provider?.nome}</p>
+                                    
+                                    <div className="d-flex align-items-center mb-2">
+                                        <i className="fas fa-scissors me-2 text-primary"></i>
+                                        <small className="text-muted">Serviço:</small>
+                                    </div>
+                                    <p className="mb-0 fw-semibold">{this.state.appointment.service?.nome}</p>
+                                </div>
+                            </div>
+                            <hr className="my-3" />
+                            <div className="row g-3">
+                                <div className="col-md-6">
+                                    <div className="d-flex align-items-center mb-2">
+                                        <i className="fas fa-user me-2 text-primary"></i>
+                                        <small className="text-muted">Cliente:</small>
+                                    </div>
+                                    <p className="mb-0 fw-semibold">{this.state.appointment.cliente?.nome}</p>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="d-flex align-items-center mb-2">
+                                        <i className="fas fa-phone me-2 text-primary"></i>
+                                        <small className="text-muted">Celular:</small>
+                                    </div>
+                                    <p className="mb-0 fw-semibold">{this.state.appointment.cliente?.celular}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="d-flex flex-column gap-2">
+                        <div className="d-flex flex-column gap-2 ms-3">
                             {
                                 this.state.status !== "Finalizado" && this.state.status !== "Cancelado" && 
-                                <button className="btn btn-success border border-white" onClick={this.handleFinalizeAppoitment}>
+                                <button className="btn btn-success btn-sm" onClick={this.handleFinalizeAppoitment} title="Finalizar">
                                     <i className="fas fa-check" />
                                 </button>
                             }
                             {
                                 this.state.status !== "Cancelado" && 
-                                <button className="btn btn-dark border border-white" onClick={this.handleEditAppointment}>
+                                <button className="btn btn-primary btn-sm" onClick={this.handleEditAppointment} title="Editar">
                                     <i className="fas fa-edit" />
                                 </button>
                             }
                         </div>
                     </div>
+                </div>
             </div>
         );
     }

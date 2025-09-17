@@ -27,33 +27,48 @@ class Login extends React.Component {
         return (
             <> 
                 {
-                    <div className="container d-flex flex-column justify-content-center align-items-center">
-                        <div className="card p-4 shadow-lg bg-light rounded">
-                            <div className="mb-2">
-                                <img src="" alt="" />
-                                <h1 className="mb-2">Acesse sua conta!</h1>
-                                <h5>PratiCorte - Gestão rapida e fácil da sua barbearia.</h5>
+                    <div className="center-container">
+                        <div className="modern-card p-5 animate-fade-in-up" style={{maxWidth: '450px', width: '100%'}}>
+                            <div className="text-center mb-4">
+                                <div className="mb-4">
+                                    <i className="fas fa-cut text-primary" style={{fontSize: '3rem'}}></i>
+                                </div>
+                                <h1 className="fw-bold text-dark mb-3">Acesse sua conta!</h1>
+                                <p className="text-muted">PratiCorte - Gestão rápida e fácil da sua barbearia.</p>
                             </div>
                             <form>
-                                <div className="mb-3">
-                                    <label className="form-label" htmlFor="email">E-mail</label>
-                                    <input className="form-control" type="text" name="email" id="email" placeholder="exemplo@gmail.com"
+                                <div className="mb-4">
+                                    <label className="form-label fw-semibold text-dark mb-2" htmlFor="email">
+                                        <i className="fas fa-envelope me-2 text-primary"></i>
+                                        E-mail
+                                    </label>
+                                    <input className="form-control-modern" type="text" name="email" id="email" placeholder="exemplo@gmail.com"
                                     onChange={(e) => this.setState({ email: e.target.value })}/>
                                 </div>
-                                <div>
-                                    <label className="form-label" htmlFor="password">Senha</label>
-                                    <input className="form-control" type="password" name="password" id="password" placeholder="***********"
+                                <div className="mb-4">
+                                    <label className="form-label fw-semibold text-dark mb-2" htmlFor="password">
+                                        <i className="fas fa-lock me-2 text-primary"></i>
+                                        Senha
+                                    </label>
+                                    <input className="form-control-modern" type="password" name="password" id="password" placeholder="***********"
                                     onChange={(e) => this.setState({ password: e.target.value })}/>
                                 </div>
                             </form>
-                            <Link to="/" className="d-block mb-3 text-decoration-none text-center">Esqueceu sua senha?</Link>
-                            <button className="btn btn-primary mb-3" onClick={() => handleLogin(this.state.email, this.state.password, (isLoading) => this.setState({ isLoading }))}>
+                            <Link to="/" className="d-block mb-4 text-decoration-none text-center text-primary fw-semibold">
+                                <i className="fas fa-key me-2"></i>
+                                Esqueceu sua senha?
+                            </Link>
+                            <button className="btn btn-modern w-100 mb-4" onClick={() => handleLogin(this.state.email, this.state.password, (isLoading) => this.setState({ isLoading }))}>
+                                <i className="fas fa-sign-in-alt me-2"></i>
                                 Fazer Login
                             </button>
                             <div className="text-center">
-                                <span className="d-block mb-2">Ainda não é cliente?</span>
+                                <p className="text-muted mb-3">Ainda não é cliente?</p>
                                 <Link to="/criar-conta">
-                                    <button className="btn btn-outline-secondary">Crie sua conta!</button>
+                                    <button className="btn btn-modern-secondary w-100">
+                                        <i className="fas fa-user-plus me-2"></i>
+                                        Crie sua conta!
+                                    </button>
                                 </Link>
                             </div>
                         </div>
@@ -154,52 +169,81 @@ class Register extends React.Component {
     render() {
         return (
             <>
-                <div className="container d-flex flex-column justify-content-center align-items-center">
-                    <div className="card p-4 shadow-lg bg-white rounded">
-                        <div className="mb-2">
-                            <img src="" alt="" />
-                            <h1 className="mb-2">Crie sua conta!</h1>
-                            <h5>PratiCorte - Gestão rapida e fácil da sua barbearia.</h5>
+                <div className="center-container">
+                    <div className="modern-card p-5 animate-fade-in-up" style={{maxWidth: '500px', width: '100%'}}>
+                        <div className="text-center mb-4">
+                            <div className="mb-4">
+                                <i className="fas fa-cut text-primary" style={{fontSize: '3rem'}}></i>
+                            </div>
+                            <h1 className="fw-bold text-dark mb-3">Crie sua conta!</h1>
+                            <p className="text-muted">PratiCorte - Gestão rápida e fácil da sua barbearia.</p>
                         </div>
                         <form>
                             <div className="mb-3">
-                                <label className="form-label" htmlFor="email">E-mail</label>
-                                <input className="form-control" type="text" name="email" id="email" placeholder="exemplo@gmail.com"
+                                <label className="form-label fw-semibold text-dark mb-2" htmlFor="email">
+                                    <i className="fas fa-envelope me-2 text-primary"></i>
+                                    E-mail
+                                </label>
+                                <input className="form-control-modern" type="text" name="email" id="email" placeholder="exemplo@gmail.com"
                                 onChange={(e) => this.setState({ email: e.target.value })}/>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label" htmlFor="name">Nome do responsável</label>
-                                <input className="form-control" type="text" name="name" id="name" placeholder="Nome do responsável"
+                                <label className="form-label fw-semibold text-dark mb-2" htmlFor="name">
+                                    <i className="fas fa-user me-2 text-primary"></i>
+                                    Nome do responsável
+                                </label>
+                                <input className="form-control-modern" type="text" name="name" id="name" placeholder="Nome do responsável"
                                 onChange={(e) => this.setState({ name: e.target.value })}/>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label" htmlFor="password">Senha</label>
-                                <input className="form-control" type="password" name="password" id="password" placeholder="***********" 
+                                <label className="form-label fw-semibold text-dark mb-2" htmlFor="password">
+                                    <i className="fas fa-lock me-2 text-primary"></i>
+                                    Senha
+                                </label>
+                                <input className="form-control-modern" type="password" name="password" id="password" placeholder="***********" 
                                 onChange={(e) => this.setState({ password: e.target.value })}/>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label" htmlFor="document">
-                                    <Link to="https://www.4devs.com.br/gerador_de_cpf" target="_blank" className="text-body text-decoration-none">Documento (CPF ou CPNJ)</Link>
+                                <label className="form-label fw-semibold text-dark mb-2" htmlFor="document">
+                                    <i className="fas fa-id-card me-2 text-primary"></i>
+                                    <Link to="https://www.4devs.com.br/gerador_de_cpf" target="_blank" className="text-primary text-decoration-none">Documento (CPF ou CNPJ)</Link>
                                 </label>
-                                <input className="form-control" type="text" name="document" id="document" placeholder="CPF ou CPNJ"
+                                <input className="form-control-modern" type="text" name="document" id="document" placeholder="CPF ou CNPJ"
                                 onChange={(e) => this.setState({ document: e.target.value })}/>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label" htmlFor="phoneNumber">Celular</label>
+                                <label className="form-label fw-semibold text-dark mb-2" htmlFor="phoneNumber">
+                                    <i className="fas fa-phone me-2 text-primary"></i>
+                                    Celular
+                                </label>
                                 <PhoneNumberInput value={this.state.phoneNumber} onChange={(e) => this.setState({ phoneNumber: e.target.value })} />
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label" htmlFor="establishment">Nome do Estabelecimento</label>
-                                <input className="form-control" type="text" name="establishment" id="establishment" placeholder="Barbearia PratiCorte"
+                            <div className="mb-4">
+                                <label className="form-label fw-semibold text-dark mb-2" htmlFor="establishment">
+                                    <i className="fas fa-store me-2 text-primary"></i>
+                                    Nome do Estabelecimento
+                                </label>
+                                <input className="form-control-modern" type="text" name="establishment" id="establishment" placeholder="Barbearia PratiCorte"
                                 onChange={(e) => this.setState({ establishment: e.target.value })} />
                             </div>
                         </form>
-                        <Link to="/termos-de-uso" target="_blank" className="mb-3"><b>termo de uso e política de privacidade.</b></Link>
-                        <button className="btn btn-primary mb-3" onClick={this.handleRegister}>Cadastre-se</button>
+                        <Link to="/termos-de-uso" target="_blank" className="mb-4 d-block text-center">
+                            <small className="text-muted">
+                                <i className="fas fa-file-contract me-2"></i>
+                                <b>Termo de uso e política de privacidade.</b>
+                            </small>
+                        </Link>
+                        <button className="btn btn-modern w-100 mb-4" onClick={this.handleRegister}>
+                            <i className="fas fa-user-plus me-2"></i>
+                            Cadastre-se
+                        </button>
                         <div className="text-center">
-                            <span className="d-block mb-2">Já é cliente?</span>
+                            <p className="text-muted mb-3">Já é cliente?</p>
                             <Link to="/">
-                                <button className="btn btn-outline-secondary">Acesse sua conta!</button>
+                                <button className="btn btn-modern-secondary w-100">
+                                    <i className="fas fa-sign-in-alt me-2"></i>
+                                    Acesse sua conta!
+                                </button>
                             </Link>
                         </div>
                     </div>
