@@ -86,6 +86,7 @@ class History extends React.Component {
         const horarios = this.state.sessao.horarios
         const completedAvailableHours = completeAvailableHours(horarios)
         const appoitmentData = {
+            appointment: appointment,
             horarios: completedAvailableHours,
             providers: [appointment.provider],
             appointmentTitle: 'Selecione um horário',
@@ -112,6 +113,10 @@ class History extends React.Component {
         this.setState({ editingAppointmentDate: selectedDate });
     }
 
+    reload = () => {
+        this.props.reload()
+    }
+
     handleCancelAppointment = async () => {
         const data = {
             ...this.state.editingAppointment,
@@ -121,7 +126,7 @@ class History extends React.Component {
         }
         try {
             await updateAppointment(data)
-            this.props.load()
+            this.reload()
             this.hideEditingAppointment()
         } catch (error) {
             console.error("Erro ao realizar agendamento:", error.message)
@@ -191,7 +196,7 @@ class History extends React.Component {
                             this.state.editingAppointmentModalOpen && (
                                 <div className="container d-flex flex-column align-items-center">
                                     <h5 className="text-center mt-3">Editando Agendamento</h5>
-                                    <Appointment isEditingAppointment={true} appoitmentData={this.state.appoitmentData}/>
+                                    <Appointment isEditingAppointment={true} reload={this.reload} appoitmentData={this.state.appoitmentData} hideEditingAppointment={this.hideEditingAppointment}/>
                                 </div>
                             )
                         }

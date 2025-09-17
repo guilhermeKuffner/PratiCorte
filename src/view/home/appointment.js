@@ -2,7 +2,7 @@ import react from 'react';
 import { getEstabelecimento, getSessao } from '../../config/auth';
 import { isEmpty, PhoneNumberFormat, dateToString, PriceFormat, PhoneNumberInput, removeSimbols, hoursArrayToString } from '../../shared/utils';
 import { setAvailableHours } from '../../services/appointment/appointmentService';
-import { addAppointment } from '../../store/collections/appointmentWorker';
+import { addAppointment, updateAppointment } from '../../store/collections/appointmentWorker';
 import { hourStillAvailable, verifyServiceTimeInBlocks } from '../../services/appointment/appointmentService';
 
 class Appointment extends react.Component {
@@ -11,6 +11,7 @@ class Appointment extends react.Component {
         console.log(props.appoitmentData)
         this.state = {
             sessao: getSessao(),
+            editingAppointment: props.appoitmentData?.appointment || null,
             providers: props.appoitmentData?.providers || [],
             horarios: props.appoitmentData?.horarios || [],
             appointmentTitle: '',
@@ -26,8 +27,9 @@ class Appointment extends react.Component {
             selectedHour: [],
             originalHourSelected: props.appoitmentData?.originalHourSelected || [],
             selectedService: null,
-            appointmentCliente: '',
-            appointmentCelular: '',
+            appointmentCliente:  props.appoitmentData?.appointment?.cliente?.nome || "",
+            appointmentCelular: props.appoitmentData?.appointment?.cliente?.celular || "",
+            appointmentObservation: props.appoitmentData?.appointment?.cliente?.observacao || "",
             appointmentTitle: 'Realize um agendamento'
         }
     }
@@ -148,7 +150,6 @@ class Appointment extends react.Component {
                 appointmentTitle: 'Selecione um serviço',
                 appoitmentSubTitle: `${this.state.selectedDay.dia} - ${this.state.selectedHour}`,
                 selectedService: null
-
             })
         }
         if (this.state.appointmentsStep === 5) {
@@ -193,12 +194,52 @@ class Appointment extends react.Component {
             } catch (error) {
                 console.error("Erro ao realizar agendamento:", error.message)
             }
-            this.props.onAddAppointment(data)
+            this.props.reload(data)
         }
         this.setState({ appointmentsStep: 1, selectedProvider: null }, () => {
             this.handleStepTitle()
         })
         console.log("Agendamento finalizado com sucesso!")
+    }
+
+    updateAppointment = async () => {
+        console.log("Atualizar Agendamento")
+        console.log(this.state.editingAppointment)
+        const data = {
+            id: this.state.editingAppointment.id,
+            oldAppointment: this.state.editingAppointment,
+            dateInfo: {
+                date: this.state.selectedDay.date,
+                hour: this.state.selectedHour,
+                indexDayOfWeek:this.state.selectedDay.dayOfWeek,
+                titleDayOfWeek: this.state.selectedDay.dia,
+                selectedDay: this.state.selectedDay
+            },
+            service: this.state.selectedService,
+            cliente: {
+                nome: this.state.appointmentCliente ?? "",
+                celular: removeSimbols(this.state.appointmentCelular) ?? "",
+                observacao: this.state.appointmentObservation ?? ""
+            },
+        }
+        this.setState({ isloading: true });
+        const availableHours = await setAvailableHours(this.state.selectedProvider.id, this.state.selectedDay, this.state.originalHourSelected)
+        if (!await hourStillAvailable(availableHours, this.state.selectedHour)) {
+            this.setState({ isloading: false })
+            return alert("Horário não está mais disponível, selecione outro horário.");
+        }
+        if (this.verifyFields(data) && this.verifyAppointmentStillAvailable) {
+            try {
+                await updateAppointment(data)
+                alert("Agendamento atualizado com sucesso!")
+                this.cleanFields()
+            } catch (error) {
+                console.error("Erro ao atualizar agendamento:", error.message)
+            }
+            this.props.hideEditingAppointment()
+            this.props.reload(data)
+        }
+        console.log("Agendamento atualizado com sucesso!")
     }
 
     verifyAppointmentStillAvailable = () => {
@@ -324,9 +365,18 @@ class Appointment extends react.Component {
                                     <textarea name="observação" id="observação" placeholder="Observação" className={`form-control`}
                                         value={this.state.appointmentObservation} onChange={(e) => this.setState({ appointmentObservation: e.target.value })} />
                                 </div>
-                                <button className="btn btn-success" onClick={() => this.finishAppointment()}>
-                                    <h6 className="mb-1">Finalizar</h6>
-                                </button>
+                                {
+                                    this.state.mininumStep === 1 &&
+                                    <button className="btn btn-success" onClick={() => this.finishAppointment()}>
+                                        <h6 className="mb-1">Finalizar</h6>
+                                    </button>
+                                }
+                                {
+                                    this.state.mininumStep === 2 &&
+                                    <button className="btn btn-primary" onClick={() => this.updateAppointment()}>
+                                        <h6 className="mb-1">Atualizar Agendamento</h6>
+                                    </button>
+                                }
                             </>
                         }
                     </div>

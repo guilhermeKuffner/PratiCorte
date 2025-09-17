@@ -50,9 +50,9 @@ class Home extends React.Component {
                 <div className="container d-flex flex-column flex-md-row justify-content-between align-items-start">
                     {
                         this.state.appoitmentData && (
-                            <Appointment onAddAppointment={this.load} appoitmentData={this.state.appoitmentData}/>)
+                            <Appointment reload={this.load} appoitmentData={this.state.appoitmentData}/>)
                     }
-                    <History appointments={this.state.appointments} load={this.load} appoitmentData={this.state.appoitmentData}/>
+                    <History appointments={this.state.appointments} reload={this.load} appoitmentData={this.state.appoitmentData}/>
                 </div>
             </>
         );
