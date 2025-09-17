@@ -114,6 +114,7 @@ class History extends React.Component {
     }
 
     reload = () => {
+        this.hideEditingAppointment()
         this.props.reload()
     }
 
@@ -127,7 +128,6 @@ class History extends React.Component {
         try {
             await updateAppointment(data)
             this.reload()
-            this.hideEditingAppointment()
         } catch (error) {
             console.error("Erro ao realizar agendamento:", error.message)
         }
@@ -197,6 +197,9 @@ class History extends React.Component {
                                 <div className="container d-flex flex-column align-items-center">
                                     <h5 className="text-center mt-3">Editando Agendamento</h5>
                                     <Appointment isEditingAppointment={true} reload={this.reload} appoitmentData={this.state.appoitmentData} hideEditingAppointment={this.hideEditingAppointment}/>
+                                        <button className="btn btn-danger mb-3" onClick={this.handleCancelAppointment}>
+                                            Cancelar Agendamento
+                                        </button>
                                 </div>
                             )
                         }
