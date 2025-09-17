@@ -15,12 +15,13 @@ class Appointment extends react.Component {
             horarios: props.appoitmentData?.horarios || [],
             appointmentTitle: '',
             appoitmentSubTitle:'',
-            appointmentsStep: 1,
+            appointmentsStep: props.appoitmentData?.mininumStep || 1,
+            mininumStep: props.appoitmentData?.mininumStep || 1,
             establishment: getEstabelecimento(),
             availableHours: [],
             providers: [],
             appointments: [],
-            selectedProvider: null,
+            selectedProvider:  props.appoitmentData?.providers || null,
             selectedDay: null,
             selectedHour: [],
             selectedService: null,
@@ -323,7 +324,7 @@ class Appointment extends react.Component {
                         }
                     </div>
                     {
-                        this.state.appointmentsStep !== 1 &&
+                        this.state.appointmentsStep > this.state.mininumStep  &&
                         <div className="d-flex justify-content-start mt-3">
                             <button className="btn btn-primary w-auto" onClick={this.handleLastStep}>
                                 Voltar
